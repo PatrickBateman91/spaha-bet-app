@@ -74,6 +74,7 @@ class AuthPage extends Component {
     }
 
   componentDidMount() {
+    window.scrollTo(0,0);
     const getUserPromise = getUserData('get user');
             getUserPromise.then(resUser => {
               this.props.history.push('/');
@@ -152,9 +153,11 @@ class AuthPage extends Component {
         setTimeout(this.props.history.push('/'), 1500);
       })
     }).catch(err => {
+      console.log(err);
+      console.log(err.response.data)
       this.setState({
         error: true,
-        errorMessage: err.response.data.errmsg || "Can't access page at the moment!"
+        errorMessage: err.response.data || "Can't access page at the moment!"
       })
     })
   }

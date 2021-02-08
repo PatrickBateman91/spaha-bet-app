@@ -342,11 +342,10 @@ userRouter.post('/resend-password', async(req, res) =>{
                 from: process.env.EMAIL,
                 to: req.body.email,
                 subject: "Reset your password on your Bet platform",
-                text: `Reset your password on the link here: http://localhost:3000/reset-password/${userUID}/${urlID}`
+                text: `Reset your password on the link here: https://spaha-betapp.netlify.app/reset-password/${userUID}/${urlID}`
             }
 
-            transporter.sendMail(mailOptions, function(err, info){
-          
+            transporter.sendMail(mailOptions, function(err, info){    
                 if(err){
                     console.log(err);
                     res.status(400).send("Could not send resend password email!");
@@ -469,8 +468,14 @@ userRouter.post('/sign-up', upload.single('file'), async (req, res, next) => {
                             res.send({ user, token })
                         } catch (err) {
                             await Group.findByIdAndDelete(data._id.toString())
-                            console.log('Saving user failed! Group deleted!');
-                            res.status(400).send(err);
+                            let notUnique;
+                            const errorKeys = Object.keys(err.keyValue);
+                            if(errorKeys[0] === "email"){
+                                notUnique = "Email is already registered!";
+                            } else{
+                                notUnique = "Nickname is taken. Please select a diferent one!";
+                            }
+                            res.status(400).send(`${notUnique}`);
                         }
                     }
                 });

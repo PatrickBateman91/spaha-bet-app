@@ -14,6 +14,8 @@ class ChangeProfilePicture extends Component {
     }
     
     componentDidMount(){
+        window.scrollTo(0,0);
+        document.getElementById('root')
         const getUserPromise = getUserData('get user');
 
         getUserPromise.then(resUser => {

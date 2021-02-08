@@ -13,6 +13,7 @@ class NewPasswordFromEmail extends Component {
     
 
     componentDidMount() {
+        window.scrollTo(0,0);
         const checkEmailPromise = checkEmailLink(this.props.match.params.uid, this.props.match.params.id);
         checkEmailPromise.then(res => {
             if (res.data === "Email link is valid!") {
@@ -78,7 +79,7 @@ class NewPasswordFromEmail extends Component {
         return (
             <div className="main-container main-background">
    
-                    {this.state.emailValid ? <Fragment>
+                    {this.state.emailValid ? <div className="fx-column fx-align-center reset-password-container">
                         <form name="reset-password" id="reset-password" onChange={this.hideMessages} onSubmit={this.handleResetPassword}>
                         <div id="change-account-holder" className="basic-column-fx justify-between-fx align-center-fx wrap-fx">
                     <div className="change-account-line">
@@ -96,7 +97,7 @@ class NewPasswordFromEmail extends Component {
                   </div>
                   </div>
                   </form>
-                    </Fragment> : null}
+                    </div> : null}
     
 
             </div>

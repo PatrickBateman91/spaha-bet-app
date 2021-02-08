@@ -39,12 +39,20 @@ class JoinNewGroup extends Component {
     if(id !== ""){
         const joinNewGroupPromise = joinNewGroupRequest(id);
         joinNewGroupPromise.then(res => {
-            this.setState({
-                success:true,
-                successMessage:"Your join request has been sent to group admin!"
-            },() => {
-                setTimeout(returnToMain.bind(null, this.props), 1500)
-            })
+            if(!res.data.error){
+                this.setState({
+                    success:true,
+                    successMessage:"Your join request has been sent to group admin!"
+                },() => {
+                    setTimeout(returnToMain.bind(null, this.props), 1500)
+                })
+            } else{
+                this.setState({
+                    error:true,
+                    errorMessage:res.data.errorMessage || "Could not add you to the group!"
+                })
+            }
+
         }).catch(err => {
             this.setState({
                 error:true,

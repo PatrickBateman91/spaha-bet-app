@@ -17,7 +17,9 @@ const SignedOutPage = (props) => {
         {success ?     <div id="sign-out-page" className="basic-fx justify-center-fx align-center-fx">
             You have been signed out successfully!
             Redirecting to Home page...
-        </div> : errorMessage}
+        </div> :
+        <div id="sign-out-page" className="basic-fx justify-center-fx align-center-fx">{errorMessage}</div>
+        }
     </Fragment>
     );
 };

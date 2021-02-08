@@ -14,6 +14,7 @@ class PublicProfile extends Component {
     }
 
     componentDidMount() {
+        window.scrollTo(0,0);
         const nickname = this.props.match.params.nickname;
         const getUserPromise = getUserData('get user');
         getUserPromise.then(responseUser => {

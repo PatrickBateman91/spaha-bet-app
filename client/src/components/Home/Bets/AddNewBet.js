@@ -96,6 +96,7 @@ state={
     }
 
     componentDidMount(){ 
+        window.scrollTo(0,0);
         if(this.props.editMode){
             const newGroup = this.props.groups.filter(group => group._id === this.props.selectedGroup);
             this.setState({

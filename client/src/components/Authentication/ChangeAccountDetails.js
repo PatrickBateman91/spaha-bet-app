@@ -53,6 +53,7 @@ class ChangeAccountDetails extends Component {
         }
     
     componentDidMount() {
+      window.scrollTo(0,0);
           const getUserPromise = getUserData('get user');
           getUserPromise.then(resUser => {
               const getDataPromise = getUserData('get groups')

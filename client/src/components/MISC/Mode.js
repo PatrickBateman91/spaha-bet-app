@@ -1,1 +1,1 @@
-export const currentUrl = "http://localhost:5000";
+export const currentUrl = "https://spaha-bets.herokuapp.com";

@@ -51,8 +51,8 @@ groupRouter.post('/create-new-group', auth, async (req, res) => {
         } catch(err){
            res.status(500).send("Could not add group to database!")
         }
-     
     }
+
     else if(req.headers.type === "get users"){
         const regex = `^${req.body.nickname}` 
         const results = await User.find({nickname:  {$regex : regex, $options : "i"}})
@@ -71,30 +71,41 @@ groupRouter.post('/join-new-group', auth, async (req, res) => {
                 res.status(400).send("Could not find group with that ID!")
             }
             else if(responseGroup !== null){
-                User.find({nickname:responseGroup.admin}, async(err, responseUser) => {
-                    const newNotification = {
-                        title: `${req.user.nickname} wants to join your group ${responseGroup.name}`,
-                        data: {user: req.user.nickname, groupId: responseGroup._id},
-                        seen:false,
-                        timestamp: new Date(),
-                        type:"accept user to group",
-                        needsResolving:true,
-                        _id: new ObjectID()
-                    }
-                    responseUser[0].notifications.push(newNotification);
-                    await responseUser[0].save();
-                    res.send('Group inquiry has been sent to the group admin.')
-                })
-              
+                if(responseGroup.people.indexOf(req.user.nickname) !== -1){
+                    res.send({
+                        error:true,
+                        errorMessage:"You are already part of this group!"
+                    })
+                } else{
+                    User.find({nickname:responseGroup.admin}, async(err, responseUser) => {
+                        const newNotification = {
+                            title: `${req.user.nickname} wants to join your group ${responseGroup.name}`,
+                            data: {user: req.user.nickname, groupId: responseGroup._id},
+                            seen:false,
+                            timestamp: new Date(),
+                            type:"accept user to group",
+                            needsResolving:true,
+                            _id: new ObjectID()
+                        }
+                        responseUser[0].notifications.push(newNotification);
+                        await responseUser[0].save();
+                        res.send('Group inquiry has been sent to the group admin.')
+                    })
+                }
             }
             else{
-                res.status(400).send("Could not find group with that ID!")
-    
+                res.send({
+                    error:true,
+                    errorMessage:"Could not find group with that ID!!"
+                })
             }
         })
     }
     catch(err){
-       return res.status(400).send("Group ID is not valid!")
+        res.send({
+            error:true,
+            errorMessage:"Group ID is not valid!"
+        })
     }
   
 })

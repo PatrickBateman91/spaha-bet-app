@@ -69,6 +69,7 @@ input::-webkit-input-placeholder{
     font-size:0.60em;
 }
 
+
 .main-container{
     width:100vw;
     min-height: 100vh;
@@ -524,16 +525,45 @@ input::-webkit-input-placeholder{
     }
 }
 
+.reset-password-container{
+    margin-top:0px;
+    width:100vw;
+    height:100vw;
+
+    form #change-account-holder{
+     margin-top:0px;
+     padding-top:35vh;
+     justify-content: flex-start;
+     width:100vw;
+     height:80vh;
+
+     input{
+         padding:5px;
+     }
+
+     .error-message{
+        width:80vw;
+    }
+    }
+}
+
 //LOG OUT
 
 //Deactivate account
 .deactivate-container{
 
+    @include mQ-phones(360px){
+        padding-top: 20px;
+        height: 70vh; 
+    }
+    
     @include mQ-other(361px, 480px){
+        padding-top: 20px;
     height: 70vh;
     }
 
     @include mQ-other(481px,768px){
+        padding-top: 20px;
         font-size:1.5em;
         height: 80vh;
     }
@@ -651,7 +681,7 @@ input::-webkit-input-placeholder{
     }
 
     @include mQ-other(481px,768px){
-        font-size:1.3em;
+        font-size:1.1em;
         padding:15px;
     }
 
@@ -1595,7 +1625,7 @@ margin-right:40px;
     @include mQ-other(481px,768px){
         top:30px;
         ul li{
-            width:198px;
+            width:150px;
         }
     }
 
@@ -3368,6 +3398,7 @@ font-size:0.65em;
  .legend-dnd{
      width:100%;
      height: 100%;
+     text-align:center;
  }
 
 //BETS
@@ -5406,9 +5437,8 @@ div button{
     margin-top:40px;
     div{
         text-align: center;
-        width:100px;
         font-size:0.8em;
-        padding:10px;
+        padding:10px 20px;
         background-color: $dugmeZaNazad;
         border-radius: 20px;
         color:white;
@@ -5425,8 +5455,7 @@ div button{
         div{
             margin-bottom: 10px;
             font-size:0.7em;
-            width:70px;
-            padding:4px 8px;
+            padding:10px 16px;
         }
     }
 
@@ -5435,8 +5464,7 @@ div button{
         div{
             margin-bottom: 10px;
             font-size:0.7em;
-            width:100px;
-            padding:4px 8px;
+            padding:10px 16px;
         }
     }
 
@@ -5445,8 +5473,7 @@ div button{
         div{
             margin-bottom: 10px;
             font-size:0.7em;
-            width:70px;
-            padding:4px 8px;
+            padding:10px 20px;
         }
     }
 
@@ -5455,17 +5482,15 @@ div button{
         div{
             margin-bottom: 10px;
             font-size:0.7em;
-            width:70px;
-            padding:5px 10px;
+            padding:10px 20px;
         }
     }
 
     @include mQ-other(1150px, 1699px){
         margin-top:30px;
         div{
-            width:80px;
             font-size:0.7em;
-            padding:6px 10px;
+            padding:10px 20px;
             margin-bottom:10px;
         }
     }
@@ -5477,13 +5502,12 @@ div button{
     justify-content: center;
     position: relative;
     margin-top:50px;
-    margin-bottom:50px;
+    padding-bottom:50px;
 
     div{
         text-align: center;
-        width:100px;
         font-size: 0.8em;
-        padding:10px;
+        padding:10px 20px;
         background-color: $dugmeZaNazad;
         border-radius: 20px;
         color:white;
@@ -5494,32 +5518,38 @@ div button{
         }
     }
 
+    @include mQ-phones(360px){
+        div{
+            font-size:0.7em;
+            padding:10px 16px;
+        }
+    }
+
     @include mQ-other(361px, 480px){
    div{
-    padding-top:5px;
-    padding-bottom: 5px;   
     font-size:0.7em;
+    padding:10px 16px;
    }
     }
 
     @include mQ-other(481px,768px){
         div{
-            font: size 0.7em;
-            padding:4px 8px;
+            font-size:0.7em;
+            padding:10px 20px;
         }
     }
 
     @include mQ-other(769px,1149px){
         div{
-            font: size 0.7em;
-            padding:4px 8px;
+            font-size:0.7em;
+            padding:10px 20px;
         }
     }
   
     @include mQ-other(1150px, 1699px){
         div{
-            font: size 0.7em;
-            padding:5px 10px;
+            font-size:0.7em;
+            padding:10px 20px;
         }
     }
 }
@@ -5580,6 +5610,14 @@ height:100vh;
 
 .text-center{
     text-align: center;
+}
+
+@include mQ-phones(481px){
+    input[type='text']
+    input[type='number'],
+    textarea {
+      font-size: 16px !important;
+    }
 }
 
 //BOJE LJUDI

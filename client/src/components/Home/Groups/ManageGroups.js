@@ -34,6 +34,7 @@ class ManageGroups extends Component {
         
     }
     componentDidMount() {
+        window.scrollTo(0,0);
         this.reRenderComponent();
     }
 

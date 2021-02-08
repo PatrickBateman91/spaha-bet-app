@@ -28,7 +28,8 @@ const ResendPassword = (props) => {
         <div className="main-container main-background basic-column-fx align-center-fx justify-center-fx">
             <div className="auth-form-holder basic-column-fx wrap-fx justify-center-fx align-center-fx">
                 <form name="resend-password" id="resend-password" onSubmit={e => handleResetPassword(e)}>
-                <div id="change-account-holder" className="basic-column-fx justify-between-fx align-center-fx wrap-fx">
+                <div className="basic-column-fx justify-between-fx align-center-fx wrap-fx">
+                <div className="basic-column-fx wrap-fx justify-center-fx align-center-fx">
                     <div className="change-account-line">
                         <label htmlFor="resend-password">Type your email:</label>
                         <input type="text" name="resend-password-input" id="resend-password-input" placeholder="Type email to reset your password" autoComplete="enail"></input>
@@ -37,6 +38,7 @@ const ResendPassword = (props) => {
               {success ? <div className="success-message">Email reset link sent! Be sure to check your spam folder!</div> : null}
                     <div className="auth-button">
                     <button type="submit" form="resend-password" >Reset password</button>
+                </div>
                 </div>
                 </div></form>
 
