@@ -1,0 +1,469 @@
+@use '../../assets/Sass/mixins.scss';
+@use '../../assets//Sass/variables.scss';
+
+
+//Finish bet
+#finish-bet{
+    position: absolute;
+    top:0px;
+    left:0px;
+    width:500px;
+    height: 100%;
+    z-index:1;
+    background-color: rgba(0,0,0,0.9);
+        div{
+            background-color: variables.$background;
+        }
+    
+        @include mixins.mQ-phones(480px){
+            width:80vw;
+        }
+}
+    
+#finish-bet-clicked{
+        width:370px;
+        height:75%;
+        margin-top:30px;
+        .regular-bet-winners span{
+            display: inline-block;
+            font-size: 0.8em;
+            padding:3px 8px;
+            margin:5px;
+    
+            &:hover{
+                cursor: pointer;
+                outline:2px solid black;
+                transform: scale(1.2);
+            }
+        }
+    
+        button{
+            padding:3px 5px;
+            background-color: variables.$titleColor;
+            color:variables.$titleTextColor;
+            border-radius: 7px;
+            &:hover{
+                cursor: pointer;
+                border: 1px solid variables.$titleTextColor;
+                padding: 4px 6px;
+                transform: scale(1.1);
+                background-color: variables.$confirmation;
+            }
+        }
+    
+        
+        @include mixins.mQ-phones(480px){
+            font-size:0.7em;
+            width:70%;
+            margin-top:10px;
+            height:85%;
+    
+            .regular-bet-winners span{
+                font-size:0.7em;
+            }
+    
+            button{
+                font-size:0.8em;
+            }
+        }
+}
+
+
+//Additional clauses
+.additional-clauses-container{
+    width:100%;
+    font-size:0.7em;
+    padding:2px;
+
+span{
+    margin-left:10px;
+}
+
+@include mixins.mQ-phones(480px){
+    font-size:0.50em;
+
+    span{
+        margin-left:4px;
+    }
+}
+}
+
+
+//Edit changes
+#edit-changes{
+    position: relative;
+    margin-top:15px;
+    margin-bottom:15px;
+    width: 100%;
+    z-index:100;
+    
+
+    .edit-change-item{
+        display:none;
+
+        &:hover{
+            font-family: 'Sen', sans-serif;
+            position: absolute;
+            display:flex;
+            flex-direction: column;
+            right:-295px;
+            top:-65px;
+            background-color:#E8E0D3;
+            border:2px solid black;
+            border-radius: 5px;
+            width:300px;
+            min-height:150px;
+            -webkit-box-shadow: 10px 10px 31px 0px rgba(0,0,0,0.75);
+        -moz-box-shadow: 10px 10px 31px 0px rgba(0,0,0,0.75);
+        box-shadow: 10px 10px 31px 0px rgba(0,0,0,0.75)
+        }
+    }
+
+    .single-change-item{
+        display: flex;
+        justify-content: space-around;
+    }
+
+    svg{
+        width:20px;
+        height:20px;
+    }
+
+    svg:hover + .edit-change-item{
+        font-family: 'Sen', sans-serif;
+        position: absolute;
+        display:flex;
+        flex-direction: column;
+        right:-295px;
+        top:-65px;
+        background-color:#E8E0D3;
+        border:2px solid black;
+        border-radius: 5px;
+        min-width:300px;
+        min-height:150px;
+        -webkit-box-shadow: 10px 10px 31px 0px rgba(0,0,0,0.75);
+        -moz-box-shadow: 10px 10px 31px 0px rgba(0,0,0,0.75);
+        box-shadow: 10px 10px 31px 0px rgba(0,0,0,0.75)
+}
+
+
+        @include mixins.mQ-phones(480px){
+            min-width:120px;
+            .edit-change-item{
+                &:hover{
+                    min-width:100px;
+                    min-height:120px;
+                    right:30px;
+                    width:220px;
+                }
+            }
+
+            svg:hover + .edit-change-item{
+                min-width:100px;
+                min-height:120px;
+                right:30px;
+                width:220px;
+            }
+
+            svg{
+                width:15px;
+                height: 15px;
+            }
+
+            .single-change-item{
+                font-size:0.7em;
+            }
+        }
+}
+
+#change-title{
+    width:100%;
+    font-size:1.3em;
+    text-align: center;
+    margin-bottom:10px;
+
+    @include mixins.mQ-phones(480px){
+        font-size:1em;
+    }
+}
+
+//Time limited
+
+.clock-holder{
+    width:100%;
+    position: relative;
+    text-align: right;
+
+    svg:hover~div{
+        display:inline-block;
+    }
+    svg:hover{
+        cursor: pointer;
+        transform: scale(1.2);
+    }
+
+    @include mixins.mQ-phones(480px){
+        top:1px;
+        font-size:0.5em;
+        margin-bottom: 0px;
+    }
+}
+
+.show-hide-duration{
+    display: none;
+    position: absolute;
+    right:20px;
+}
+
+//Participants - common
+
+.participant-holder{
+    position: relative;
+    width:100%;
+    min-height:120px;
+
+    @media screen and (min-device-width: 320px) 
+    and (max-device-width: 650px)
+    and (orientation: landscape)
+    {
+        min-height: 80px;
+    }
+
+    @include mixins.mQ-phones(480px){
+        min-height:80px;
+    }
+}
+
+.participant-row{
+    width:25%;
+}
+
+.participant-value{
+  margin-bottom:30px;
+
+  @media screen and (min-device-width: 320px) 
+    and (max-device-width: 650px)
+    and (orientation: landscape)
+    {
+        margin-bottom: 5px;
+    }
+
+  @include mixins.mQ-phones(480px){
+    margin-bottom:10px;   
+}
+}
+
+.participant-name{
+position: relative;
+text-align: center;
+padding:5px;
+margin-top:5px;
+margin-bottom:20px;
+border:1px solid black;
+-webkit-box-shadow: 2px 2px 6px 1px rgba(0,0,0,0.75);
+-moz-box-shadow: 2px 2px 6px 1px rgba(0,0,0,0.75);
+box-shadow: 2px 2px 6px 1px rgba(0,0,0,0.75);
+
+&:hover{
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+@include mixins.mQ-phones(480px){
+    margin-bottom: 7px;
+    font-size:0.6em;
+    padding:3px;
+}
+}
+
+.participant-value{
+    display: flex;
+    justify-content: center;
+    font-size: 0.8em;
+    
+    @include mixins.mQ-phones(480px){
+        font-size:0.5em;
+    }
+}
+    
+.participant-value span{
+        padding:5px;
+        border:1px solid black;
+        min-width: 50px;
+        text-align: center;
+        background-color:white;
+        -webkit-box-shadow: 1px 1px 8px 1px rgba(0,0,0,0.75);
+        -moz-box-shadow: 1px 1px 8px 1px rgba(0,0,0,0.75);
+        box-shadow: 1px 1px 8px 1px rgba(0,0,0,0.75);
+}
+
+//Different stakes participants
+
+.different-stakes-container{
+    width:500px;
+    
+    @include mixins.mQ-phones(480px){
+        width: 80vw;
+    }
+}
+    
+.amount-bet-different-stakes{
+       position: absolute;
+       width:300px;
+    
+       @include mixins.mQ-phones(480px){
+        width:35vw;
+        margin-top:10px;
+    }
+}
+    
+.different-bet-stake{
+        padding:5px;
+        border:1px solid black;
+        font-size:0.8em;
+        margin-top:5px;
+        min-width:60px;
+        max-width:80px;
+        text-align: center;
+    
+        @include mixins.mQ-phones(480px){
+            min-width:40px;
+            max-width:60px;
+            font-size:0.5em;
+            padding:2px;
+        }
+}
+
+.participant-different-multiple-stake{
+    position: relative;
+    bottom:30px;
+    font-size: 0.8em;
+    
+    span{
+        padding:1px 2px;
+        margin:10px;
+        border:1px solid black;
+        min-width: 50px;
+        text-align: center;
+    }
+}
+
+//Joint bet participants
+
+.joint-bet-holder{
+    width: 100%;
+}
+
+.joint-display-side{
+    position: relative;
+    width: 50%;
+}
+
+.joint-participant-name{
+    text-align: center;
+    width:100px;
+    padding:5px;
+    margin:2px;
+    border:1px solid black;
+    -webkit-box-shadow: 2px 2px 6px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 2px 2px 6px 1px rgba(0,0,0,0.75);
+    box-shadow: 2px 2px 6px 1px rgba(0,0,0,0.75);
+
+    &:hover{
+        cursor: pointer;
+        text-decoration: underline;
+    }
+
+    @include mixins.mQ-phones(480px){
+    width:50px;
+    font-size:0.7em;
+    padding:3px;
+    }
+}
+
+.joint-bets-bet{
+    font-size:0.9em;
+    min-height:35px;
+    min-width:60px;
+    max-width:100px;
+    text-align: center;
+    padding: 2px 4px;
+    border:1px solid black;
+
+    @include mixins.mQ-phones(480px){
+        font-size:0.6em;
+        min-height:20px;
+        min-width:30px;
+        max-width:70px;
+        padding: 2px 4px;
+    }
+}
+
+.joint-winners{
+margin:10px 20px;
+
+span{
+    width:80px;
+    text-align: center;
+    margin:1px;
+}
+
+&:hover{
+    cursor: pointer;
+    transform: scale(1.2);
+}
+
+@include mixins.mQ-phones(480px){
+    font-size:0.8em;
+    span{
+        width:40px;
+    }
+}
+}
+
+.joint-finished-winner-left{
+position: absolute;
+bottom:-20px;
+left:50px;
+color: variables.$confirmation;
+transform: scale(3);
+@include mixins.mQ-phones(480px){
+   transform: scale(2);
+   left:20px;
+}
+}
+
+.joint-finished-winner-right{
+position: absolute;
+bottom:-20px;
+right:40px;
+color: variables.$confirmation;
+transform: scale(3);
+@include mixins.mQ-phones(480px){
+   right:20px;
+   transform: scale(2);
+ }
+}
+
+.bet-left{
+    margin-right:40px;
+
+    @include mixins.mQ-phones(480px){
+    margin-right:10px;
+    }
+}
+
+.bet-right{
+    margin-left:40px;
+
+    @include mixins.mQ-phones(480px){
+    margin-left:10px;
+    }
+}
+
+//Joint bet answers 
+.joint-bet-answers-container{
+    width:100%;
+    margin-top:25px;
+    margin-bottom:20px;
+}

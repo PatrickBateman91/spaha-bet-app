@@ -1,0 +1,39 @@
+@use '../../../assets/Sass/variables.scss';
+@use '../../../assets/Sass/mixins.scss';
+
+#manage-help{
+    margin-top:20px;
+    margin-left:175px;
+    align-self: flex-start;
+    svg{
+        font-size:0.7em;
+        margin-right:10px;
+    }
+    span{
+        font-size:0.7em;
+    }
+
+    @include mixins.mQ-phones(360px){
+        margin-left:20px;
+        font-size:0.8em;
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        margin-left:20px;
+        font-size:0.8em;
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        margin-left:20px;
+    }
+}
+
+.currently-changing-title{
+    margin-top:20px;
+    font-size:1.1em;
+    span{
+        background-color: variables.$titleColor;
+        padding:5px 10px;
+        border-radius:7px;
+    }
+}

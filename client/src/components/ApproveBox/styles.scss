@@ -1,0 +1,73 @@
+@use '../../assets/Sass/mixins.scss';
+@use '../../assets/Sass/variables.scss';
+
+.approval-items-holder{
+    width:250px;
+    margin-bottom: 10px;
+
+    @include mixins.mQ-other(769px,1149px){
+        width:400px;
+        font-size:1.1em;
+    }
+
+    @include mixins.mQ-other(1150px, 1699px){
+        width: 300px;
+        font-size:1.1em;
+    }
+}
+
+.approve-single-box{
+    margin-top:20px;
+    border-bottom: 3px solid black;
+
+    .approval-container:last-child{
+        margin-bottom: 20px;
+    }
+}
+
+.approve-item-title{
+text-decoration: underline;
+font-weight: bold;
+font-size:1.5em;
+margin-bottom:20px;
+margin-top:20px;
+}
+
+.approval-item{
+    padding:5px 10px;
+    border:1px solid black;
+    border-radius: 4px; 
+    &:hover{
+        cursor: pointer;
+        transform:scale(1.05)
+    }
+    &:first-child{
+        background-color: variables.$confirmation;
+    }
+    &:last-child{
+        background-color: variables.$warningColor;
+    }
+
+    @include mixins.mQ-phones(360px){
+        padding: 3px 8px;
+        font-size:0.85em; 
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        padding: 3px 8px;
+        font-size:0.9em; 
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        padding: 2px 5px;
+        font-size:0.8em;
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        padding: 5px 10px;
+    }
+
+    @include mixins.mQ-other(1150px, 1699px){
+        padding:6px 12px;
+    }
+}

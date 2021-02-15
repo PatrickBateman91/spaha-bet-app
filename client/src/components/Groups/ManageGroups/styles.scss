@@ -1,0 +1,265 @@
+@use '../../../assets//Sass//mixins.scss';
+@use '../../../assets//Sass//variables.scss';
+
+#change-account-holder{
+    margin-top:40px;
+    
+    @include mixins.mQ-phones(360px){
+        margin-top:30px;
+        width:100vw;
+
+        .auth-form-holder{
+            min-height:300px;
+        }
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        margin-top:50px;
+        width:100vw;
+
+        .auth-form-holder{
+            min-height:400px;
+        }
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        margin-top:20px;
+        width:100vw;
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        width:550px;
+    }
+
+    @include mixins.mQ-other(1150px, 1699px){
+        width:600px;
+    }
+
+    @include mixins.mQ-other(1700px, 2298px){
+        width:700px;
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        width:800px;
+    }
+}
+
+#group-line-container{
+    padding:7px 10px;
+    border:1px solid black;
+    width:75vw;
+
+    @include mixins.mQ-phones(360px){
+        padding:1px 2px;
+        width:98vw;
+        font-size:0.6em;
+        align-items: center;
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        padding:3px 5px;
+        width:95vw;
+        font-size:0.6em;
+        align-items: center;
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        width:95vw;
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        width:90vw;
+    }
+}
+
+.group-line{
+    &:nth-child(odd){
+        background-color: variables.$beige;
+    }
+    &:nth-child(even){
+        background-color: variables.$containerColor;
+    }
+}
+ 
+.group-line-selected{
+     background-color: variables.$dropZoneAllowed !important;
+}
+
+.group-line-invite{
+    background-color: variables.$confirmation;
+    font-size:0.55em;
+    padding:3px 5px;
+    border-radius:6px;
+    
+    &:hover{
+        cursor: pointer;
+        border:1px solid black;
+        transform: scale(1.05);
+        padding:2px 4px;
+    }
+}
+    
+.group-line-remove{
+    background-color: variables.$warningColor;
+    font-size: 0.55em;
+    padding:3px 5px;
+    border-radius:6px;
+    &:hover{
+        cursor: pointer;
+        border: 1px solid black;
+        transform: scale(1.05);
+        padding:2px 4px;
+    }
+}
+
+.group-name{
+    font-size:0.9em;
+    font-weight: bold;
+    overflow: hidden;
+
+    @include mixins.mQ-other(481px,768px){
+        font-size:0.7em;
+    }
+}
+ 
+.line-width{
+    width: 12%;
+
+    @include mixins.mQ-other(361px, 480px){
+     
+    }
+}
+
+.line-svg{
+    text-align: center;
+    svg{
+        &:hover{
+            cursor: pointer;
+            transform: scale(1.3);
+        }
+    }
+}
+
+.copy-id{
+    font-size:0.7em;
+    background-color: variables.$beige;
+    padding:2px;
+
+    @include mixins.mQ-phones(360px){
+        font-size:0.5em;
+        padding:1px;
+        width:110%; 
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        font-size:0.5em;
+        padding:1px;
+        width:130%;  
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        width:120%;
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        width:120%;
+    }
+}
+
+.manage-groups-mouseover{
+    position: absolute;
+    bottom:30px;
+    left:20px;
+    width:150px;
+    padding:5px;
+    background-color: variables.$titleTextColor;
+    color:variables.$background;
+    font-size:0.7em;
+
+    @include mixins.mQ-phones(360px){
+        left:-35px;
+        bottom:20px;
+        width:80px;
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        left:-25px;
+        bottom:20px;
+        width:100px;
+    }
+    @include mixins.mQ-other(481px,768px){
+        left:-30px;
+        bottom:40px;
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        left:-20px;
+    }
+}
+
+#leave-delete-group{
+    min-height:300px;
+
+    @include mixins.mQ-phones(360px){
+        text-align: center;
+    }
+}
+
+#new-group-selected-people{
+    width:300px;
+    min-height:100px;
+    padding:5px;
+    border:1px solid black;
+
+    @include mixins.mQ-phones(360px){
+        width:65vw;
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        width:65vw;
+    } 
+}
+
+.removed-single-person{
+    display: inline-block;
+    position: relative;
+    text-align: center;
+    font-size: 0.9em;
+    margin:5px;
+    padding:2px 4px;
+    border:1px solid black;
+    border-radius:10px;
+    background-color: variables.$warningColor;
+    color:white;
+    &:hover{
+        cursor: pointer;
+        transform: scale(1.05);
+        background-color: variables.$confirmation;
+    }
+    span{
+        color:black;
+    }
+}
+
+.about-to-be-removed{
+    display: inline-block;
+    position: relative;
+    text-align: center;
+    font-size: 0.9em;
+    margin:5px;
+    padding:2px 4px;
+    border:1px solid black;
+    border-radius:10px;
+    background-color: variables.$confirmation;
+    color:white;
+    &:hover{
+        cursor: pointer;
+        transform: scale(1.05);
+        background-color: variables.$warningColor;
+    }
+    span{
+        color:black;
+    } 
+}
+
+

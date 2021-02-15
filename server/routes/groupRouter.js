@@ -214,6 +214,10 @@ groupRouter.post('/manage-groups', auth, async (req, res) => {
                 return res.status(400).send('Could not find the group!')
             }
             if(req.user.nickname === groupResponse.admin){
+                if(req.body.newGroupName === ""){
+                    return res.status(400).send("Group name cannot be empty!")
+                }
+                console.log(req.body.newGroupName)
                 const oldGroupName = groupResponse.name;
                 groupResponse.people.forEach(person => {
                     if(person !== req.user.nickname){

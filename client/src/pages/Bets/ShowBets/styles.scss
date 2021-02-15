@@ -1,0 +1,224 @@
+@use '../../../assets/Sass/variables.scss';
+@use '../../../assets//Sass/mixins.scss';
+
+.all-bets-container{
+    padding-top: 50px;
+    padding-bottom:50px;
+    min-height:100vh;
+    background-color: #fffff2;
+
+
+    .single-bet-container:nth-child(odd){
+        background-color: #fe4891;
+        #bet-title{
+            background-color: #e2015b;
+        }
+    }
+
+    .single-bet-container:nth-child(even){
+       background-color: #00b7bb;
+       #bet-title{
+           background-color: #008082;
+       }
+    }
+
+    .upper-bet-full{
+        display: flex;
+        width:100vw;
+        justify-content: space-around;
+        padding-bottom:40px;
+    }
+
+ 
+
+    @include mixins.mQ-phones(360px){
+        .upper-bet-container{
+            padding-bottom:30px;
+            width:100vw;
+        }
+
+        .upper-bet-empty{
+            display:flex;
+            justify-content: center;
+            align-items: center;
+            width:100vw;
+            div{
+         
+                justify-content: center;
+
+                #currently-selected-group{
+                    max-width:80vw;
+                }
+            }
+        }
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        padding-top:20px;
+
+        .upper-bet-container{
+            padding-bottom:30px;
+            width:100vw;
+        }
+
+        .upper-bet-empty{
+            display:flex;
+            justify-content: center;
+            align-items: center;
+            width:100vw;
+            div{
+         
+                justify-content: center;
+
+                #currently-selected-group{
+                    max-width:80vw;
+                }
+            }
+        }
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        .upper-bet-container{
+            padding-bottom:50px;
+        }
+    }
+}
+
+.bet-legend{
+    position:fixed;
+    left:5vw;
+    top:20vw;
+
+    .legend-section{
+        padding:5px 10px;
+        width:15vw;
+        border-radius:10px;
+        border:1px solid black;
+        margin-top:20px;
+        -webkit-box-shadow: 0px 3px 8px 1px rgba(0,0,0,0.75);
+        -moz-box-shadow: 0px 3px 8px 1px rgba(0,0,0,0.75);
+        box-shadow: 0px 3px 8px 1px rgba(0,0,0,0.75);
+    }
+
+    .legend-item{
+        font-size:0.7em;
+
+        span{
+            width:80%;
+        }
+    }
+
+    @include mixins.mQ-phones(360px){
+        position: relative;
+        top:0px;
+        left:0px;
+        width:100vw;
+        flex-direction: row !important;
+        display:flex;
+        justify-content: space-around;
+        order:1;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+        font-size:0.8em;
+           .legend-section{
+               width:45%;
+               padding:5px 10px;
+           }
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        position: relative;
+        top:0px;
+        left:0px;
+        width:100vw;
+        flex-direction: row !important;
+        display:flex;
+        justify-content: space-around;
+        order:1;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+        font-size:0.9em;
+           .legend-section{
+               width:45%;
+               padding:5px 10px;
+           }
+    }
+
+    @include mixins.mQ-other(481px,768px){
+     position: relative;
+     top:0px;
+     left:0px;
+     width:80vw;
+     flex-direction: row !important;
+     display:flex;
+     justify-content: space-around;
+     order:1;
+     flex-wrap: wrap;
+     margin-bottom: 50px;
+        .legend-section{
+            width:40%;
+            padding:5px 10px;
+        }
+    }
+
+    @include mixins.mQ-other(1150px, 1699px){
+        left:8vw;
+        font-size:1.05em;
+    
+        .legend-section{
+            padding:6px 15px;
+        }
+    }    
+
+    @include mixins.mQ-other(1700px, 2298px){
+        left:10vw;
+        font-size:1.15em;
+    
+        .legend-section{
+            padding:8px 17px;
+        }
+    }
+    
+    @include mixins.mQ-largerDesktops(2299px){
+    left:15vw;
+    font-size:1.3em;
+
+    .legend-section{
+        padding:10px 20px;
+    }
+    }
+}
+
+#legend-finished-bets{
+    width:500px;
+    font-size:0.7em;
+    display:flex;
+    justify-content: space-around;
+    margin-bottom:50px;
+    padding:6px;
+    border-bottom: 3px dashed black;
+    div svg{
+        color: variables.$confirmation;
+        transform: scale(2);
+    }
+    div span{
+        margin-right: 10px;
+    }
+
+
+    @include mixins.mQ-phones(480px){
+        width:80vw;
+        font-size:0.5em;
+    }
+}
+
+.no-bets-to-show{
+    display:flex;
+    width:500px;
+    margin:150px 0px;
+    justify-content: center;
+
+    @include mixins.mQ-phones(480px){
+        width:90vw;
+    }
+}

@@ -1,0 +1,113 @@
+@use '../../../assets/Sass/mixins.scss';
+@use '../../../assets/Sass/variables.scss';
+
+.join-new-group{
+    width:500px;
+    min-height:400px;
+    background-image: url('../../../assets/images/paper-background3.jpg');
+    padding:30px;
+    border-radius:10px;
+    border:5px solid black;
+    -webkit-box-shadow: 0px 3px 8px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 3px 8px 1px rgba(0,0,0,0.75);
+    box-shadow: 0px 3px 8px 1px rgba(0,0,0,0.75);
+    label{
+        text-align:center;
+        font-size:1.2em;
+        font-weight: bold;
+    }
+    input{
+        height:50px;
+        border:1px dashed green;
+        text-align:center;
+        font-size:1.2em;
+        &::placeholder{
+            text-align:center;
+    }
+    }
+
+    @include mixins.mQ-phones(360px){
+        font-size:0.6em;
+        min-height:200px;
+        width:95vw;
+        border:2px solid black;
+        label{
+            margin-bottom: 10px;
+        }
+        input{
+            height:40px;
+            font-size:1.2em;
+        }
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        font-size:0.65em;
+        min-height:200px;
+        width:95vw;
+        border:3px solid black;
+        label{
+            margin-bottom: 10px;
+        }
+        input{
+            height:40px;
+            font-size:1.2em;
+        }
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        font-size:0.9em;
+        min-height:250px;
+        label{
+            margin-bottom: 10px;
+        }
+        input{
+            height:40px;
+            font-size:1.2em;
+        }
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        font-size:0.7em;
+        min-height:250px;
+        label{
+            margin-bottom: 10px;
+        }
+        input{
+            height:40px;
+            font-size:1em;
+        }
+    }
+
+    @include mixins.mQ-other(1150px, 1699px){
+        margin-top:0px;
+        font-size:0.9em;
+        min-height:300px;
+        label{
+            margin-bottom: 20px;
+        }
+        input{
+            font-size:1.1em;
+        }
+    }
+
+    @include mixins.mQ-other(1700px, 2298px){
+        label{
+            margin-bottom: 20px;
+        }
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        width:800px;
+        height:600px;
+        padding:30px;
+        margin-top:0px;
+
+        label{
+            font-size:1.5em;
+        }
+        input{
+            height:80px;
+            font-size:1.35em;
+        }
+    }
+}

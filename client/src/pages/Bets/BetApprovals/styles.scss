@@ -1,0 +1,17 @@
+@use '../../../assets/Sass/variables.scss';
+@use '../../../assets//Sass/mixins.scss';
+
+#no-waiting-bets-container{
+    height:80vh;
+}
+
+#no-waiting-bets-holder{
+width:400px;
+background-color: variables.$containerColor;
+padding:30px;
+border-radius: 10px;
+svg{
+    color:variables.$confirmation;
+    transform: scale(3);
+}
+}

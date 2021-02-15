@@ -1,0 +1,25 @@
+@use '../../../assets/Sass/variables.scss';
+@use '../../../assets/Sass//mixins.scss';
+
+.reset-password-container{
+    margin-top:0px;
+    width:100vw;
+    height:100vw;
+
+    form #change-account-holder{
+     margin-top:0px;
+     padding-top:35vh;
+     justify-content: flex-start;
+     width:100vw;
+     height:80vh;
+
+
+     input{
+         padding:5px;
+     }
+
+     .error-message{
+        width:80vw;
+    }
+    }
+}

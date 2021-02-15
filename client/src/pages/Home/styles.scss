@@ -1,0 +1,91 @@
+@use '../../assets/Sass/variables.scss';
+@use '../../assets/Sass/mixins.scss';
+
+#upper-home-container{
+    margin-top:100px;
+    height:300px;
+    
+    #left-home-container{
+        width:40vw;
+    
+        @include mixins.mQ-other(481px,768px){
+            width:60vw;
+        }
+    }
+        
+    #right-home-container{
+        justify-content: center;
+        width:40vw;
+    
+        @include mixins.mQ-phones(360px){
+            display:none;
+        }
+    
+        @include mixins.mQ-other(481px,768px){
+            width:25vw;
+        }
+    }
+    
+    @include mixins.mQ-phones(360px){
+        flex-wrap: wrap;
+        #left-home-container{
+            width:100vw;
+        }
+            
+        #right-home-container{
+            width:100vw;
+            justify-content: flex-end;
+        }
+        height:auto;
+        margin-top:20px;
+        margin-bottom:20px;
+    }
+    
+    @include mixins.mQ-other(361px, 480px){
+        flex-wrap: wrap;
+        #left-home-container{
+            width:100vw;
+        }
+            
+        #right-home-container{
+            width:100vw;
+            justify-content: flex-end;
+        }
+        min-height: 250px;
+        margin-top:0px;
+    }
+    
+    @include mixins.mQ-other(481px,768px){
+        height: 200px;
+        margin-top:0px;
+    }
+    
+    @include mixins.mQ-other(769px,1149px){
+    margin-top:20px;
+    height: 250px;
+    }
+    
+    @include mixins.mQ-other(1150px, 1699px){
+        margin-top:20px;
+    }
+    
+    @include mixins.mQ-other(1700px, 2298px){
+        margin-top:70px;
+    }
+    
+    @include mixins.mQ-largerDesktops(2299px){
+        margin-top:100px;
+        height: 500px;
+    }
+}
+    
+#middle-home-container{
+    width:100vw;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    @include mixins.mQ-other(481px,768px){
+        flex-direction: column;
+        align-items: center;
+    }
+    
+}

@@ -69,20 +69,25 @@ userRouter.post('/sign-out', auth, async (req, res) => {
 //Change passsword
 userRouter.post('/change-account-details', auth, async (req, res) => {
     if (req.headers.type === "password") {
-        const passCheck = await bcryptjs.compare(req.body.oldPassword, req.user.password);
-
-        if (!passCheck) {
-            return res.status(400).send("Old password is not correct!")
-        }
-
-        req.user.password = req.body.newPassword;
-        try {
-            await req.user.save();
-            res.send("Password changed succesfully!")
-        }
-        catch (err) {
-            return res.status(500).send("Password could not be saved!");
-        }
+ 
+        const hashPromise = bcryptjs.compare(req.body.oldPassword, req.user.password);
+            hashPromise.then(async hashRes => {
+                if(hashRes){
+                    console.log(req.body)
+                    req.user.password = req.body.newPassword;
+                    try{
+                        await req.user.save();
+                        res.status(200).send("Password changed succesfully!")
+                    } catch(err){
+                        res.status(500).send("Could not save password at the moment!")
+                    }
+                } else{
+                    console.log(req.body.newPassword1, "nije dobar ")
+                    res.status(400).send("Old password is not correct!")
+                }   
+            }).catch( err=> {
+                res.send(err);
+            })  
     }
     else if (req.headers.type === "email") {
         try {

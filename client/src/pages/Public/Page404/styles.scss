@@ -1,0 +1,12 @@
+@use '../../../assets/Sass/mixins.scss';
+@use '../../../assets/Sass/variables.scss';
+
+#page-404{
+    width:100vw;
+    height:100vh;
+    }
+    
+#title-404{
+        color: variables.$warningColor;
+        font-size:10em;
+}

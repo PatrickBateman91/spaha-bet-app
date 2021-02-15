@@ -1,0 +1,17 @@
+@mixin mQ-phones($arg){
+    @media screen and (max-width: $arg){
+        @content;
+    }
+}
+
+@mixin mQ-other($min, $max){
+    @media screen and (min-width:$min) and (max-width:$max){
+        @content;
+}
+}
+
+@mixin mQ-largerDesktops($min){
+@media screen and (min-width:$min){
+    @content;
+}
+}

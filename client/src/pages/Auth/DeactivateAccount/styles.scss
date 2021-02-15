@@ -1,0 +1,166 @@
+@use '../../../assets/Sass/variables.scss';
+@use '../../../assets/Sass//mixins.scss';
+
+#goodbye-container{
+    div{
+        font-size:3em;
+        height:200px;
+    }
+    span{
+        font-size:0.8em;
+    }
+    @include mixins.mQ-phones(380px){
+        div{
+            font-size:1.1em;
+            height:80px;
+        }
+        span{
+            font-size: 0.4em;
+        }
+    }
+    
+    @include mixins.mQ-other(381px, 480px){
+        div{
+            font-size:1.4em;
+            height:100px;
+        }
+        span{
+            font-size: 0.5em;
+        }
+    }
+    
+    @include mixins.mQ-other(481px,768px){
+        div{
+            font-size:1.8em;
+            height:120px;
+        }
+        span{
+            font-size: 0.6em;
+        }
+    }
+    
+    @include mixins.mQ-other(769px,1149px){
+        div{
+            font-size:2em;
+            height:150px;
+        }
+        span{
+            font-size: 0.7em;
+        }
+    }
+}
+
+.deactivate-container{
+
+    @include mixins.mQ-phones(360px){
+        padding-top: 20px;
+        height: 70vh; 
+    }
+    
+    @include mixins.mQ-other(361px, 480px){
+        padding-top: 20px;
+    height: 70vh;
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        padding-top: 20px;
+        font-size:1.5em;
+        height: 80vh;
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        height:80vh;
+    }
+
+    @include mixins.mQ-other(1150px, 1699px){
+        height: 60vh;
+    }
+
+    @include mixins.mQ-other(1700px, 2299px){
+        height:60vh;
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        height: 60vh;
+    }
+}
+
+.deactivate-auth-line{
+    width:400px;
+    padding:10px;
+    display: flex;
+    justify-content: space-between;
+    background-color: #D1D1D1;
+    align-items: center;
+
+    @include mixins.mQ-phones(360px){
+        width:90vw;
+        padding:10px;
+        label{
+            text-align: center;
+            font-size:0.85em;
+        }
+        input{
+            height:25px;
+        }
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        width:90vw;
+        padding:10px;
+        label{
+            text-align: center;
+            font-size:0.85em;
+        }
+        input{
+            height:25px;
+        }
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        width: 75vw;
+    }
+}
+
+#deactivate-question{
+    font-size:1.5em;
+
+    @include mixins.mQ-other(361px, 480px){
+    text-align: center;
+    font-size:1.8em;
+    padding:10px;
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        text-align: center;
+        padding:20px;
+        margin-top:50px;
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        margin-top:100px;
+    }
+
+    @include mixins.mQ-other(1150px, 1699px){
+        margin-top:150px;
+    }
+
+    @include mixins.mQ-other(1700px, 2299px){
+        margin-top:200px;
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        margin-top:250px;
+    }
+}
+
+#deactivate-note{
+    font-size:0.8em;
+    color:variables.$warningColor;
+}
+
+.deactivate-label{
+    label{
+        font-size:0.9em;
+    }
+}

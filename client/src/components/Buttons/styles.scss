@@ -1,0 +1,198 @@
+@use '../../assets/Sass/mixins.scss';
+@use '../../assets/Sass/variables.scss';
+
+.return-button-shape{
+    display: flex;
+ 
+    div{
+        font-size:0.9em;
+        padding:10px 20px;
+        background-color: variables.$dugmeZaNazad;
+        color: white;
+        border-radius: 20px;
+        text-shadow: 2px 1px 1px #000;
+
+        &:hover{
+            cursor: pointer;
+            transform: scale(1.1);
+        }
+    }
+
+    @include mixins.mQ-phones(480px){
+        align-items: center;
+      div{
+        padding:5px 10px;
+        font-size:0.7em;
+      }
+    }
+}
+
+.return-button-space{
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.auth-button-shape{
+    button{
+        font-size:1.3em;
+        padding:10px 20px;
+        background-color: variables.$titleTextColor;
+        color: variables.$titleColor;
+        
+        @media (hover: hover){
+            &:hover{
+                cursor: pointer;
+                background-color: variables.$confirmation;
+                color:black;
+                border-radius: 2px;
+                transform: scale(1.05);
+            }
+        }
+    }
+
+    @include mixins.mQ-phones(360px){
+        button{
+            font-size:1.1em;
+            padding:6px 15px;
+        }   
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        button{
+            padding:7px 20px;
+        }
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        button{
+            font-size:1.2em;
+        }
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        button{
+            font-size:1.4em;
+            padding:15px 30px;
+        }
+    }
+}
+
+.auth-button-space{
+    padding-top:30px;
+    padding-bottom:30px;
+}
+
+.confirm-button-shape{
+    button{
+        padding:10px 20px;
+        font-size:1.1em;
+        background-color: variables.$titleColor;
+        border:2px solid variables.$titleTextColor;
+
+        &:hover{
+            cursor: pointer;
+            background-color: variables.$confirmation;
+            transform: scale(1.1);
+            border:2px solid variables.$titleTextColor;
+        }
+    }
+
+    @include mixins.mQ-phones(360px){
+        button{
+            font-size:1.2em;
+            padding:5px 10px;
+        }
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        button{
+            font-size:1.3em;
+            padding:5px 10px;
+        }
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        button{
+            font-size:1.3em;
+            padding:5px 10px;
+        }
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        margin-top:25px;
+        button{
+            font-size:1.2em;
+        }
+    }
+
+    @include mixins.mQ-other(1700px, 2298px){
+        button{
+            font-size:1.3em;
+        }
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        button{
+            font-size:1.5em;
+        }
+    }
+}
+
+.confirm-button-space{
+    margin-top:30px;
+    margin-bottom: 30px;
+}
+
+.danger-button-shape{
+    button{
+        padding:10px 20px;
+        font-size:1em;
+        background-color: #FF8F8F;
+        border-radius:2px;
+
+        &:hover{
+            cursor: pointer;
+            background-color: variables.$warningColor;
+        }
+    }
+
+    @include mixins.mQ-phones(360px){
+        button{
+            font-size:1.2em;
+            padding:5px 10px;
+        }
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        button{
+            font-size:1.3em;
+            padding:5px 10px;
+        }
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        button{
+            font-size:1.3em;
+            padding:5px 10px;
+        }
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        margin-top:25px;
+        button{
+            font-size:1.2em;
+        }
+    }
+
+    @include mixins.mQ-other(1700px, 2298px){
+        button{
+            font-size:1.3em;
+        }
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        button{
+            font-size:1.5em;
+        }
+    }
+}

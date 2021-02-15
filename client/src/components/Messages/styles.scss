@@ -1,0 +1,41 @@
+@use '../../assets/Sass/mixins.scss';
+@use '../../assets/Sass/variables.scss';
+
+
+.error-message{
+    text-align:center;
+    padding: 20px 0px;
+    color:red;
+    text-shadow:1px 1px 1px #000;
+    font-size: 0.8em;
+
+    @include mixins.mQ-phones(360px){
+        font-size:0.7em;
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        font-size:0.8em;
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        font-size:1em;
+    }
+}
+
+.success-message{
+    text-align:center;
+    margin-top:20px;
+    color:variables.$confirmation;
+    text-shadow:1px 1px 1px #000;
+    font-size: 1em;
+    @include mixins.mQ-phones(480px){
+        font-size:0.9em;
+    }
+}
+
+.message-space{
+    padding:10px 20px;
+    border-radius: 10px;
+    margin-top:50px;
+    margin-bottom:50px;
+}

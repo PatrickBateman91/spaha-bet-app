@@ -1,0 +1,708 @@
+@use '../../assets/Sass/mixins.scss';
+@use '../../assets/Sass/variables.scss';
+
+.auth-navigation-container{
+    position: relative;
+    font-size:0.85em;
+    justify-content: flex-end;
+    
+    a{
+        text-decoration: none;
+        color:variables.$titleTextColor
+    }
+
+    div{
+        padding:5px 12px;
+        background-color: variables.$titleColor;
+        border-radius: 8px;
+
+        &:hover{
+            cursor: pointer;
+            outline: 2px solid variables.$titleTextColor;
+        }
+    }
+
+    @include mixins.mQ-phones(360px){
+        font-size:0.6em;
+        div{
+            padding:3px 7px;
+        } 
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        font-size:0.7em;
+        
+        div{
+            padding:4px 10px;
+        } 
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        font-size:0.7em;
+        div{
+            padding:5px 10px;
+        }
+    }
+
+    @include mixins.mQ-other(1700px, 2299px){
+        font-size:1.2em;
+        div{
+            padding:8px 16px;
+        }
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        font-size:1.5em;
+        div{
+            padding: 10px 20px;
+        }
+    }
+}
+
+.auth-yes{
+    width:230px;
+
+    @include mixins.mQ-phones(360px){
+        width: auto;
+        margin-top:20px;
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        width:auto;
+        margin-top:20px;
+    }
+
+    @include mixins.mQ-other(1700px, 2299px){
+        width:300px;
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        width:400px;
+    }
+}
+
+#manage-bets-container{
+    position: relative;
+    width:30vw;
+    padding-left:30px;
+    padding-right:30px;
+
+    -webkit-box-shadow: 7px 4px 12px -9px rgba(0,0,0,0.75);
+    -moz-box-shadow: 7px 4px 12px -9px rgba(0,0,0,0.75);
+    box-shadow: 7px 4px 12px -9px rgba(0,0,0,0.75);
+    background-image:url('../../assets/images/paper-background3.jpg');
+    border-radius:4px;
+
+    #manage-bets-title{
+        margin-top:10px;
+        margin-bottom:20px;
+        font-size:1.1em;
+        text-decoration: underline;
+    }
+
+    #manage-bets-body{
+        div{
+            position: relative;
+            color:white;
+            width:250px;
+            height:250px;
+        }
+        span{
+            z-index:10;
+            font-family: "Reenie Beanie";
+            font-weight: 300;
+            text-align: center;
+            font-size:1em;
+        }
+        img{
+            position: absolute;
+            top:0px;
+            left:0px;
+            width:250px;
+        }
+        div:nth-child(1){
+            transform: rotate(25deg);
+            &:hover{
+                z-index:2;
+                transform: scale(1.2);
+                cursor:pointer;
+                }
+        }
+        div:nth-child(2){
+            transform: rotate(10deg);
+            &:hover{
+                z-index:2;
+                transform: scale(1.2);
+                cursor:pointer;
+                }
+        }
+        div:nth-child(3){
+            transform: rotate(10deg);
+            &:hover{
+                z-index:2;
+                transform: scale(1.2);
+                cursor:pointer;
+                }
+        }
+        div:nth-child(4){
+            transform: rotate(-5deg);
+            &:hover{
+                z-index:2;
+                transform: scale(1.2);
+                cursor:pointer;
+                }
+        }
+    }
+
+    .home-paper-pin-container{
+    position: absolute;
+    transform: rotate(40deg);
+    top:0px;
+    right:0px;
+    div{
+        z-index: 100;
+      img{
+        object-fit: cover;
+        width:80px;
+      }
+    }
+    }
+
+    @include mixins.mQ-phones(360px){
+        width:95vw;
+        min-height:90vw;
+        margin-bottom:10px;
+        border-radius: 22px;
+
+        #manage-bets-title{
+            margin-top:10px;
+            margin-bottom:10px;
+            font-size:0.85em;
+        }
+        #manage-bets-body div{
+            width:30vw;
+            height: 30vw;
+            span{
+                z-index:10;
+                position: relative;
+                right:3px;
+                max-width: 80%;
+                font-family: "Reenie Beanie";
+                font-weight: 300;
+                text-align: center;
+                font-size:1em;
+            }
+            img{
+                position: absolute;
+                top:0px;
+                left:0px;
+                width:30vw;
+            }
+        }
+        .home-paper-pin-container{
+            div img{
+                width:25px;
+            }
+        }
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        width:95vw;
+        min-height:90vw;
+        margin-bottom:10px;
+        border-radius: 22px;
+
+        #manage-bets-title{
+            margin-top:10px;
+            margin-bottom:10px;
+            font-size:1.3em;
+        }
+        #manage-bets-body div{
+            width:35vw;
+            height:35vw;
+            span{
+                z-index:10;
+                position: relative;
+                right:3px;
+                max-width: 80%;
+                font-family: "Reenie Beanie";
+                font-weight: 300;
+                text-align: center;
+                font-size:1.7em;
+            }
+            img{
+                position: absolute;
+                top:0px;
+                left:0px;
+                width:35vw;
+            }
+        }
+        .home-paper-pin-container{
+            div img{
+                width:35px;
+            }
+        }
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        width:75vw;
+        min-height:65vw;
+        margin-bottom:30px;
+
+        #manage-bets-title{
+            margin-top:10px;
+            margin-bottom:30px;
+            font-size:1.5em;
+        }
+        #manage-bets-body div{
+            width:24vw;
+            height: 24vw;
+            span{
+                z-index:10;
+                max-width: 80%;
+                font-family: "Reenie Beanie";
+                font-weight: 300;
+                text-align: center;
+                font-size:1.5em;
+            }
+            img{
+                position: absolute;
+                top:0px;
+                left:0px;
+                width:24vw;
+            }
+        }
+        .home-paper-pin-container{
+            div img{
+                width:30px;
+            }
+        }
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        min-height:27vw;
+        margin-bottom:20px;
+
+        #manage-bets-title{
+            margin-top:10px;
+            margin-bottom:10px;
+            font-size:1em;
+        }
+        #manage-bets-body div{
+            width:10.5vw;
+            height: 10.5vw;
+            span{
+                z-index:10;
+                max-width: 80%;
+                font-family: "Reenie Beanie";
+                font-weight: 300;
+                text-align: center;
+                font-size:1.1em;
+            }
+            img{
+                position: absolute;
+                top:0px;
+                left:0px;
+                width:10.5vw;
+            }
+        }
+        .home-paper-pin-container{
+            div img{
+                width:35px;
+            }
+        }
+    }
+
+    @include mixins.mQ-other(1150px, 1699px){
+        min-height: 27vw;
+        margin-bottom:20px;
+
+        #manage-bets-title{
+            margin-top:10px;
+            margin-bottom:10px;
+            font-size:1.2em;
+        }
+        #manage-bets-body div{
+            width:11vw;
+            height: 11vw;
+            span{
+                z-index:10;
+                max-width: 80%;
+                font-family: "Reenie Beanie";
+                font-weight: 300;
+                text-align: center;
+                font-size:1.3em;
+            }
+            img{
+                position: absolute;
+                top:0px;
+                left:0px;
+                width:11vw;
+            }
+        }
+        .home-paper-pin-container{
+            div img{
+                width:40px;
+            }
+        }
+    }
+
+    @include mixins.mQ-other(1700px, 2299px){
+        min-height:550px;
+
+        #manage-bets-title{
+            margin-top:20px;
+            margin-bottom:20px;
+            font-size:1.5em;
+        }
+        #manage-bets-body div{
+            width:9.5vw;
+            height: 9.5vw;
+            span{
+                z-index:10;
+                max-width: 80%;
+                font-family: "Reenie Beanie";
+                font-weight: 300;
+                text-align: center;
+                font-size:1.7em;
+            }
+            img{
+                position: absolute;
+                top:0px;
+                left:0px;
+                width:9.5vw;
+            }
+        }
+        .home-paper-pin-container{
+            div img{
+                width:50px;
+            }
+        }
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+    min-height:700px;
+
+    #manage-bets-title{
+        margin-top:40px;
+        margin-bottom:30px;
+        font-size:2em;
+    }
+    #manage-bets-body div{
+        span{
+            max-width: 80%;
+            font-size:2em;
+        }
+    }
+    }
+}
+
+#manage-groups-container{
+    width:30vw;
+    min-height:300px;
+    position: relative;
+    -webkit-box-shadow: 7px 4px 12px -9px rgba(0,0,0,0.75);
+    -moz-box-shadow: 7px 4px 12px -9px rgba(0,0,0,0.75);
+    box-shadow: -7px 4px 12px -9px rgba(0,0,0,0.75);
+    padding-left:30px;
+    padding-right:30px;
+    margin-bottom: 30px;
+    background-image:url('../../assets/images/paper-background3.jpg');
+    border-radius: 4px;
+    #manage-group-title{
+        margin-top:10px;
+        font-size:1.1em;
+        text-decoration: underline;
+    }
+
+    #manage-groups-body {
+    height:75%;
+    div{
+        position: relative;
+        color:white;
+        width:200px;
+        height:200px;
+    }
+    span{
+        z-index:10;
+        font-family: "Reenie Beanie";
+        font-weight: 300;
+        text-align: center;
+        font-size:1em;
+    }
+    img{
+        position: absolute;
+        top:0px;
+        left:0px;
+        width:215px;
+    }
+
+    div:nth-child(1){
+       transform: rotate(25deg);
+        &:hover{
+            z-index:2;
+            transform: scale(1.2);
+            cursor:pointer;
+            }
+    }
+    div:nth-child(2){
+      transform: rotate(10deg);
+        &:hover{
+            z-index:2;
+            transform: scale(1.2);
+            cursor:pointer;
+            }
+    }
+    div:nth-child(3){
+        transform: rotate(-9deg);
+          &:hover{
+              z-index:2;
+              transform: scale(1.2);
+              cursor:pointer;
+              }
+      }
+    }
+     
+    .home-paper-pin-container{
+        position: absolute;
+        top:0px;
+        right:0px;
+        transform: rotate(-50deg);
+        div{
+            z-index: 100;
+          img{
+            object-fit: cover;
+            width:80px;
+          }
+        }
+    }
+
+    @include mixins.mQ-phones(360px){
+        width:95vw;
+        height:200px;
+        padding-left:10px;
+        padding-right:10px;
+        border-radius: 22px;
+        #manage-group-title{
+            margin-top:10px;
+            margin-bottom:10px;
+            font-size:0.85em;
+        }
+        #manage-groups-body {
+            height:80%;
+            div{        
+                width:25vw;
+                height:25vw;
+                span{
+                    max-width: 80%;
+                    font-size:0.9em;
+                    position: relative;
+                    right:3px;
+                }
+                img{
+                    width:25vw;
+                }
+            }
+        }
+        .home-paper-pin-container{
+            div img{
+                width:25px;
+              }
+        }
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        width:95vw;
+        height:225px;
+        padding-left:10px;
+        padding-right:10px;
+        border-radius: 22px;
+        #manage-group-title{
+            margin-top:10px;
+            margin-bottom:10px;
+            font-size:1.3em;
+        }
+        #manage-groups-body {
+            height:80%;
+            div{
+                width:27vw;
+                height:27vw;
+                span{
+                    position: relative;
+                    max-width: 80%;
+                    font-size:1.3em;
+                    right:3px;
+                }
+                img{
+                    width:27vw;
+                }
+            }
+            }
+        .home-paper-pin-container{
+            div img{
+                width:35px;
+              }
+        }
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        width:75vw;
+        height:500px;
+        padding-left:10px;
+        padding-right:10px;
+        #manage-group-title{
+            margin-top:10px;
+            margin-bottom:20px;
+            font-size:1.5em;
+        }
+        #manage-groups-body {
+            height:80%;
+            div{
+                
+                width:24vw;
+                height:24vw;
+                span{
+                    max-width: 80%;
+                    font-size:1.5em;
+                }
+                img{
+                    width:24vw;
+                }
+            }
+            }
+        .home-paper-pin-container{
+            div img{
+                width:30px;
+              }
+        }
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        height:350px;
+        padding-left:10px;
+        padding-right:10px;
+        #manage-group-title{
+            margin-top:10px;
+            margin-bottom:10px;
+            font-size:1em;
+        }
+        #manage-groups-body {
+            flex-direction: column;
+            height:80%;
+            div{
+                
+                width:90px;
+                height:90px;
+                span{
+                    max-width: 80%;
+                    font-size:0.9em;
+                }
+                img{
+                    width:85px;
+                }
+            }
+
+            div:nth-child(1){
+               position: relative;
+               left:50px;
+            }
+
+            div:nth-child(3){
+               position: relative;
+               left:-50px;
+            }
+            }
+        .home-paper-pin-container{
+            div img{
+                width:35px;
+              }
+        }
+    }
+
+    @include mixins.mQ-other(1150px, 1699px){
+        height:400px;
+        #manage-group-title{
+            margin-top:10px;
+            margin-bottom:10px;
+            font-size:1.1em;
+        }
+        #manage-groups-body {
+            div{
+                width:120px;
+                height:120px;
+                span{
+                    max-width: 80%;
+                    font-size:1.3em;
+                }
+                img{
+                    width:120px;
+                }
+            }
+    }
+        .home-paper-pin-container{
+            div img{
+                width:40px;
+              }
+        }
+    }
+
+    @include mixins.mQ-other(1700px, 2299px){
+        height:500px;
+        #manage-group-title{
+            margin-top:20px;
+            margin-bottom:20px;
+            font-size:1.5em;
+        }
+        #manage-groups-body {
+            div{
+                width:150px;
+                height:150px;
+                span{
+                    max-width: 80%;
+                    font-size:1.5em;
+                }
+                img{
+                    width:150px;
+                }
+            }
+    }
+        .home-paper-pin-container{
+            div img{
+                width:50px;
+              }
+        }
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        height:700px;
+        #manage-group-title{
+            margin-top:40px;
+            margin-bottom:30px;
+            font-size:2em;
+        }
+        #manage-groups-body {
+            div span{
+                max-width: 80%;
+                font-size:2em;
+            }
+    }
+    }
+}
+
+#manage-title{
+    padding:20px;
+    border-radius: 5px;
+    background-color: variables.$titleColor;
+    margin-top:20px;
+    margin-bottom: 50px;
+
+    @include mixins.mQ-phones(360px){
+        margin-bottom:20px;
+        padding: 10px 15px;
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        margin-bottom:20px;
+        padding: 10px 15px;
+    }
+}

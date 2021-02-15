@@ -1,0 +1,187 @@
+@use '../../assets/Sass/variables.scss';
+@use '../../assets//Sass//mixins.scss';
+
+#profile-info-container{
+    width:150px;
+    text-align: center;
+
+    @include mixins.mQ-phones(360px){
+        font-size:0.75em;
+        width:100px;
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        font-size:1em;
+        width:33vw;
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        font-size:0.85em;
+        width:150px;
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        font-size:0.8em;
+        width:125px;
+    }
+
+    @include mixins.mQ-other(1700px, 2299px){
+        font-size:1.2em;
+        width:250px;
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        font-size:1.5em;
+        width:300px;
+    }
+}
+
+#profile-info-home{
+    background-color: variables.$titleTextColor;
+    padding:3px 10px;
+    font-size:0.9em;
+    margin-bottom: 10px;
+    color:variables.$background;
+    &:hover{
+        cursor: pointer;
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        margin-bottom: 4px;
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        font-size:1em;
+        margin-bottom: 50px;
+    }
+}
+
+.profile-info-item{
+    font-size:0.85em;
+}
+
+#profile-info-icon{
+    transform: scale(1.5);
+    &:hover{
+        transform: scale(2.5);
+    }
+}
+
+#profile-info-more-stats{
+    align-self: center;
+    padding:5px;
+    margin-top:10px;
+    background-color: variables.$titleColor;
+    text-align:center;
+    border-radius:7px;
+    border:1px solid transparent;
+    font-size:0.7em;
+    width:130px;
+    &:hover{
+        cursor: pointer;
+        border:1px solid black;
+    }
+
+    @include mixins.mQ-phones(360px){
+        font-size:0.7em;
+        width:60px;
+        margin-top:5px;
+        padding:3px;
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        font-size:0.85em;
+        width:120px;
+        margin-top:5px;
+        padding:3px 8px;
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        font-size:0.7em;
+        width:80px;
+        margin-top:5px;
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        font-size:0.7em;
+        width:80px;
+        margin-top:5px;
+    }
+
+    @include mixins.mQ-other(1700px, 2299px){
+        font-size:0.7em;
+        width:200px;
+        margin-top:20px;
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        font-size:0.8em;
+        width:250px;
+        margin-top:30px;
+    }
+}
+
+#profile-hidden-menu{
+    position:absolute;
+    top:30px;
+    right:0px;
+    background-color: variables.$titleTextColor;
+    border:1px solid black;
+    ul{
+        list-style-type: none;
+        li{
+            padding:5px;
+            font-size:0.7em;
+            width:148px;
+            color:white;
+            text-align: right;
+            border:1px solid black;
+            &:hover{
+                cursor: pointer;
+                background-color: variables.$dugmeZaNazad;
+            }
+        }
+    }
+
+    @include mixins.mQ-phones(360px){
+        top:25px;
+        ul li{
+            width:100px;
+        }
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        top:33px;
+        ul li{
+            width:32.5vw;
+        }
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        top:30px;
+        ul li{
+            width:150px;
+        }
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        top:26px;
+        ul li{
+            width:125px;
+        }
+    }
+
+    @include mixins.mQ-other(1700px, 2299px){
+        top:35px;
+        ul li{
+            width:250px;
+        }
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        top:50px;
+        ul li{
+            width:300px;
+        }
+    }
+}

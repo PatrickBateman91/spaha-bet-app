@@ -1,0 +1,201 @@
+@use '../../assets/Sass/mixins.scss';
+@use '../../assets/Sass/variables.scss';
+
+#stats-container{
+    position: relative;
+    width:100%;
+    height:100%;
+
+    @include mixins.mQ-other(361px, 480px){
+        width:100vw;
+        height:auto;
+    }
+}
+
+#stats-svg-holder{
+    margin-top:50px;
+
+    @media screen and (min-device-width: 320px) 
+    and (max-device-width: 650px)
+    and (orientation: landscape)
+    {
+        margin-top:0px;
+    }
+
+    @include mixins.mQ-phones(480px){
+        width:95vw;
+        margin-top:20px;
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        width:90vw;
+        padding:30px;
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        width:90vw;
+        padding:20px;
+        justify-content: flex-start;
+    }
+
+    @include mixins.mQ-other(1150px, 1699px){
+        width:90vw;
+        padding:30px;
+        justify-content: flex-start;
+    }
+
+    @include mixins.mQ-other(1700px, 2299px){
+        width:90vw;
+        padding:20px;
+        justify-content: flex-start;
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        width:90vw;
+        padding:20px;
+        justify-content: flex-start;
+    }
+}
+
+#stats-title{
+    width:100%;
+    height:120px;
+
+    .statistic-main-title{
+        padding:10px;
+        border-radius: 10px;
+        font-size: 1.7em;
+        background-color:variables.$titleColor;
+    }
+
+    @media screen and (min-device-width: 320px) 
+        and (max-device-width: 650px)
+        and (orientation: landscape)
+        {
+          height: 100px;
+          .statistic-main-title{
+            font-size:0.7em;
+        }
+        margin-bottom:10px;
+        }
+
+    @include mixins.mQ-phones(480px){
+        height:100px;
+        .statistic-main-title{
+            font-size:0.8em;
+        }
+        margin-bottom:10px;
+    }
+
+    @include mixins.mQ-other(1150px, 1699px){
+        margin-top:75px;
+    }
+
+    @include mixins.mQ-other(1700px, 2299px){
+        margin-top:100px;
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        margin-top:100px;
+    }
+}
+
+.single-pie-chart{
+    display:flex;
+    flex-direction: column;
+    position: relative;
+    width:27vw;
+    vertical-align: top;
+    overflow: hidden;
+
+
+    svg{
+        order:2;
+    }
+    .single-pie-title{
+        order:1;
+    }
+
+    @include mixins.mQ-phones(480px){
+        align-items: center;
+        width:90vw;
+        padding-bottom:0px;
+
+        svg{
+            margin-left:20px;
+        }
+    }
+}
+
+.stats-no-finished-bets{
+    text-align: center;
+    margin-top:50px;
+    margin-bottom: 50px;
+
+    span{
+        padding:10px;
+        background-color: variables.$titleColor;
+        border-radius: 7px;
+        width:20vw;
+    }
+
+    @include mixins.mQ-phones(480px){
+        margin-top:0px;
+        span{
+            font-size:0.6em;
+           
+        }
+      
+    }
+}
+
+.single-pie-title{
+    margin-bottom:30px;
+    text-decoration: underline;
+
+    @include mixins.mQ-phones(480px){
+        font-size:0.9em;
+        margin-bottom:10px;
+    }
+}
+
+.tip-chart{
+    padding:5px 30px;
+    background-color: variables.$titleColor;
+
+    @include mixins.mQ-phones(480px){
+        padding: 3px 15px;
+        font-size:0.9em;
+    }
+}
+
+.tip-holder{
+    display:flex;
+    position:relative;
+}
+
+.additional-tip-info{
+    position: absolute;
+    background-color: #e9b200;
+    padding:10px;
+    min-width:250px;
+    max-width:350px;
+    left:150px;
+    display:flex;
+    flex-wrap: wrap;
+
+    @include mixins.mQ-phones(480px){
+        min-width:120px;
+        left:90px;
+        font-size:0.65em;
+    }
+}
+
+.other-tip-item{
+    margin-left:3px;
+    @include mixins.mQ-phones(480px){
+        font-size:0.9em;
+    }
+
+}
+

@@ -1,0 +1,54 @@
+@use '../../assets//Sass//variables.scss';
+@use '../../assets/Sass/mixins.scss';
+
+.notification-body{
+    width:60%;
+
+.red-color{
+margin-right:6px;
+font-size:0.5em;
+}
+
+@include mixins.mQ-phones(360px){
+    font-size: 0.7em;
+}
+
+@include mixins.mQ-other(361px, 480px){
+    font-size: 0.8em;
+}
+
+@include mixins.mQ-other(481px,768px){
+    font-size: 0.8em;
+}
+
+@include mixins.mQ-other(769px,1149px){
+    font-size:0.8em;
+}
+
+@include mixins.mQ-other(1150px, 1699px){
+    font-size:0.9em;
+}
+
+@include mixins.mQ-largerDesktops(2299px){
+    width: 70%;
+    font-size: 1.3em;
+}
+}
+
+.notification-date{
+    width:25%;
+    font-size:0.65em;
+
+
+    @include mixins.mQ-other(769px,1149px){
+        font-size:0.55em;
+    }
+
+    @include mixins.mQ-other(1150px,1699px){
+        font-size:0.6em;
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        font-size:1em;
+    }
+}

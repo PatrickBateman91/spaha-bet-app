@@ -1,0 +1,50 @@
+@use './variables.scss';
+
+.display-none{
+    display: none !important;
+}
+
+.bold{
+    font-weight: bold;
+}
+
+.bottom-line{
+    border-bottom:1px solid black;
+    width:300px;
+}
+
+.order-last{
+    order:2;
+}
+
+.relative{
+    position: relative;
+}
+
+.red-color{
+    color:variables.$warningColor;
+}
+
+.green-color{
+    color:variables.$confirmation;
+}
+
+.green-border{
+    border:2px solid variables.$confirmation;
+}
+
+.red-border{
+    border:1px solid variables.$warningColor;
+}
+
+.text-right{
+    text-align: right;
+}
+
+.text-center{
+    text-align: center;
+}
+
+.give-space-medium{
+    padding: 20px 0px;
+}

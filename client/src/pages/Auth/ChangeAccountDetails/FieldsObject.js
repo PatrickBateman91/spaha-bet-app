@@ -1,0 +1,36 @@
+export const fieldsObjects = {
+    changeEmailPage: {
+        formName: "change-email-form",
+        firstFieldType: "email",
+        labelTwoName: "New email",
+        labelThreeName: "Retype new email",
+        formOneAutocomplete: "old-email",
+        formTwoName: "change-email-second-field",
+        formTwoAutocomplete: "new-email",
+        formThreeName: "change-email-third-field",
+        formThreeAutocomplete: "new-email",
+        buttonText: "Confirm changes",
+      },
+      changeNicknamePage: {
+        formName: "change-nickname-form",
+        firstFieldType: "nickname",
+        labelThreeName: "Type new nickname",
+        formThreeName: "change-nickname-third-field",
+        formThreeAutocomplete: "new-nickname",
+        buttonText: "Confirm changes",
+      },
+      changePasswordPage: {
+        formName: "change-password-form",
+        firstFieldType: "password",
+        labelOneName: "Old password",
+        labelTwoName: "New password",
+        labelThreeName: "Retype new password",
+        formOneName: "change-password-first-field",
+        formOneAutocomplete: "old-password",
+        formTwoName: "change-password-second-field",
+        formTwoAutocomplete: "new-password",
+        formThreeName: "change-password-third-field",
+        formThreeAutocomplete: "new-password",
+        buttonText: "Confirm changes",
+      }
+}

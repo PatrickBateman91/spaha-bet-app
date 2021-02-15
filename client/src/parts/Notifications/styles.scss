@@ -1,0 +1,243 @@
+@use '../../assets/Sass/mixins.scss';
+@use '../../assets/Sass/variables.scss';
+
+#notification-container{
+    position: relative;
+    background-image:url('../../assets/images/paper-background3.jpg');
+    width:32vw;
+    border-radius: 4px;
+    padding:20px;
+    margin-bottom:20px;
+    -webkit-box-shadow: 7px 4px 12px -9px rgba(0,0,0,0.75);
+    -moz-box-shadow: 7px 4px 12px -9px rgba(0,0,0,0.75);
+    box-shadow: 7px 4px 12px -9px rgba(0,0,0,0.75);
+    
+    .home-paper-pin-container{
+        position: absolute;
+        top:0px;
+        right:0px;
+        div{
+            z-index: 100;
+          img{
+            object-fit: cover;
+            width:80px;
+          }
+        }
+    }
+
+    @include mixins.mQ-phones(360px){
+        width:95vw;
+        min-height: 200px;
+        padding:5px;
+        .home-paper-pin-container{
+            div img{
+                width:25px;
+            }
+        }
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        width:95vw;
+        min-height: 100px;
+        padding:8px;
+        .home-paper-pin-container{
+            div img{
+                width:35px;
+            }
+        }
+    }
+    
+    @include mixins.mQ-other(481px,768px){
+        width:75vw;
+        min-height: 200px;
+        padding:10px;
+        .home-paper-pin-container{
+            div img{
+                width:30px;
+            }
+        }
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        min-height: 200px;
+        padding:15px;
+        .home-paper-pin-container{
+            div img{
+                width:35px;
+            }
+        }
+    }
+
+    @include mixins.mQ-other(1150px, 1699px){
+        min-height: 250px;
+        .home-paper-pin-container{
+            div img{
+                width:40px;
+            }
+        }
+    }
+
+    @include mixins.mQ-other(1700px, 2298px){
+        min-height: 300px;
+        .home-paper-pin-container{
+            div img{
+                width:50px;
+            }
+        }
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        padding:40px;
+    }
+}
+
+#notification-holder{
+width:100%;
+}
+
+#notification-title{
+    font-size:1.3em;
+    font-weight: bold;
+    margin-bottom:30px;
+    text-decoration: underline;
+
+    @include mixins.mQ-phones(360px){
+        font-size:0.8em;
+        margin-bottom: 10px;
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        font-size:1.3em;
+        margin-bottom: 10px;
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        font-size:1.2em;
+        margin-bottom: 10px;
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        font-size:1em;
+        margin-bottom: 20px;
+    }
+
+    @include mixins.mQ-other(1150px, 1699px){
+    font-size: 1.2em;
+    }
+
+    @include mixins.mQ-other(1700px, 2299px){
+        font-size:1.2em;
+        margin-bottom: 30px;
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        font-size:2em;
+        margin-bottom: 50px;
+    }
+}
+
+#newer-notifications-holder{
+    font-size:0.80em;
+
+    @include mixins.mQ-other(481px,768px){
+        font-size:0.9em;
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        font-size: 1em;
+    }
+}
+
+#older-notifications-holder{
+font-size:0.7em;
+
+@include mixins.mQ-phones(360px){
+    font-size:0.65em;
+}
+
+@include mixins.mQ-other(361px, 480px){
+font-size:0.65em;
+}
+
+@include mixins.mQ-other(481px,768px){
+    font-size:0.85em;
+}
+
+@include mixins.mQ-largerDesktops(2299px){
+    font-size: 0.8em;
+}
+}
+
+.older-notifications-title{
+    align-self: center;
+    font-size:0.8em;
+    margin-top:20px;
+    margin-bottom:20px;
+
+    @include mixins.mQ-phones(360px){
+        margin-top:5px;
+        margin-bottom: 5px;
+        font-size:0.8em;
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        margin-top:5px;
+        margin-bottom: 5px;
+        font-size:0.9em;
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        margin-top:8px;
+        margin-bottom: 8px;
+    }
+
+    @include mixins.mQ-other(1150px, 1699px){
+        margin-top:10px;
+        margin-bottom: 10px;
+    }
+}
+
+.notification-approval-container{
+    margin-top:20px;
+    margin-bottom:20px;
+
+    @include mixins.mQ-phones(360px){
+        margin-top: 7px;
+        margin-bottom: 7px;
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        margin-top:5px;
+        margin-bottom: 5px;
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        margin-top:10px;
+        margin-bottom: 10px;
+    }
+}
+
+.notification-number{
+    
+    @include mixins.mQ-other(481px,768px){
+        font-size:2em !important;
+    }
+    
+    @include mixins.mQ-other(769px,1149px){
+        font-size:2em !important;
+    }
+    
+    @include mixins.mQ-other(1150px,1699px){
+        font-size:2em !important;
+    }
+}

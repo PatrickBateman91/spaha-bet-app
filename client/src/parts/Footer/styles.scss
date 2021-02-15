@@ -1,0 +1,26 @@
+@use '../../assets/Sass/mixins.scss';
+@use '../../assets/Sass/variables.scss';
+
+.footer-relative{
+    display:flex;
+    justify-content: center;
+    position: relative;
+    bottom:0px;
+    background-color:variables.$titleTextColor;
+    color:variables.$background;
+    font-weight: bold;
+    font-size:0.8em;
+    padding:5px;
+}
+
+.footer-absolute{
+    position: absolute;
+    height: 30px;
+    width:100vw;
+    bottom:0px;
+    background-color:variables.$titleTextColor;
+    color:variables.$background;
+    font-weight: bold;
+    font-size:0.8em;
+    padding:5px;
+}
