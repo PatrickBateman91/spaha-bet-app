@@ -10,11 +10,13 @@
         padding:5px;
     }
     @include mixins.mQ-phones(360px){
+        flex-direction: column;
         width:90vw;
         font-size:0.9em;
     }
 
     @include mixins.mQ-other(361px, 480px){
+        flex-direction: column;
         width:90vw;
         font-size:0.9em;  
     }
@@ -31,7 +33,7 @@
     
     @include mixins.mQ-phones(360px){
         min-height: 50px;
-        min-width: 65vw;
+        min-width: 75vw;
     }
 
     @include mixins.mQ-other(361px, 480px){
@@ -52,6 +54,16 @@
 #search-line{
     width:200px;
     border-bottom: 1px solid black;
+
+    @include mixins.mQ-phones(360px){
+        font-size:1.3em;
+        
+        .search-add{
+            
+            padding:5px 10px;
+        }
+    }
+
 }
 
 .search-add{

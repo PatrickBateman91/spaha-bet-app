@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { resendPasswordRequest } from '../../../services/Axios/UserRequests';
-import { returnToMain, checkCorrectMailFormat } from '../../../services/HelperFunctions/HelperFunctions';
+import { returnToMain, checkCorrectMailFormat, windowWidth as usingMobile } from '../../../services/HelperFunctions/HelperFunctions';
 import AuthButton from '../../../components/Buttons/AuthButton';
 import ErrorMessage from '../../../components/Messages/ErrorMessage';
 import ReturnButton from '../../../components/Buttons/ReturnButton';
@@ -28,8 +28,8 @@ const ResendPassword = (props) => {
         }
     }
     return (
-        <div className="main-container main-background basic-column-fx align-center-fx justify-center-fx">
-            <div className="auth-form-holder basic-column-fx wrap-fx justify-center-fx align-center-fx">
+        <div className={`main-container basic-column-fx align-center-fx justify-center-fx ${usingMobile(480) ? "main-background" : "alternative-mobile-background"}`}>
+            <div className="auth-form-holder basic-column-fx wrap-fx justify-center-fx align-center-fx resend-password-container">
                 <form name="resend-password" id="resend-password" onSubmit={e => handleResetPassword(e)}>
                     <div className="basic-column-fx justify-between-fx align-center-fx wrap-fx">
                         <div className="basic-column-fx wrap-fx justify-center-fx align-center-fx">
@@ -44,7 +44,7 @@ const ResendPassword = (props) => {
                     </div></form>
             </div>
             <ReturnButton returnToMain={returnToMain.bind(null, props)}
-                classToDisplay="return-button-space" text={"Main menu"} />
+                classToDisplay="return-button-space return-button-medium" text={"Main menu"} />
         </div>
     );
 };

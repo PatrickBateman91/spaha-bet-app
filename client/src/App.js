@@ -48,7 +48,6 @@ function App(props) {
         <Route {...props} path='/sign-in' component={MainAuth} />
         <Route {...props} path='/sign-up' component={MainAuth} />
         <Route {...props} path='/sign-out' component={SignedOutPage} />
-        <Route {...props} path='/change-password' component={MainAuth} />
         <Route {...props} path='/change-profile-picture' component={ChangeProfilePicture} />
         <Route {...props} path='/change-account-details' component={ChangeAccountDetails} />
         <Route {...props} path='/deactivate-account' component={DeactivateAccount} />

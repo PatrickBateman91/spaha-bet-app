@@ -41,7 +41,7 @@ const Notifications = (props) => {
     return (
         <div id="notification-container" className="basic-column-fx align-center-fx">
             <div id="notification-holder" className="basic-column-fx">
-                <div id="notification-title">Notifications:</div>
+                <div id="notification-title">Notifications</div>
                 <Fragment>
                     <div id="newer-notifications-holder">
                         {unseenTrigger ? unseenToRender : null}

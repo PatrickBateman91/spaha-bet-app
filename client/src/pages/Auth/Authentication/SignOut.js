@@ -5,6 +5,7 @@ import './styles.scss';
 const SignedOutPage = (props) => {
     const [success, setSuccess] = useState(false);
     const [errorMessage, setMessage] = useState("");
+
     const signOutPromise = signOutRequest();
     signOutPromise.then(res => {
         setSuccess(true);
@@ -13,6 +14,7 @@ const SignedOutPage = (props) => {
         setMessage('Something went wrong with! Redirecting you to Home page.')
         setTimeout(() => props.history.push('/'), 1000)
     })
+
     return (
         <Fragment>
             {success ? <div className="basic-fx justify-center-fx align-center-fx sign-out-page">

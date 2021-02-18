@@ -1,49 +1,6 @@
 @use '../../../assets//Sass//mixins.scss';
 @use '../../../assets//Sass//variables.scss';
 
-#change-account-holder{
-    margin-top:40px;
-    
-    @include mixins.mQ-phones(360px){
-        margin-top:30px;
-        width:100vw;
-
-        .auth-form-holder{
-            min-height:300px;
-        }
-    }
-
-    @include mixins.mQ-other(361px, 480px){
-        margin-top:50px;
-        width:100vw;
-
-        .auth-form-holder{
-            min-height:400px;
-        }
-    }
-
-    @include mixins.mQ-other(481px,768px){
-        margin-top:20px;
-        width:100vw;
-    }
-
-    @include mixins.mQ-other(769px,1149px){
-        width:550px;
-    }
-
-    @include mixins.mQ-other(1150px, 1699px){
-        width:600px;
-    }
-
-    @include mixins.mQ-other(1700px, 2298px){
-        width:700px;
-    }
-
-    @include mixins.mQ-largerDesktops(2299px){
-        width:800px;
-    }
-}
-
 #group-line-container{
     padding:7px 10px;
     border:1px solid black;
@@ -212,11 +169,11 @@
     border:1px solid black;
 
     @include mixins.mQ-phones(360px){
-        width:65vw;
+        width:80vw;
     }
 
     @include mixins.mQ-other(361px, 480px){
-        width:65vw;
+        width:80vw;
     } 
 }
 

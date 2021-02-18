@@ -12,17 +12,29 @@
     box-shadow: 0px 3px 8px 1px rgba(0,0,0,0.75);
 
     @include mixins.mQ-phones(360px){
-        border: 2px solid black;
-        min-height: 300px;
-        font-size:0.66em;
-        width: 95vw;
+        background-image: none;
+        min-height: 100vh;
+        font-size:1em;
+        width: 100vw;
+        border-top:3px solid black;
+        border-bottom:3px solid black;
+        border-left:none;
+        border-right:none;
+        border-radius: 0px;
+        box-shadow: none;
     }
 
     @include mixins.mQ-other(361px, 480px){
-        border: 3px solid black;
+        background-image: none;
         min-height: 300px;
-        font-size:0.7em;
-        width: 95vw;
+        font-size:1em;
+        width: 100vw;
+        border-top:3px solid black;
+        border-bottom:3px solid black;
+        border-left:none;
+        border-right:none;
+        border-radius: 0px;
+        box-shadow: none;
     }
 
     @include mixins.mQ-other(481px,768px){
@@ -59,7 +71,7 @@
     }
     
     @include mixins.mQ-phones(360px){
-        width: 90vw;
+        width: 95vw;
         font-size:0.9em;
         input{
             padding:2px;

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { getUserData } from '../../../services/Axios/UserRequests';
 import { joinNewGroupRequest } from '../../../services/Axios/GroupRequests';
-import { returnToMain } from '../../../services/HelperFunctions/HelperFunctions';
+import { returnToMain, windowWidth as usingMobile } from '../../../services/HelperFunctions/HelperFunctions';
 import ConfirmButton from '../../../components/Buttons/ConfirmButton';
 import ErrorMessage from '../../../components/Messages/ErrorMessage';
 import ReturnButton from '../../../components/Buttons/ReturnButton';
@@ -68,7 +68,7 @@ class JoinNewGroup extends Component {
 
     render() {
         return (
-            <div className="basic-fx justify-center-fx align-center-fx main-container main-background">
+            <div className={`basic-fx justify-center-fx align-center-fx main-container ${usingMobile(480) ? "main-background" : "alternative-mobile-background"}`}>
                 <form id="join-new-group-form" onSubmit={this.joinNewGroupFunction}>
                     {this.state.pageLoaded ? <div className="join-new-group basic-column-fx justify-between-fx">
                         <label htmlFor="join-new-group">Enter the ID of the group you want to join:</label>
@@ -83,7 +83,7 @@ class JoinNewGroup extends Component {
                         {this.state.error ? <ErrorMessage text={this.state.errorMessage} /> : null}
                         {this.state.success ? <SuccessMessage text={this.state.successMessage} /> : null}
                         <ConfirmButton classToDisplay="basic-fx justify-center-fx confirm-button-space" form="join-new-group-form" text="Join group" type="submit" />
-                        <ReturnButton classToDisplay="justify-center-fx return-button-space" returnToMain={returnToMain.bind(null, this.props)} text="Main menu" />
+                        <ReturnButton classToDisplay="justify-center-fx return-button-space return-button-medium" returnToMain={returnToMain.bind(null, this.props)} text="Main menu" />
                     </div> : null}
                 </form>
             </div>

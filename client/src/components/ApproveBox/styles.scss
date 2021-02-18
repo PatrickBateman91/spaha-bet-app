@@ -23,6 +23,10 @@
     .approval-container:last-child{
         margin-bottom: 20px;
     }
+
+    @include mixins.mQ-phones(480px){
+            margin-top:10px;
+    }
 }
 
 .approve-item-title{
@@ -49,13 +53,13 @@ margin-top:20px;
     }
 
     @include mixins.mQ-phones(360px){
-        padding: 3px 8px;
-        font-size:0.85em; 
+        padding: 7.5px 15px;
+        font-size: 0.9em; 
     }
 
     @include mixins.mQ-other(361px, 480px){
-        padding: 3px 8px;
-        font-size:0.9em; 
+        padding: 10px 20px;
+        font-size:1em; 
     }
 
     @include mixins.mQ-other(481px,768px){

@@ -40,6 +40,10 @@ background-image:url(./images//wall-background.png);
 
 }
 
+.mobile-alternative-background{
+    background-color: #FFFEFC !important;
+}
+
 @include mixins.mQ-phones(481px){
     input[type='text']
     input[type='number'],

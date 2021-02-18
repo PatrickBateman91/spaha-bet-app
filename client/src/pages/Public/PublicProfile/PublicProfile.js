@@ -96,7 +96,7 @@ const PublicProfile = (props) => {
                     : null}
             </div>
             <ReturnButton returnToMain={returnToMain.bind(null, props)}
-                classToDisplay="basic-fx justify-center-fx" text={"Main menu"} />
+                classToDisplay="basic-fx justify-center-fx return-button-space return-button-medium" text={"Main menu"} />
         </div>
     );
 }

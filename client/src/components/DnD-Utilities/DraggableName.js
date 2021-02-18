@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDrag } from 'react-dnd';
 import { ItemTypes } from './Utilities';
+import './styles.scss';
 
 const DraggableName = (props) => {
     const [{ isDragging }, drag] = useDrag({

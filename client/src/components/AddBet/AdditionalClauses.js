@@ -6,7 +6,7 @@ const AdditionalClauses = (props) => {
         <div className="full-line-space basic-fx justify-between-fx">
             <label htmlFor={`newBetAdditionalClause${props.index + 1}`}>{`Additional clause ${props.index + 1}`}</label>
             <span className="removeAdditionalClauseOrParticipant" onClick={props.removeAdditionalClause}>x</span>
-            <input 
+            <input
                 type="text" id={`newBetAdditionalClause${props.index + 1}`}
                 onChange={props.settingAdditionalClauseValue}
                 value={props.value}

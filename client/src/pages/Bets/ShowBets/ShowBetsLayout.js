@@ -21,10 +21,10 @@ const ShowBetsLayout = (props) => {
                                     selectedGroupName={props.selectedGroupName}
                                 />
                             </div>
-                            {props.trigger ? <ReturnButton returnToMain={returnToMain.bind(null, props)} text="Main menu" /> : null}
+                            {props.trigger ? <ReturnButton classToDisplay="return-button-small" returnToMain={returnToMain.bind(null, props)} text="Main menu" /> : null}
                         </div>
                         {props.children}
-                        <ReturnButton returnToMain={returnToMain.bind(null, props)} text="Main menu" />
+                        <ReturnButton classToDisplay="return-button-medium" returnToMain={returnToMain.bind(null, props)} text="Main menu" />
                     </Fragment> : null}
             </div>
         </div>

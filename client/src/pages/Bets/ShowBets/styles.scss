@@ -7,7 +7,6 @@
     min-height:100vh;
     background-color: #fffff2;
 
-
     .single-bet-container:nth-child(odd){
         background-color: #fe4891;
         #bet-title{
@@ -29,10 +28,13 @@
         padding-bottom:40px;
     }
 
- 
 
     @include mixins.mQ-phones(360px){
+        background-color: #FFFEFC !important;
+        padding-top:10px;
+
         .upper-bet-container{
+            padding-top:20px;
             padding-bottom:30px;
             width:100vw;
         }
@@ -54,9 +56,11 @@
     }
 
     @include mixins.mQ-other(361px, 480px){
-        padding-top:20px;
+        background-color: #FFFEFC !important;
+        padding-top:10px;
 
         .upper-bet-container{
+            padding-top:20px;
             padding-bottom:30px;
             width:100vw;
         }
@@ -208,7 +212,7 @@
 
     @include mixins.mQ-phones(480px){
         width:80vw;
-        font-size:0.5em;
+        font-size:1em;
     }
 }
 

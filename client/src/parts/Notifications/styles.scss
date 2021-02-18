@@ -92,7 +92,7 @@
 }
 
 #notification-holder{
-width:100%;
+    width:100%;
 }
 
 #notification-title{
@@ -102,12 +102,13 @@ width:100%;
     text-decoration: underline;
 
     @include mixins.mQ-phones(360px){
-        font-size:0.8em;
+        text-align: center;
         margin-bottom: 10px;
     }
 
     @include mixins.mQ-other(361px, 480px){
-        font-size:1.3em;
+        text-align: center;
+        font-size:1.7em;
         margin-bottom: 10px;
     }
 
@@ -139,6 +140,14 @@ width:100%;
 #newer-notifications-holder{
     font-size:0.80em;
 
+    @include mixins.mQ-phones(360px){
+        font-size:1.2em
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        font-size: 1em;
+    }
+
     @include mixins.mQ-other(481px,768px){
         font-size:0.9em;
     }
@@ -152,11 +161,13 @@ width:100%;
 font-size:0.7em;
 
 @include mixins.mQ-phones(360px){
-    font-size:0.65em;
+    .notification-item{
+        font-size: 1.2em;
+    }
 }
 
 @include mixins.mQ-other(361px, 480px){
-font-size:0.65em;
+font-size:0.9em;
 }
 
 @include mixins.mQ-other(481px,768px){
@@ -177,13 +188,13 @@ font-size:0.65em;
     @include mixins.mQ-phones(360px){
         margin-top:5px;
         margin-bottom: 5px;
-        font-size:0.8em;
+        font-size:1.3em;
     }
 
     @include mixins.mQ-other(361px, 480px){
         margin-top:5px;
         margin-bottom: 5px;
-        font-size:0.9em;
+        font-size:1.2em;
     }
 
     @include mixins.mQ-other(481px,768px){
@@ -207,11 +218,6 @@ font-size:0.65em;
     margin-bottom:20px;
 
     @include mixins.mQ-phones(360px){
-        margin-top: 7px;
-        margin-bottom: 7px;
-    }
-
-    @include mixins.mQ-other(361px, 480px){
         margin-top: 10px;
         margin-bottom: 10px;
     }

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfo } from '@fortawesome/free-solid-svg-icons';
 import { getUserData } from '../../../services/Axios/UserRequests';
 import { manageGroupsRequest } from '../../../services/Axios/GroupRequests';
-import { returnToMain, joinArrays } from '../../../services/HelperFunctions/HelperFunctions';
+import { returnToMain, joinArrays, isMobile } from '../../../services/HelperFunctions/HelperFunctions';
 import GroupLine from '../../../components/Groups/ManageGroups/GroupLine';
 import ManageGroupsModal from '../../../parts/Groups/ManageGroups/ManageGroupsModal';
 import ReturnButton from '../../../components/Buttons/ReturnButton';
@@ -401,7 +401,7 @@ class ManageGroups extends Component {
             }
         }
         return (
-            <div className="main-container main-background">
+            <div className={`main-container ${isMobile(480) ? "mobile-alternative-background" : "main-background"}`}>
                 {this.state.pageLoaded ? <div className="basic-column-fx align-center-fx">
                     <div id="manage-title">Manage your groups</div>
                     {groupLines}
@@ -439,7 +439,7 @@ class ManageGroups extends Component {
                         warningCheck={this.state.warningCheck}
                         whichModal={this.state.whichModal} />
                     <ReturnButton
-                        classToDisplay="return-button-space"
+                        classToDisplay="return-button-space return-button-medium"
                         returnToMain={returnToMain.bind(null, this.props)}
                         text="Main menu" />
                 </div> : null}

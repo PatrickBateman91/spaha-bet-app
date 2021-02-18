@@ -1,0 +1,26 @@
+@use '../../assets/Sass/mixins.scss';
+@use '../../assets/Sass/variables.scss';
+
+.onDrag{
+    z-index:20;
+    border-radius: 10px;
+    font-size:0.8em;
+    padding:5px;
+    background-color: variables.$titleColor;
+    color:variables.$titleTextColor;
+}
+    
+.onDropAllowed{
+    background-color: variables.$dropZoneAllowed;
+}
+   
+.legend-dnd{
+    width:100%;
+    height: 100%;
+    text-align:center;
+
+    @include mixins.mQ-phones(480px){
+        font-size:0.8em;
+    }
+}
+   

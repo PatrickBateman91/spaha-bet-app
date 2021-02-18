@@ -916,8 +916,9 @@ class Stats extends Component {
                                 />
                             </div>
                             <ReturnButton
+                                classToDisplay="return-button-small"
                                 returnToMain={returnToMain.bind(null, this.props)}
-                                text={"Main menu"}
+                                text="Main menu"
                             />
                         </div>
                         <div id="stats-svg-holder" className="basic-fx wrap-fx justify-around-fx">
@@ -929,8 +930,8 @@ class Stats extends Component {
                         {this.state.noGroups ? <div className="stats-no-finished-bets"><span>You are not part of any groups yet!</span></div> : null}
                         <ReturnButton
                             returnToMain={returnToMain.bind(null, this.props)}
-                            classToDisplay="justify-center-fx return-button-space"
-                            text={"Main menu"}
+                            classToDisplay="justify-center-fx return-button-space return-button-medium"
+                            text="Main menu"
                         />
                     </div>
                     : null}

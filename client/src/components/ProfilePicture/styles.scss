@@ -3,65 +3,70 @@
 
 #profile-picture-container{
     margin-right:40px;
-        position:relative;
-        img{
+    position:relative;
+    img{
             border:6px ridge variables.$ParticipantColor4;
             padding:3px;
             max-width:200px;
             max-height: 200px;
-        }
+    }
     
-        @include mixins.mQ-phones(360px){    
+     @include mixins.mQ-phones(360px){    
+         margin-right: 0px;
+        img{
+            border:2px solid variables.$ParticipantColor4;
+            padding:0px;
+            max-width: 65vw;
+            max-height:65vw;
+        }
+    }
+    
+    @include mixins.mQ-other(361px, 480px){
             img{
-                max-width: 45vw;
-                max-height:45vw;
+                max-width: 55vw;
+                max-height:55vw;
+                border:2px solid variables.$ParticipantColor4;
+                padding:0px;
             }
-        }
+    }
     
-        @include mixins.mQ-other(361px, 480px){
-            img{
-                max-width: 50vw;
-                max-height:50vw;
-            }
-        }
-    
-        @include mixins.mQ-other(481px,768px){
+    @include mixins.mQ-other(481px,768px){
             img{
                 max-width: 200px;
                 max-height:200px;
             }
-        }
+    }
     
-        @include mixins.mQ-other(769px,1149px){
+    @include mixins.mQ-other(769px,1149px){
             img{
                 max-width: 250px;
                 max-height:250px;
             }
-        }
+    }
 
-        @include mixins.mQ-other(1150px,1699px){
+    @include mixins.mQ-other(1150px,1699px){
             img{
                 max-width: 350px;
                 max-height:350px;
             }
-        }
+    }
 
-        @include mixins.mQ-other(1700px,2298px){
+    @include mixins.mQ-other(1700px,2298px){
             img{
                 max-width: 400px;
                 max-height:400px;
             }
-        }
+    }
     
-        @include mixins.mQ-largerDesktops(2299px){
+    @include mixins.mQ-largerDesktops(2299px){
            img{
             max-height:450px;
             max-width:450px;
            }
-        }
     }
+}
     
-    #profile-picture-hidden-div{
+#profile-picture-hidden-div{
         position:absolute;
         background-color: rgba(0,0,0,0.9);
         top:0px;
@@ -70,9 +75,9 @@
         padding:3px;
         cursor: pointer;
         border:2px solid black;
-    }
+}
     
-    .profile-picture-change-span{
+.profile-picture-change-span{
         z-index: 2;
         color:variables.$background;
         text-align: center;
@@ -89,4 +94,4 @@
         @include mixins.mQ-other(481px,768px){
             font-size:0.7em;
         }
-    }
+}

@@ -5,8 +5,6 @@
     display: flex;
  
     div{
-        font-size:0.9em;
-        padding:10px 20px;
         background-color: variables.$dugmeZaNazad;
         color: white;
         border-radius: 20px;
@@ -18,12 +16,12 @@
         }
     }
 
-    @include mixins.mQ-phones(480px){
+    @include mixins.mQ-phones(360px){
         align-items: center;
-      div{
-        padding:5px 10px;
-        font-size:0.7em;
-      }
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        align-items: center;
     }
 }
 
@@ -32,12 +30,55 @@
     padding-bottom: 50px;
 }
 
+.return-button-medium{
+    div{
+        font-size:0.9em;
+        padding:10px 20px;
+    }
+
+    @include mixins.mQ-phones(360px){
+        div{
+            padding:10px 20px;
+            font-size:1em;
+        }
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        div{
+            padding:7px 20px;
+            font-size:1.1em;
+        }
+    }
+}
+
+.return-button-small{
+    div{
+        font-size:0.9em;
+        padding:10px 20px;
+    }
+
+    @include mixins.mQ-phones(360px){
+        div{
+            padding:5px 10px;
+            font-size:0.8em;
+        }
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        div{
+            padding:5px 12px;
+            font-size:0.9em;
+        }
+    }
+}
+
 .auth-button-shape{
     button{
         font-size:1.3em;
         padding:10px 20px;
-        background-color: variables.$titleTextColor;
-        color: variables.$titleColor;
+        background-color: variables.$authButtonColor;
+        color: black;
+        border:2px solid black;
         
         @media (hover: hover){
             &:hover{
@@ -52,14 +93,15 @@
 
     @include mixins.mQ-phones(360px){
         button{
-            font-size:1.1em;
-            padding:6px 15px;
+            font-size:1.4em;
+            padding:10px 20px;
         }   
     }
 
     @include mixins.mQ-other(361px, 480px){
         button{
-            padding:7px 20px;
+            font-size:1.5em;
+            padding:10px 20px;
         }
     }
 

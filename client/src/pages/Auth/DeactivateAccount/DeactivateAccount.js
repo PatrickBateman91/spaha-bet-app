@@ -16,7 +16,7 @@ const DeactivateAccount = (props) => {
     }
     const [checkBoxClicked, handleCheckbox] = useState(false);
     return (
-        <div className="main-container main-background">
+        <div className="main-container">
             <div className="deactivate-container basic-column-fx justify-between-fx align-center-fx">
                 <div id="deactivate-question">Are you sure you want to deactivate your account?</div>
                 <div id="deactivate-note">All your bets and groups will be deleted!</div>
@@ -27,7 +27,7 @@ const DeactivateAccount = (props) => {
                 <DangerButton disabled={!checkBoxClicked} handleDangerButton={deleteAccount} text="Deactivate account" type="submit" />
             </div>
             <ReturnButton returnToMain={returnToMain.bind(null, props)}
-                classToDisplay="justify-center-fx return-button-space" text={"Main menu"} />
+                classToDisplay="justify-center-fx return-button-space return-button-medium" text="Main menu" />
         </div>
     );
 };

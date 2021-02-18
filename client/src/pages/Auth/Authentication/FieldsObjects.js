@@ -22,8 +22,8 @@ signUpPage:{
   labelFiveName: "Create new group",
   labelSixName: "Group name",
   labelSevenName: "Upload profile picture",
-  placeholderOne: "Email",
-  placeholderTwo: "Password",
+  placeholderOne: "We won't spam, don' worry",
+  placeholderTwo: "Select a strong password",
   placeholderThree: "Nickname must be unique",
   placeholderFour: "Enter ID of the group you want to join",
   placeholderSix: "Enter group name",
@@ -41,19 +41,5 @@ signUpPage:{
   formSevenName: "upload-profile-picture",
   formSevenAutocomplete: "profile picture",
   buttonText: "Sign Up"
-}, 
-changePasswordPage:{
-  formName: "change-password-form",
-  firstFieldType: "password",
-  labelOneName: "Old password",
-  labelTwoName: "New password",
-  labelThreeName: "Retype new password",
-  formOneName: "change-password-first-field",
-  formOneAutocomplete: "old-password",
-  formTwoName: "change-password-second-field",
-  formTwoAutocomplete: "new-password",
-  formThreeName: "change-password-third-field",
-  formThreeAutocomplete: "new-password",
-  buttonText: "Confirm changes",
 }
 };

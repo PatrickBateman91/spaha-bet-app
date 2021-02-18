@@ -106,6 +106,7 @@ class AddNewBet extends Component {
 
     componentDidMount() {
         window.scrollTo(0, 0);
+        document.getElementById('root').style.height = "100%";
         if (this.props.editMode) {
             const newGroup = this.props.groups.filter(group => group._id === this.props.selectedGroup);
             this.setState({
@@ -950,15 +951,11 @@ class AddNewBet extends Component {
         return (
             <DndProvider backend={windowWidth(480) ? Backend : TouchBackend}>
                 {windowWidth(480) ? null : <MyPreview />}
-                <div className={`${this.props.editMode ? "" : "main-container main-background"} basic-column-fx justify-center-fx align-center-fx`}>
+                <div className={`${this.props.editMode ? "" : windowWidth(480) ? "main-container main-background" : "main-container mobile-alternative-background"} basic-column-fx justify-center-fx align-center-fx`}>
                     {this.state.pageLoaded ? <Fragment>
                         <div id="add-new-bet-container" className="basic-fx justify-center-fx " onClick={this.closeModals}>
                             <form id="addNewBet" onSubmit={this.createNewBet} onChange={this.hideError}>
-                                <div className="full-line-space basic-fx justify-between-fx">
-                                    <label htmlFor="newBetSubject">Bet subject</label>
-                                    <input type="text" id="newBetSubject" name="newBetSubject" />
-                                </div>
-                                {this.state.pageLoaded && !this.props.editMode ? <div className="basic-fx justify-center-fx relative">
+                            {this.state.pageLoaded && !this.props.editMode ? <div className="basic-fx justify-center-fx relative add-bet-group-container">
                                     <GroupsDropdown
                                         groups={this.state.groups}
                                         groupsOpen={this.state.groupsOpen}
@@ -967,9 +964,15 @@ class AddNewBet extends Component {
                                         selectedGroup={this.state.selectedGroup}
                                         selectedGroupName={this.state.selectedGroupName}
                                     /></div> : null}
-                                <div className="bet-between">Bet is between:</div>
-                                {!this.state.jointBet ? participantsToRender : jointBetToRender}
+
                                 <div className="full-line-space basic-fx justify-between-fx">
+                                    <label htmlFor="newBetSubject">Bet subject</label>
+                                    <input type="text" id="newBetSubject" name="newBetSubject" />
+                                </div>
+
+                                <div className="bet-between">Participants:</div>
+                                {!this.state.jointBet ? participantsToRender : jointBetToRender}
+                                <div className={`full-line-space basic-fx ${this.state.jointBet ? "justify-center-fx": " justify-between-fx"}`}>
                                     {!this.state.jointBet ? <button type="button" className="add-clause-participant-button" onClick={this.addNewParticipant}>Add participant</button> : null}
                                     <button type="button" id="jointBet" className="add-clause-participant-button" onClick={this.jointBetFunction}>Group bet</button>
                                 </div>
@@ -997,8 +1000,8 @@ class AddNewBet extends Component {
                                 {this.state.error ? <ErrorMessage text={this.state.errorMessage} /> : null}
                                 {this.state.success ? <SuccessMessage text={this.state.successMessage} classToDisplay="message-space"  /> : null}
                                 {this.props.editMode ?
-                                    <div className="basic-fx justify-around-fx">
-                                        <ConfirmButton text={"Edit bet"} type="submit" />
+                                    <div className="basic-fx justify-around-fx align-center-fx">
+                                        <ConfirmButton classToDisplay="confirm-button-space" text="Edit bet" type="submit" />
                                         <DangerButton disabled={false} handleDangerButton={this.props.hideModal} text="Quit" type="button" />
                                     </div>
                                     : <ConfirmButton classToDisplay="basic-fx justify-center-fx confirm-button-space" text={"Add bet"} type="submit" />}
@@ -1006,7 +1009,7 @@ class AddNewBet extends Component {
                         </div>
                         {this.props.editMode ? null : <ReturnButton
                             returnToMain={returnToMain.bind(null, this.props)}
-                            classToDisplay="return-button-space" text={"Main menu"} />}
+                            classToDisplay="return-button-space return-button-medium" text="Main menu" />}
                     </Fragment> : null}
                 </div>
             </DndProvider>

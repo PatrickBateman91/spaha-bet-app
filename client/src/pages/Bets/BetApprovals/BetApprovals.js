@@ -7,12 +7,14 @@ import { uploadApprovalRequest } from '../../../services/Axios/BetRequests';
 import ApproveBox from '../../../components/ApproveBox/ApproveBox';
 import DifferentStakes from '../../../parts/Bets/DifferentStakes';
 import JointBet from '../../../parts/Bets/JointBet';
+import Loader from '../../../components/Loaders/Loader';
 import ReturnButton from '../../../components/Buttons/ReturnButton';
 import SameStakes from '../../../parts/Bets/SameStakes';
 import './styles.scss';
 
 class WaitingForApproval extends Component {
     state = {
+        appLoading: true,
         pageLoaded: false,
         error: false,
         errorMessage: "",
@@ -120,6 +122,7 @@ class WaitingForApproval extends Component {
             })
         })
         this.setState({
+            appLoading:false,
             addBets,
             editBets,
             error: false,
@@ -144,12 +147,14 @@ class WaitingForApproval extends Component {
                 this.updateData(resData.data, resUser.data.nickname, resUser.data);
             }).catch(err => {
                 this.setState({
+                    appLoading:false,
                     error: true,
                     errorMessage: "Could not get data!"
                 })
             })
         }).catch(err => {
             this.setState({
+                appLoading:false,
                 error: true,
                 errorMessage: "Could not get user"
             })
@@ -332,7 +337,7 @@ class WaitingForApproval extends Component {
         }
         return (
             <div className="all-bets-container basic-column-fx wrap-fx align-center-fx">
-                {!addTrigger && !editTrigger && !finishTrigger ?
+                {this.state.appLoading ? <Loader loading={this.state.appLoading} /> : !addTrigger && !editTrigger && !finishTrigger ?
                     <div id="no-waiting-bets-container" className="basic-column-fx justify-evenly-fx">
                         <div id="no-waiting-bets-holder" className="basic-fx justify-evenly-fx">
                             You approved everything!
@@ -340,7 +345,7 @@ class WaitingForApproval extends Component {
                                 icon={faCheck} />
                         </div>
                         <ReturnButton
-                            classToDisplay="justify-center-fx"
+                            classToDisplay="justify-center-fx return-button-medium"
                             returnToMain={returnToMain.bind(null, this.props)}
                             text="Main menu" />
                     </div>
@@ -360,7 +365,7 @@ class WaitingForApproval extends Component {
                             {finishTrigger ? finishBets : <span className="approve-item">No finished bets are awaiting your approval!</span>}
                         </div>
                         <ReturnButton
-                            classToDisplay="justify-center-fx return-button-space"
+                            classToDisplay="justify-center-fx return-button-space return-button-medium"
                             returnToMain={returnToMain.bind(null, this.props)}
                             text="Main menu" />
                     </div>}

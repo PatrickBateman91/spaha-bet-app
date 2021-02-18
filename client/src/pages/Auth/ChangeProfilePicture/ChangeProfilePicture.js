@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { getUserData, uploadProfilePicture } from '../../../services/Axios/UserRequests';
-import { returnToMain } from '../../../services/HelperFunctions/HelperFunctions';
+import { returnToMain, windowWidth as usingMobile } from '../../../services/HelperFunctions/HelperFunctions';
 import AuthButton from '../../../components/Buttons/AuthButton';
 import ErrorMessage from '../../../components/Messages/ErrorMessage';
 import ReturnButton from '../../../components/Buttons/ReturnButton';
@@ -86,7 +86,7 @@ class ChangeProfilePicture extends Component {
 
     render() {
         return (
-            <div className="main-container main-background">
+            <div className={`main-container ${usingMobile(480) ? "main-backgroudn": "alternative-mobile-background"}`}>
                 {this.state.pageLoaded ?
                     <Fragment>
                         <div className="basic-fx justify-center-fx align-center-fx change-profile-holder">
@@ -101,7 +101,7 @@ class ChangeProfilePicture extends Component {
                             </div>
                         </div>
                         <ReturnButton returnToMain={returnToMain.bind(null, this.props)}
-                            classToDisplay="justify-center-fx" text={"Main menu"} />
+                            classToDisplay="justify-center-fx return-button-medium" text="Main menu"/>
                     </Fragment> : null}
             </div>
         );

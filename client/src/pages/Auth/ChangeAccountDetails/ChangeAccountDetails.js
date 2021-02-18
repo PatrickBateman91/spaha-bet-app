@@ -1,7 +1,7 @@
 import React, { Component} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserEdit } from '@fortawesome/free-solid-svg-icons';
-import { checkCorrectMailFormat, emptyFieldsCheck, passwordCheck, returnToMain } from '../../../services/HelperFunctions/HelperFunctions';
+import { checkCorrectMailFormat, emptyFieldsCheck, passwordCheck, returnToMain, windowWidth as usingMobile } from '../../../services/HelperFunctions/HelperFunctions';
 import { changeAccountDetailsRequest, getUserData } from '../../../services/Axios/UserRequests';
 import { fieldsObjects } from './FieldsObject';
 import AuthButton from '../../../components/Buttons/AuthButton';
@@ -240,7 +240,7 @@ class ChangeAccountDetails extends Component {
 
   render() {
     return (
-      <div className="main-container main-background basic-column-fx align-center-fx">
+      <div className={`main-container basic-column-fx align-center-fx ${usingMobile(480) ? "main-background": "mobile-alternative-background"}`}>
         {this.state.pageLoaded ?
           <div id="change-account-container">
             <div className="change-account-title">Account details:</div>
@@ -301,9 +301,10 @@ class ChangeAccountDetails extends Component {
             <span>What would you like to change?</span>
           </div>}
         <ReturnButton returnToMain={returnToMain.bind(null, this.props)}
-          classToDisplay="return-button-space" text={"Main menu"} />
+          classToDisplay="return-button-space return-button-medium" text={"Main menu"} />
       </div>
     );
   }
 }
+
 export default ChangeAccountDetails;

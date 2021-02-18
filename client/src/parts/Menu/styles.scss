@@ -23,18 +23,26 @@
     }
 
     @include mixins.mQ-phones(360px){
-        font-size:0.6em;
         div{
-            padding:3px 7px;
-        } 
+            padding:3px;
+        }
+
+        #sign-out{
+            width:25vw;
+            font-size: 12px;
+            padding:3px;
+        }
     }
 
     @include mixins.mQ-other(361px, 480px){
-        font-size:0.7em;
-        
         div{
             padding:4px 10px;
         } 
+
+        #sign-out{
+            width:35vw;
+            font-size: 16px;
+        }
     }
 
     @include mixins.mQ-other(769px,1149px){
@@ -63,13 +71,13 @@
     width:230px;
 
     @include mixins.mQ-phones(360px){
-        width: auto;
-        margin-top:20px;
+        width: 25vw;
+        margin-top:7px;
     }
 
     @include mixins.mQ-other(361px, 480px){
         width:auto;
-        margin-top:20px;
+        margin-top:5px;
     }
 
     @include mixins.mQ-other(1700px, 2299px){
@@ -86,7 +94,6 @@
     width:30vw;
     padding-left:30px;
     padding-right:30px;
-
     -webkit-box-shadow: 7px 4px 12px -9px rgba(0,0,0,0.75);
     -moz-box-shadow: 7px 4px 12px -9px rgba(0,0,0,0.75);
     box-shadow: 7px 4px 12px -9px rgba(0,0,0,0.75);
@@ -126,7 +133,7 @@
                 z-index:2;
                 transform: scale(1.2);
                 cursor:pointer;
-                }
+            }
         }
         div:nth-child(2){
             transform: rotate(10deg);
@@ -134,7 +141,7 @@
                 z-index:2;
                 transform: scale(1.2);
                 cursor:pointer;
-                }
+            }
         }
         div:nth-child(3){
             transform: rotate(10deg);
@@ -142,7 +149,7 @@
                 z-index:2;
                 transform: scale(1.2);
                 cursor:pointer;
-                }
+            }
         }
         div:nth-child(4){
             transform: rotate(-5deg);
@@ -150,7 +157,7 @@
                 z-index:2;
                 transform: scale(1.2);
                 cursor:pointer;
-                }
+            }
         }
     }
 
@@ -171,17 +178,25 @@
     @include mixins.mQ-phones(360px){
         width:95vw;
         min-height:90vw;
+        padding-left: 5px;
+        padding-right: 5px;
+        padding-bottom: 15px;
         margin-bottom:10px;
         border-radius: 22px;
 
         #manage-bets-title{
             margin-top:10px;
             margin-bottom:10px;
-            font-size:0.85em;
+            font-size:1.3em;;
         }
+
+        #manage-bets-body{
+            width:100%;
+        }
+
         #manage-bets-body div{
-            width:30vw;
-            height: 30vw;
+            width:43vw;
+            height: 43vw;
             span{
                 z-index:10;
                 position: relative;
@@ -190,36 +205,52 @@
                 font-family: "Reenie Beanie";
                 font-weight: 300;
                 text-align: center;
-                font-size:1em;
+                font-size:1.5em;
+
+                .notification-number{
+                    font-size:2em;
+                }
             }
             img{
                 position: absolute;
                 top:0px;
                 left:0px;
-                width:30vw;
+                width:43vw;
             }
         }
+
         .home-paper-pin-container{
             div img{
                 width:25px;
             }
+        }
+
+        #manage-bets-body div:nth-child(1):hover,
+        #manage-bets-body div:nth-child(2):hover,
+        #manage-bets-body div:nth-child(3):hover,
+        #manage-bets-body div:nth-child(4):hover{
+            transform: scale(1.0);
         }
     }
 
     @include mixins.mQ-other(361px, 480px){
         width:95vw;
         min-height:90vw;
+        padding-left: 5px;
+        padding-right: 5px;
+        padding-bottom: 15px;
         margin-bottom:10px;
         border-radius: 22px;
 
         #manage-bets-title{
             margin-top:10px;
             margin-bottom:10px;
-            font-size:1.3em;
+            font-size:1.7em;
         }
         #manage-bets-body div{
-            width:35vw;
-            height:35vw;
+            width:45vw;
+            height:45vw;
+
             span{
                 z-index:10;
                 position: relative;
@@ -228,19 +259,30 @@
                 font-family: "Reenie Beanie";
                 font-weight: 300;
                 text-align: center;
-                font-size:1.7em;
+                font-size:2em;
+
+                .notification-number{
+                    font-size:2.2em;
+                }
             }
             img{
                 position: absolute;
                 top:0px;
                 left:0px;
-                width:35vw;
+                width:45vw;
             }
         }
         .home-paper-pin-container{
             div img{
                 width:35px;
             }
+        }
+
+        #manage-bets-body div:nth-child(1):hover,
+        #manage-bets-body div:nth-child(2):hover,
+        #manage-bets-body div:nth-child(3):hover,
+        #manage-bets-body div:nth-child(4):hover{
+            transform: scale(1.0);
         }
     }
 
@@ -409,58 +451,61 @@
     margin-bottom: 30px;
     background-image:url('../../assets/images/paper-background3.jpg');
     border-radius: 4px;
+
     #manage-group-title{
         margin-top:10px;
         font-size:1.1em;
         text-decoration: underline;
     }
 
-    #manage-groups-body {
-    height:75%;
-    div{
-        position: relative;
-        color:white;
-        width:200px;
-        height:200px;
-    }
-    span{
-        z-index:10;
-        font-family: "Reenie Beanie";
-        font-weight: 300;
-        text-align: center;
-        font-size:1em;
-    }
-    img{
-        position: absolute;
-        top:0px;
-        left:0px;
-        width:215px;
-    }
+    #manage-groups-body{
+        height:75%;
+        div{
+            position: relative;
+            color:white;
+            width:200px;
+            height:200px;
+        }
+        span{
+            z-index:10;
+            font-family: "Reenie Beanie";
+            font-weight: 300;
+            text-align: center;
+            font-size:1em;
+        }
+        img{
+            position: absolute;
+            top:0px;
+            left:0px;
+            width:215px;
+        }
 
-    div:nth-child(1){
-       transform: rotate(25deg);
-        &:hover{
-            z-index:2;
-            transform: scale(1.2);
-            cursor:pointer;
-            }
-    }
-    div:nth-child(2){
-      transform: rotate(10deg);
-        &:hover{
-            z-index:2;
-            transform: scale(1.2);
-            cursor:pointer;
-            }
-    }
-    div:nth-child(3){
-        transform: rotate(-9deg);
-          &:hover{
-              z-index:2;
-              transform: scale(1.2);
-              cursor:pointer;
-              }
-      }
+        div:nth-child(1){
+            transform: rotate(25deg);
+             &:hover{
+                 z-index:2;
+                 transform: scale(1.2);
+                 cursor:pointer;
+                }
+        }
+
+        div:nth-child(2){
+           transform: rotate(10deg);
+             &:hover{
+                 z-index:2;
+                 transform: scale(1.2);
+                 cursor:pointer;
+                }
+        }
+
+        div:nth-child(3){
+             transform: rotate(-9deg);
+               &:hover{
+                   z-index:2;
+                   transform: scale(1.2);
+                   cursor:pointer;
+                }
+        }
     }
      
     .home-paper-pin-container{
@@ -479,69 +524,91 @@
 
     @include mixins.mQ-phones(360px){
         width:95vw;
-        height:200px;
-        padding-left:10px;
-        padding-right:10px;
+        padding-left:5px;
+        padding-right:5px;
+        padding-bottom:15px;
         border-radius: 22px;
-        #manage-group-title{
-            margin-top:10px;
-            margin-bottom:10px;
-            font-size:0.85em;
-        }
-        #manage-groups-body {
-            height:80%;
-            div{        
-                width:25vw;
-                height:25vw;
-                span{
-                    max-width: 80%;
-                    font-size:0.9em;
-                    position: relative;
-                    right:3px;
-                }
-                img{
-                    width:25vw;
-                }
-            }
-        }
-        .home-paper-pin-container{
-            div img{
-                width:25px;
-              }
-        }
-    }
 
-    @include mixins.mQ-other(361px, 480px){
-        width:95vw;
-        height:225px;
-        padding-left:10px;
-        padding-right:10px;
-        border-radius: 22px;
         #manage-group-title{
             margin-top:10px;
             margin-bottom:10px;
             font-size:1.3em;
         }
+
+        #manage-groups-body{
+            justify-content: center;
+            margin-top:30px;
+            div{        
+                width:45vw;
+                height:45vw;
+
+                span{
+                    max-width: 80%;
+                    font-size:1.6em;
+                    position: relative;
+                    right:3px;
+                }
+
+                img{
+                    width:45vw;
+                }
+            }
+        }
+        
+        .home-paper-pin-container{
+            div img{
+                width:25px;
+              }
+        }
+
+        #manage-groups-body div:nth-child(1):hover,
+        #manage-groups-body div:nth-child(2):hover,
+        #manage-groups-body div:nth-child(3):hover,
+        #manage-groups-body div:nth-child(4):hover{
+            transform:none;
+        }
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        width:95vw;
+        padding-left:10px;
+        padding-right:10px;
+        padding-bottom:20px;
+        border-radius: 22px;
+        #manage-group-title{
+            margin-top:10px;
+            margin-bottom:10px;
+            font-size:1.7em;
+        }
+
         #manage-groups-body {
-            height:80%;
+            justify-content: center;
             div{
-                width:27vw;
-                height:27vw;
+                width:40vw;
+                height:40vw;
                 span{
                     position: relative;
                     max-width: 80%;
-                    font-size:1.3em;
+                    font-size:1.9em;
                     right:3px;
                 }
                 img{
-                    width:27vw;
+                    width:40vw;
                 }
             }
-            }
+        }
+
         .home-paper-pin-container{
             div img{
                 width:35px;
               }
+        }
+
+        #manage-groups-body div:nth-child(1):hover,
+        #manage-groups-body div:nth-child(2):hover,
+        #manage-groups-body div:nth-child(3):hover,
+        #manage-groups-body div:nth-child(4):hover{
+            transform:none;
         }
     }
 

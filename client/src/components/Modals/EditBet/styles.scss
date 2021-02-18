@@ -19,12 +19,12 @@
     width:70vw;
 
     @include mixins.mQ-phones(360px){
-        width: 98vw;
+        width: 100vw;
     }
 
     @include mixins.mQ-other(361px, 480px){
         padding:20px 10px;
-        width:95vw;
+        width:100vw;
     }
 
     @include mixins.mQ-other(481px,768px){

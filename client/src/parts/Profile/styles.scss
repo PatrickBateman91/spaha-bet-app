@@ -7,12 +7,12 @@
 
     @include mixins.mQ-phones(360px){
         font-size:0.75em;
-        width:100px;
+        width:25vw;
     }
 
     @include mixins.mQ-other(361px, 480px){
         font-size:1em;
-        width:33vw;
+        width:35vw;
     }
 
     @include mixins.mQ-other(481px,768px){
@@ -46,8 +46,17 @@
         cursor: pointer;
     }
 
+    @include mixins.mQ-phones(360px){
+        width:25vw;
+        font-size:12px;
+        padding:3px 5px;
+        margin-bottom:5px;
+    }
+
     @include mixins.mQ-other(361px, 480px){
         margin-bottom: 4px;
+        width:35vw;
+        font-size: 16px;
     }
 
     @include mixins.mQ-largerDesktops(2299px){
@@ -65,6 +74,12 @@
     &:hover{
         transform: scale(2.5);
     }
+
+    @include mixins.mQ-phones(480px){
+    &:hover{
+        transform: none;
+    }
+    }    
 }
 
 #profile-info-more-stats{
@@ -83,17 +98,17 @@
     }
 
     @include mixins.mQ-phones(360px){
-        font-size:0.7em;
-        width:60px;
+        font-size: 12px;
+        width:25vw;
         margin-top:5px;
         padding:3px;
     }
 
     @include mixins.mQ-other(361px, 480px){
-        font-size:0.85em;
-        width:120px;
+        width:35vw;
+        font-size:16px;
         margin-top:5px;
-        padding:3px 8px;
+        padding:4px 10px;
     }
 
     @include mixins.mQ-other(481px,768px){
@@ -127,6 +142,7 @@
     right:0px;
     background-color: variables.$titleTextColor;
     border:1px solid black;
+    z-index: 10;
     ul{
         list-style-type: none;
         li{
@@ -145,15 +161,31 @@
 
     @include mixins.mQ-phones(360px){
         top:25px;
+        border:none;
         ul li{
-            width:100px;
+            width:25vw;
+            border:none;
+            font-size:10px;
+            padding:3px;
+            border-bottom: 1px solid black;
+
+            &:first-of-type{
+                border-top: 1px solid black;
+            }
         }
     }
 
     @include mixins.mQ-other(361px, 480px){
         top:33px;
+        border:none;
         ul li{
-            width:32.5vw;
+            width:35vw;
+            font-size: 12px;
+            border-bottom:1px solid black;
+
+            &:first-of-type{
+                border-top: 1px solid black;
+            }
         }
     }
 

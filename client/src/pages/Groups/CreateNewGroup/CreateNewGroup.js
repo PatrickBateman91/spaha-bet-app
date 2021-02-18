@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { createNewGroupRequest } from '../../../services/Axios/GroupRequests';
 import { findUsersByNicknameRequest, getUserData } from '../../../services/Axios/UserRequests';
-import { joinArrays, returnToMain } from '../../../services/HelperFunctions/HelperFunctions';
+import { windowWidth as usingMobile, joinArrays, returnToMain } from '../../../services/HelperFunctions/HelperFunctions';
 import ConfirmButton from '../../../components/Buttons/ConfirmButton';
 import ErrorMessage from '../../../components/Messages/ErrorMessage';
 import ReturnButton from '../../../components/Buttons/ReturnButton';
@@ -173,7 +173,7 @@ class CreateNewGroup extends Component {
 
     render() {
         return (
-            <div className="main-container main-background basic-fx justify-center-fx align-center-fx">
+            <div className={`main-container basic-fx justify-center-fx align-center-fx ${!usingMobile(480) ? "alternative-mobile-background" : "main-background"}`}>
                 <form name="create-new-group" id="create-new-group" onSubmit={this.uploadGroup}>
                     <div id="create-new-group-container" className="basic-column-fx align-center-fx justify-between-fx">
                         {this.state.pageLoaded ?
@@ -231,7 +231,7 @@ class CreateNewGroup extends Component {
                                 {this.state.success ? <SuccessMessage text={this.state.successMessage} /> : null}
                                 <ConfirmButton classToDisplay="confirm-button-space" form="create-new-group" text="Add group" type="submit" />
                                 <ReturnButton
-                                    classToDisplay="return-button-space"
+                                    classToDisplay="return-button-space return-button-medium"
                                     returnToMain={returnToMain.bind(null, this.props)}
                                     text="Main menu" />
                             </Fragment> : null}

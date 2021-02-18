@@ -33,7 +33,7 @@ const RegularParticipants = (props) => {
                     disabled={!props.equalBets} />
 
                 {props.participants.length > 2 ? <span className="removeAdditionalClauseOrParticipant" onClick={props.removeParticipant}>x</span> : null}
-                
+
             </div>
             {props.people.map(person => {
                 let check = props.alreadyExistsCheck(person, "regular");

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {fieldObjects} from './FieldsObjects';
-import { returnToMain, checkCorrectMailFormat, emptyFieldsCheck, passwordCheck } from '../../../services/HelperFunctions/HelperFunctions';
+import { returnToMain, checkCorrectMailFormat, emptyFieldsCheck, passwordCheck, isMobile } from '../../../services/HelperFunctions/HelperFunctions';
 import { signInRequest, signUpRequest, getUserData } from '../../../services/Axios/UserRequests';
 import AuthButton from '../../../components/Buttons/AuthButton';
 import ErrorMessage from '../../../components/Messages/ErrorMessage';
@@ -292,14 +292,14 @@ class MainAuth extends Component {
 
   render() {
     return (
-      <div className="auth-form-main-container basic-column-fx justify-center-fx">
+      <div className={`auth-form-main-container basic-column-fx justify-center-fx ${isMobile(480) ? "mobile-alternative-background": ""}`}>
         {this.state.pageLoaded ? <div className="basic-column-fx justify-between-fx align-center-fx wrap-fx">
           <form name={fieldObjects[this.state.whichPage].formName} id={fieldObjects[this.state.whichPage].formName} onChange={this.hideMessages} onSubmit={this.handleSubmit} encType="multipart/form-data">
             <div className="auth-form-holder basic-column-fx wrap-fx justify-center-fx align-center-fx">
               <div>
                 <InputField
                   autoComplete={fieldObjects[this.state.whichPage].formOneAutocomplete}
-                  classToDisplay="auth-line"
+                  classToDisplay={`auth-line ${this.state.whichPage === "signInPage" ?  "hide-placeholder" : ""}`}
                   id={fieldObjects[this.state.whichPage].formOneName}
                   label={fieldObjects[this.state.whichPage].labelOneName}
                   placeholder={fieldObjects[this.state.whichPage].placeholderOne}
@@ -307,14 +307,14 @@ class MainAuth extends Component {
 
                 <InputField
                   autoComplete={fieldObjects[this.state.whichPage].formTwoAutocomplete}
-                  classToDisplay="auth-line"
+                  classToDisplay={`auth-line ${this.state.whichPage === "signInPage" ?  "hide-placeholder" : ""}`}
                   id={fieldObjects[this.state.whichPage].formTwoName}
                   label={fieldObjects[this.state.whichPage].labelTwoName}
                   placeholder={fieldObjects[this.state.whichPage].placeholderTwo}
                   type={"password"} />
               </div>
 
-              {this.state.whichPage === "signUpPage" || this.state.whichPage === "changePasswordPage" ?
+              {this.state.whichPage === "signUpPage" ?
                 <InputField
                   autoComplete={fieldObjects[this.state.whichPage].formThreeAutocomplete}
                   classToDisplay="auth-line"
@@ -333,11 +333,6 @@ class MainAuth extends Component {
                   placeholder={fieldObjects[this.state.whichPage].placeholderFour}
                   type={fieldObjects[this.state.whichPage].firstFieldType} /> : null}
 
-              {this.state.whichPage === "signUpPage" ? <div className="auth-line">
-                <label htmlFor={fieldObjects[this.state.whichPage].formFiveName}>{fieldObjects[this.state.whichPage].labelFiveName}</label>
-                <input type="checkbox" id={fieldObjects[this.state.whichPage].formFiveName} onClick={this.newGroupCheckFunction} />
-              </div> : null}
-
               {this.state.whichPage === "signUpPage" && this.state.newGroupCheck ?
                 <InputField
                   autoComplete={fieldObjects[this.state.whichPage].formSixAutocomplete}
@@ -347,6 +342,11 @@ class MainAuth extends Component {
                   placeholder={fieldObjects[this.state.whichPage].placeholderSix}
                   type="text" /> : null}
 
+              {this.state.whichPage === "signUpPage" ? <div className="auth-line">
+                <label htmlFor={fieldObjects[this.state.whichPage].formFiveName}>{fieldObjects[this.state.whichPage].labelFiveName}</label>
+                <input type="checkbox" id={fieldObjects[this.state.whichPage].formFiveName} onClick={this.newGroupCheckFunction} />
+              </div> : null}
+
               {this.state.whichPage === "signUpPage" ? <div className="basic-column-fx justify-center-fx align-center-fx upload-picture-form">
                 <label htmlFor={fieldObjects[this.state.whichPage].formSevenName}>{fieldObjects[this.state.whichPage].labelSevenName}</label>
                 <input type="file" accept="image/x-png,image/jpg,image/jpeg" name={fieldObjects[this.state.whichPage].formSevenName} id={fieldObjects[this.state.whichPage].formSevenName} onChange={this.handleProfilePicture}></input>
@@ -354,8 +354,8 @@ class MainAuth extends Component {
 
               {this.state.whichPage === "signInPage" ? <div className="basic-fx justify-center-fx" onClick={this.handleResendPassword}><span className="forgot-password-link">Forgot your password?</span></div> : null}
 
-              {this.state.error ? <ErrorMessage text={this.state.errorMessage} /> : null}
-              {this.state.success ? <SuccessMessage text={this.state.successMessage} /> : null}
+              {this.state.error ? <ErrorMessage classToDisplay="message-space" text={this.state.errorMessage} /> : null}
+              {this.state.success ? <SuccessMessage classToDisplay="message-space" text={this.state.successMessage} /> : null}
 
               <AuthButton 
               classToDisplay="auth-button-space" 
@@ -364,7 +364,7 @@ class MainAuth extends Component {
 
             </div>
           </form>
-          <ReturnButton classToDisplay="return-button-space" returnToMain={returnToMain.bind(null, this.props)} whereTo='Home' text="Home" />
+          <ReturnButton classToDisplay="return-button-space return-button-medium" returnToMain={returnToMain.bind(null, this.props)} whereTo='Home' text="Home" />
         </div> : null}
       </div>
     );

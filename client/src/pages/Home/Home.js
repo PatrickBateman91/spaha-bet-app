@@ -398,80 +398,6 @@ class Home extends Component {
         })
     }
 
-    uploadBetToFirebase = (type, editId, newBet) => {
-        let trigger = false;
-        let copyState = [...this.state.people];
-        if (newBet.jointBet) {
-            newBet.participants.forEach(item => {
-                item.participants.forEach(participant => {
-                    let checkForNewName = this.state.people.indexOf(participant)
-                    if (checkForNewName === -1) {
-                        trigger = true;
-                        copyState.push(participant);
-                    }
-                })
-            })
-
-            if (trigger) {
-
-            }
-
-            if (type) {
-                let theOne = this.state.groups.filter(bet => {
-                    return bet.id === editId;
-                })
-
-                let changes;
-                if (theOne[0].newBet.changes) {
-                    changes = [...theOne[0].newBet.changes]
-                }
-                else {
-                    changes = [];
-                }
-                let name = "";
-                let newDate = getDate(2);
-                changes.push({ name: name, time: newDate })
-                newBet.changes = changes;
-            }
-            else {
-            }
-        }
-
-        else {
-            newBet.participants.forEach(participant => {
-                let checkForNewName = this.state.people.indexOf(participant.name)
-                if (checkForNewName === -1) {
-                    trigger = true;
-                    copyState.push(participant.name)
-                }
-            })
-
-            if (trigger) {
-            }
-
-            if (type) {
-                let theOne = this.state.groups.filter(bet => {
-                    return bet.id === editId;
-                })
-
-                let changes;
-                if (theOne[0].newBet.changes) {
-                    changes = [...theOne[0].newBet.changes]
-                }
-                else {
-                    changes = [];
-                }
-
-                let name = "";
-                let newDate = getDate(2);
-                changes.push({ name: name, time: newDate })
-                newBet.changes = changes;
-            }
-            else {
-            }
-        }
-    }
-
     render() {
         return (
             <div className="main-container main-background basic-column-fx wrap-fx" onClick={this.hideAccountModal}>
@@ -494,9 +420,10 @@ class Home extends Component {
                                 user={this.state.user}
                             />
                         </div>
-                        <div id="right-home-container" className="basic-fx align-center-fx justify-center-fx">
-                            {this.state.pageLoaded && this.state.user ? windowWidth(480) ? <SignOutNav navAuth={this.state.navAuth} handleNavigationClick={this.handleNavigationClick} /> : null : null}
-                        </div>
+                        {this.state.pageLoaded && this.state.user ? windowWidth(480) ? <div id="right-home-container" className='basic-fx align-center-fx justify-center-fx'>
+                            <SignOutNav navAuth={this.state.navAuth} handleNavigationClick={this.handleNavigationClick} />
+                        </div> : null : null}
+                    
                     </div>
                         <div id="middle-home-container" className="basic-fx justify-around-fx">
                             <Notifications user={this.state.user} handleNotificationApproval={this.handleNotificationApproval} />

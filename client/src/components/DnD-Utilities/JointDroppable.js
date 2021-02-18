@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDrop } from 'react-dnd';
 import { ItemTypes } from './Utilities';
+import './styles.scss';
 
 const JointDroppable = (props) => {
     const [{ isOver, canDrop }, drop] = useDrop({

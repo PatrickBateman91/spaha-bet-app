@@ -52,14 +52,12 @@
 
 .deactivate-container{
 
-    @include mixins.mQ-phones(360px){
-        padding-top: 20px;
-        height: 70vh; 
-    }
-    
-    @include mixins.mQ-other(361px, 480px){
-        padding-top: 20px;
-    height: 70vh;
+    @include mixins.mQ-phones(480px){
+        height:70vh;
+        margin-top:10vh;
+        padding:20px 0px;
+        border-top:3px solid black;
+        border-bottom:3px solid black;
     }
 
     @include mixins.mQ-other(481px,768px){
@@ -94,8 +92,9 @@
     align-items: center;
 
     @include mixins.mQ-phones(360px){
-        width:90vw;
+        width:95vw;
         padding:10px;
+        font-size:0.9em;
         label{
             text-align: center;
             font-size:0.85em;
@@ -125,10 +124,16 @@
 #deactivate-question{
     font-size:1.5em;
 
+    @include mixins.mQ-phones(360px){
+        text-align: center;
+        font-size:1.8em;
+        padding:10px;
+    }
+
     @include mixins.mQ-other(361px, 480px){
-    text-align: center;
-    font-size:1.8em;
-    padding:10px;
+        text-align: center;
+        font-size:1.8em;
+        padding:10px;
     }
 
     @include mixins.mQ-other(481px,768px){

@@ -20,7 +20,12 @@
     }
 
     @include mixins.mQ-phones(480px){
-        width:93vw;
+        width:98vw;
+        margin: 0 auto;
+
+        ::placeholder{
+            font-size:0.7em;
+        }
     }
 
     @include mixins.mQ-other(481px,768px){
@@ -56,35 +61,57 @@
 
     @include mixins.mQ-phones(360px){
         display: flex;
-        justify-content: space-between;
+        flex-direction: column;
+        align-items: center;
+
+        &:last-of-type{
+            flex-direction: column-reverse;
+        }
         #joint-left-side-input1,#joint-right-side-input2{
-            width:27vw;
+            width:45vw;
             margin:5px 2px;
-            font-size:0.9em;
+            font-size:16px;
             padding:3px;
         }
 
         #joint-left-side-input2,#joint-right-side-input1{
-            width:15vw;
+            width:45vw;
             margin:5px 2px;
-            font-size:0.8em;
+            font-size:16px;
+            padding:3px;
+        }
+
+        input::placeholder{
+            color:#5B5B5B !important;
+            text-align: center;
         }
     }
 
     @include mixins.mQ-other(361px, 480px){
         display: flex;
-        justify-content: space-between;
+        flex-direction: column;
+        align-items: center;
+
+        &:last-of-type{
+            flex-direction: column-reverse;
+        }
         #joint-left-side-input1,#joint-right-side-input2{
-            width:27vw;
+            width:45vw;
             margin:5px 2px;
-            font-size:0.9em;
+            font-size:16px;
             padding:3px;
         }
 
         #joint-left-side-input2,#joint-right-side-input1{
-            width:15vw;
+            width:45vw;
             margin:5px 2px;
-            font-size:0.8em;
+            font-size:16px;
+            padding:3px;
+        }
+
+        input::placeholder{
+            color:#5B5B5B !important;
+            text-align: center;
         }
     }
 
@@ -156,15 +183,16 @@
     }
 
     @include mixins.mQ-phones(480px){
-        width:95vw;
+        width:100vw;
         flex-wrap: wrap;
         justify-content: center;
 
         input{
-            width: 30vw;
-            height:22px;
+            width: 32vw;
+            height:30px;
+            padding:5px 3px;
             margin:2px;
-            font-size: 0.85em;
+            font-size: 1em;
         }
     }
 
@@ -206,22 +234,29 @@
     }
 
     @include mixins.mQ-phones(480px){
-        width:90vw;
+        width:94vw;
         flex-wrap: wrap;
-        font-size:0.75em;
-        margin:3px;
+        font-size:0.95em;
+        margin:3px 3vw;
+        align-items: center;
 
         #newBetSubject{
-            width:50vw;
+            margin:3vw;
+            width:45vw;
+        }
+
+        label{
+            width:40vw;
         }
 
         input[type=text]{
-            width:35vw;
-            height:20px;
-            font-size:0.9em;
+            width:40vw;
+            padding:5px;
+            font-size: 16px;
         }
+
         input[type=checkbox]{
-            width:10px;
+            width:20px;
         }
     }
 
@@ -236,9 +271,30 @@
             width: 25px;
         }
     }
+
     @include mixins.mQ-other(1700px, 2299px){
         input[type=text]{
             width: 30%;
         }
+    }
+}
+
+.removeAdditionalClauseOrParticipant{
+    position: absolute;
+    z-index:100;
+    font-size:0.8em;
+    right:-10px;
+    top:-10px;
+    &:hover{
+        cursor: pointer;
+        color:variables.$titleTextColor;
+    } 
+
+    @include mixins.mQ-phones(360px){
+        right: -10px
+    }
+ 
+    @include mixins.mQ-other(361px, 480px){
+        right: -10px
     }
 }
