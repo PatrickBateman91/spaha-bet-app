@@ -1,8 +1,10 @@
 import React, { Component, Fragment } from 'react';
-import { getUserData, uploadProfilePicture } from '../../../services/Axios/UserRequests';
+import { connect } from 'react-redux';
+import { uploadProfilePicture } from '../../../services/Axios/UserRequests';
 import { returnToMain, windowWidth as usingMobile } from '../../../services/HelperFunctions/HelperFunctions';
 import AuthButton from '../../../components/Buttons/AuthButton';
 import ErrorMessage from '../../../components/Messages/ErrorMessage';
+import Loader from '../../../components/Loaders/Loader';
 import ReturnButton from '../../../components/Buttons/ReturnButton';
 import SuccessMessage from '../../../components/Messages/SuccessMessage';
 import './styles.scss';
@@ -19,42 +21,57 @@ class ChangeProfilePicture extends Component {
 
     componentDidMount() {
         window.scrollTo(0, 0);
-        document.getElementById('root')
-        const getUserPromise = getUserData('get user');
+        document.getElementById('root').style.height = "100%";
 
-        getUserPromise.then(resUser => {
-            this.setState({
-                user: resUser.data
-            }, () => {
+        if (this.props.appLoaded) {
+            if (this.props.user === "guest") {
+                this.props.history.push('/');
+            } else {
                 this.setState({ pageLoaded: true })
-            })
-        })
-            .catch(err => {
-                this.props.history.push('/sign-in');
-            })
+            }
+        }
+    }
+
+    componentDidUpdate(prevProps) {
+        if (!prevProps.appLoaded && this.props.appLoaded) {
+            if (this.props.user === "guest") {
+                this.props.history.push('/');
+            } else {
+                this.setState({ pageLoaded: true })
+            }
+        }
     }
 
     handlePictureChange = (e) => {
         e.preventDefault();
         if (this.state.selectedFile) {
             const formData = new FormData();
-            formData.append('nickname', this.state.user.nickname)
+            formData.append('nickname', this.props.user.nickname)
             formData.append('file', this.state.selectedFile);
             const uploadPromise = uploadProfilePicture(formData);
-            uploadPromise.then(res => {
+            uploadPromise.then(userResponse => {
+                document.body.style.pointerEvents = 'none';
+                document.body.style.cursor = "wait";
+                this.props.updateUser(userResponse.data.payload);
                 this.setState({
                     success: true,
-                    successMessage: res.data
+                    successMessage: userResponse.data.message
                 }, () => {
-                    setTimeout(() => this.props.history.push('/'), 1500)
+                    setTimeout(() => {
+                        document.body.style.pointerEvents = 'auto';
+                        document.body.style.cursor = "auto";
+                        window.location.replace("https://spaha-betapp.netlify.app")
+                    }, 1000)
                 })
             }).catch(err => {
                 this.setState({
                     error: true,
-                    errorMessage: err.response.data
+                    errorMessage: err.response.data.message
                 })
             })
-        } else {
+        }
+
+        else {
             this.setState({ error: true, errorMessage: "Please select adequate picture" })
         }
 
@@ -86,7 +103,7 @@ class ChangeProfilePicture extends Component {
 
     render() {
         return (
-            <div className={`main-container ${usingMobile(480) ? "main-backgroudn": "alternative-mobile-background"}`}>
+            <div className={`main-container ${usingMobile(480) ? "main-background" : "alternative-mobile-background"}`}>
                 {this.state.pageLoaded ?
                     <Fragment>
                         <div className="basic-fx justify-center-fx align-center-fx change-profile-holder">
@@ -101,11 +118,26 @@ class ChangeProfilePicture extends Component {
                             </div>
                         </div>
                         <ReturnButton returnToMain={returnToMain.bind(null, this.props)}
-                            classToDisplay="justify-center-fx return-button-medium" text="Main menu"/>
-                    </Fragment> : null}
+                            classToDisplay="justify-center-fx return-button-medium" text="Main menu" />
+                    </Fragment> : <Loader loading={this.state.pageLoaded} />}
             </div>
         );
     }
 }
 
-export default ChangeProfilePicture;
+const mapStateToProps = (state) => {
+    return {
+        appLoaded: state.appStates.appLoaded,
+        user: state.user
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        updateUser: (user) => {
+            dispatch({ type: "user/updateUser", payload: user })
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChangeProfilePicture);

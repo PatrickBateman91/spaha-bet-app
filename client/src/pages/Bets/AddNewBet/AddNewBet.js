@@ -1,9 +1,11 @@
 import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import { changeGroup } from '../../../components/Groups/GroupsDropdown/ChangeGroupFunction';
 import { DndProvider } from 'react-dnd'
 import { editBetRequest, uploadBetRequest } from '../../../services/Axios/BetRequests';
-import { getUserData } from '../../../services/Axios/UserRequests';
-import { returnToMain, windowWidth } from '../../../services/HelperFunctions/HelperFunctions';
+import { calculateBalance, changeSingleGroup, getShortStats, returnToMain, windowWidth } from '../../../services/HelperFunctions/HelperFunctions';
 import { usePreview } from 'react-dnd-preview';
+import { withRouter } from 'react-router-dom';
 import AdditionalClauses from '../../../components/AddBet/AdditionalClauses';
 import AddCheckbox from '../../../components/AddBet/Checkbox';
 import Backend from 'react-dnd-html5-backend';
@@ -13,9 +15,10 @@ import ErrorMessage from '../../../components/Messages/ErrorMessage';
 import GroupsDropdown from '../../../components/Groups/GroupsDropdown/GroupsDropdown';
 import InputField from '../../../components/AddBet/InputField';
 import JointParticipants from '../../../components/AddBet/JointParticipants';
+import Loader from '../../../components/Loaders/Loader';
 import RegularParticipants from '../../../components/AddBet/RegularParticipants';
 import ReturnButton from '../../../components/Buttons/ReturnButton';
-import SuccessMessage from '../../../components/Messages/SuccessMessage';
+import SuccessModal from '../../../components/Modals/SuccessModal';
 import TouchBackend from 'react-dnd-touch-backend';
 import './styles.scss';
 
@@ -107,55 +110,69 @@ class AddNewBet extends Component {
     componentDidMount() {
         window.scrollTo(0, 0);
         document.getElementById('root').style.height = "100%";
-        if (this.props.editMode) {
-            const newGroup = this.props.groups.filter(group => group._id === this.props.selectedGroup);
-            this.setState({
-                groups: this.props.groups,
-                pageLoaded: true,
-                people: newGroup[0].people,
-                user: this.props.user
-            }, () => {
-                this.getAndSetEditValues();
-            })
+        if (this.props.appLoaded) {
+            if (this.props.editMode) {
+                const newGroup = this.props.groups.filter(group => group._id.toString() === this.props.selectedGroup.toString());
+                this.setState({
+                    pageLoaded: true,
+                    people: newGroup[0].people,
+                }, () => {
+                    this.getAndSetEditValues();
+                })
+            }
+            else {
+                if (this.props.user === 'guest') {
+                    this.props.history.push('/sign-in')
+                } else if (this.props.groups.length === 0) {
+                    this.setState({
+                        error: true,
+                        errorMessage: "You cannot add bets until you are apart of a group!",
+                        pageLoaded: true,
+                        people: [this.props.user.nickname],
+                    })
+                } else {
+                    const newGroup = this.props.groups.filter(group => group._id === this.props.selectedGroup);
+                    this.setState({
+                        people: newGroup[0].people,
+                        pageLoaded: true
+                    })
+                }
+            }
         }
-        else {
-            const getUserPromise = getUserData('get user');
-            getUserPromise.then(resUser => {
-                const getDataPromise = getUserData('get groups');
-                getDataPromise.then(resData => {
+    }
 
-                    if (resData.data !== "User is not a part of any groups!") {
+    componentDidUpdate(prevProps) {
+        if (!prevProps.appLoaded && this.props.appLoaded) {
+            if (this.props.user === "guest") {
+                this.props.history.push('/');
+            } else {
+                if (this.props.editMode) {
+                    const newGroup = this.props.groups.filter(group => group._id === this.props.selectedGroup);
+                    this.setState({
+                        pageLoaded: true,
+                        people: newGroup[0].people,
+                    }, () => {
+                        this.getAndSetEditValues();
+                    })
+                }
+                else {
+                    if (this.props.groups.length === 0) {
                         this.setState({
-                            groups: resData.data,
-                            pageLoaded: true,
-                            people: resData.data[0].people,
-                            selectedGroup: resData.data[0]._id,
-                            selectedGroupName: resData.data[0].name,
-                            user: resUser.data
-                        })
-                    }
-                    else {
-                        this.setState({
-                            groups: [],
                             error: true,
                             errorMessage: "You cannot add bets until you are apart of a group!",
                             pageLoaded: true,
-                            people: [resUser.data.nickname],
-                            selectedGroup: "",
-                            selectedGroupName: "",
-                            user: resUser.data,
+                            people: [this.props.user.nickname],
+                        })
+                    } else {
+                        const newGroup = this.props.groups.filter(group => group._id === this.props.selectedGroup);
+                        this.setState({
+                            people: newGroup[0].people,
+                            pageLoaded: true
                         })
                     }
-                }).catch(err => {
-
-                    this.props.history.push('/sign-in')
-                })
-            }).catch(err => {
-
-                this.props.history.push('/sign-in')
-            })
+                }
+            }
         }
-
     }
 
     createNewBet = (e) => {
@@ -199,7 +216,7 @@ class AddNewBet extends Component {
             people[0].value = rightValue;
             people[0].bet = rightBet;
             copyJointSelected.forEach(participant => {
-                if (participant.name === this.state.user.nickname) {
+                if (participant.name === this.props.user.nickname) {
                     rightUserTrigger = true;
                 }
                 if (copySuggestions.indexOf(participant.name) === -1) {
@@ -212,6 +229,7 @@ class AddNewBet extends Component {
                     people[1].participants.push(participant.name)
                 }
             })
+
             if (!rightUserTrigger) {
                 return this.setState({
                     error: true,
@@ -239,8 +257,8 @@ class AddNewBet extends Component {
                         additionalClauses.push(clause.value);
                     }
                 })
-            //TESTIRANJE DA LI JE DOBRO POPUNJENO
 
+            //TESTIRANJE DA LI JE DOBRO POPUNJENO
             people.forEach(person => {
                 if (person.value === "" || person.bet === "") {
                     falseValue = true;
@@ -248,7 +266,6 @@ class AddNewBet extends Component {
             })
 
             if (subject !== "" && falseValue === false) {
-
                 if (moneyBet) {
                     newBet = {
                         subject,
@@ -284,40 +301,50 @@ class AddNewBet extends Component {
                 if (this.props.editMode) {
                     newBet._id = this.props.editId;
                     const editBetPromise = editBetRequest("editBet", this.props.selectedGroup, newBet);
-                    editBetPromise.then(res => {
+                    editBetPromise.then(groupResponse => {
+                        document.body.style.pointerEvents = 'none';
+                        document.body.style.cursor = 'wait';
+                        const changedGroups = changeSingleGroup(this.props.groups, this.props.selectedGroup, groupResponse.data.payload);
+                        let statsObject = getShortStats(changedGroups, this.props.user.nickname);
+                        statsObject.balance = calculateBalance(changedGroups, this.props.user.nickname);
+                        this.props.setShortStats(statsObject);
+                        this.props.setGroups(changedGroups);
                         this.setState({
                             success: true,
                             successMessage: "Edited bet has been sent for approval!"
-                        }, () => {
-                            setTimeout(() => window.location.reload(), 1000)
-                        })
+                        });
+                        setTimeout(() => {
+                            document.body.style.pointerEvents = 'auto';
+                            document.body.style.cursor = "auto";
+                            this.props.history.push('/')
+                        }, 1000)
                     }).catch(err => {
                         this.setState({
                             error: true,
-                            errorMessage: "Could not edit bet!"
+                            errorMessage: err.response.data.message
                         })
                     })
                 }
                 else {
-                    const uploadBetPromise = uploadBetRequest(false, false, this.state.selectedGroup, newBet);
+                    document.body.style.pointerEvents = 'none';
+                    document.body.style.cursor = "wait";
+                    const uploadBetPromise = uploadBetRequest(false, false, this.props.selectedGroup, newBet);
                     uploadBetPromise.then(res => {
                         this.setState({
                             success: true,
-                            successMessage: "Bet has been sent for approval!"
+                            successMessage: res.data.message
                         }, () => {
-                            setTimeout(() => this.props.history.push({
-                                pathname: '/active-bets',
-                                state: {
-                                    user: this.state.user,
-                                    groups: this.state.groups,
-                                    selectedGroup: this.state.selectedGroup
-                                }
-                            }), 1000)
+                            document.getElementById('success-modal-container').style.top = `${window.pageYOffset}px`;
+                            setTimeout(() => {
+                                document.body.style.pointerEvents = 'auto';
+                                document.body.style.cursor = "auto";
+                                this.props.history.push('/')
+                            }, 1000)
                         })
                     }).catch(err => {
                         this.setState({
                             error: true,
-                            errorMessage: "Could not upload bet to server!"
+                            errorMessage: err.response.data.message
                         })
                     })
                 }
@@ -339,9 +366,8 @@ class AddNewBet extends Component {
             }
 
             //Između koga je opklada -> People varijabla
-
             copyParticipants.forEach((participant, index) => {
-                if (participant.name === this.state.user.nickname) {
+                if (participant.name === this.props.user.nickname) {
                     rightUserTrigger = true;
                 }
                 if (copySuggestions.indexOf(participant.name) === -1) {
@@ -476,40 +502,49 @@ class AddNewBet extends Component {
                 if (this.props.editMode) {
                     newBet._id = this.props.editId;
                     const editBetPromise = editBetRequest("editBet", this.props.selectedGroup, newBet);
-                    editBetPromise.then(res => {
+                    editBetPromise.then(groupResponse => {
+                        document.body.style.pointerEvents = 'none';
+                        document.body.style.cursor = 'wait';
+                        const changedGroups = changeSingleGroup(this.props.groups, this.props.selectedGroup, groupResponse.data.payload);
+                        let statsObject = getShortStats(changedGroups, this.props.user.nickname);
+                        statsObject.balance = calculateBalance(changedGroups, this.props.user.nickname);
+                        this.props.setShortStats(statsObject);
+                        this.props.setGroups(changedGroups);
                         this.setState({
                             success: true,
                             successMessage: "Edited bet has been sent for approval!"
-                        }, () => {
-                            setTimeout(() => window.location.reload(), 1000)
-                        })
+                        });
+                        setTimeout(() => {
+                            document.body.style.pointerEvents = 'auto';
+                            document.body.style.cursor = 'auto';
+                            this.props.history.push('/');
+                        }, 1000)
                     }).catch(err => {
                         this.setState({
                             error: true,
-                            errorMessage: "Could not edit bet!"
+                            errorMessage: err.response.data.message
                         })
                     })
                 }
                 else {
-                    const uploadBetPromise = uploadBetRequest(false, false, this.state.selectedGroup, newBet);
+                    document.body.style.pointerEvents = 'none';
+                    document.body.style.cursor = "wait";
+                    const uploadBetPromise = uploadBetRequest(false, false, this.props.selectedGroup, newBet);
                     uploadBetPromise.then(res => {
                         this.setState({
                             success: true,
-                            successMessage: "Bet has been sent for approval!"
+                            successMessage: res.data.message
                         }, () => {
-                            setTimeout(() => this.props.history.push({
-                                pathname: '/active-bets',
-                                state: {
-                                    groups: this.state.groups,
-                                    selectedGroup: this.state.selectedGroup,
-                                    user: this.state.user,
-                                }
-                            }), 1000)
-                        })
+                            setTimeout(() => {
+                                document.body.style.pointerEvents = 'auto';
+                                document.body.style.cursor = "auto";
+                                this.props.history.push('/')
+                            }, 1000)
+                        });
                     }).catch(err => {
                         this.setState({
                             error: true,
-                            errorMessage: "Could not upload bet to server!"
+                            errorMessage: err.response.data.message
                         })
                     })
                 }
@@ -561,10 +596,10 @@ class AddNewBet extends Component {
     }
 
     getAndSetEditValues = () => {
-        const theGroup = this.props.groups.filter(group => group._id === this.props.selectedGroup);
-        const theOne = theGroup[0].activeBets.filter(bet => bet._id === this.props.editId);
+        const theGroup = this.props.groups.filter(group => group._id.toString() === this.props.selectedGroup.toString());
+        const theOne = theGroup[0].activeBets.filter(bet => bet._id.toString() === this.props.editId.toString());
 
-        let filteredBet = theOne[0];
+        let filteredBet = JSON.parse(JSON.stringify(theOne[0]));
 
         if (filteredBet.jointBet) {
             let newJointSelected = [];
@@ -650,29 +685,27 @@ class AddNewBet extends Component {
         }
     }
 
-    handleGroupModal = () => {
+    handleGroupModal = (e) => {
+        e.stopPropagation();
         this.setState({
             groupsOpen: true
         })
     }
 
-    handleGroupChange = (e) => {
-        if (e.target.innerHTML.indexOf('>') === -1) {
-            let newName = e.target.innerHTML;
-            const newGroup = this.state.groups.filter(group => group.name === newName);
-            const fieldsToRevert = Array.from(document.getElementsByClassName('participant-input-name'));
-            fieldsToRevert.forEach(field => field.classList.remove('selected-person'))
-            this.setState({
-                people: newGroup[0].people,
-                groupsOpen: false,
-                jointSelected: [],
-                participants: [
-                    { id: "newBetParticipant1", name: "", value: "", singleStake: "" },
-                    { id: "newBetParticipant2", name: "", value: "", singleStake: "" }],
-                selectedGroup: newGroup[0]._id,
-                selectedGroupName: newGroup[0].name
-            })
-        }
+    handleGroupChange = (ID, e) => {
+        console.log(ID, e)
+        e.stopPropagation();
+        const newGroup = changeGroup(this.props.groups, ID, this.props.setGroup, this.props.setGroupName);
+        const fieldsToRevert = Array.from(document.getElementsByClassName('participant-input-name'));
+        fieldsToRevert.forEach(field => field.classList.remove('selected-person'))
+        this.setState({
+            people: newGroup,
+            groupsOpen: false,
+            jointSelected: [],
+            participants: [
+                { id: "newBetParticipant1", name: "", value: "", singleStake: "" },
+                { id: "newBetParticipant2", name: "", value: "", singleStake: "" }]
+        })
     }
 
     handleLimitedCheck = () => {
@@ -681,7 +714,9 @@ class AddNewBet extends Component {
     }
 
     hideError = (e) => {
-        e.stopPropagation();
+        if (e) {
+            e.stopPropagation();
+        }
         this.setState({ error: false, errorMessage: "" })
     }
 
@@ -948,6 +983,10 @@ class AddNewBet extends Component {
             }
         };
 
+        if (this.state.error) {
+            setTimeout(() => this.hideError(), 1500);
+        }
+
         return (
             <DndProvider backend={windowWidth(480) ? Backend : TouchBackend}>
                 {windowWidth(480) ? null : <MyPreview />}
@@ -955,14 +994,14 @@ class AddNewBet extends Component {
                     {this.state.pageLoaded ? <Fragment>
                         <div id="add-new-bet-container" className="basic-fx justify-center-fx " onClick={this.closeModals}>
                             <form id="addNewBet" onSubmit={this.createNewBet} onChange={this.hideError}>
-                            {this.state.pageLoaded && !this.props.editMode ? <div className="basic-fx justify-center-fx relative add-bet-group-container">
+                                {this.state.pageLoaded && !this.props.editMode ? <div className="basic-fx justify-center-fx relative add-bet-group-container">
                                     <GroupsDropdown
-                                        groups={this.state.groups}
+                                        groups={this.props.groups}
                                         groupsOpen={this.state.groupsOpen}
                                         handleGroupModal={this.handleGroupModal}
                                         handleGroupChange={this.handleGroupChange}
-                                        selectedGroup={this.state.selectedGroup}
-                                        selectedGroupName={this.state.selectedGroupName}
+                                        selectedGroup={this.props.selectedGroup}
+                                        selectedGroupName={this.props.selectedGroupName}
                                     /></div> : null}
 
                                 <div className="full-line-space basic-fx justify-between-fx">
@@ -972,13 +1011,13 @@ class AddNewBet extends Component {
 
                                 <div className="bet-between">Participants:</div>
                                 {!this.state.jointBet ? participantsToRender : jointBetToRender}
-                                <div className={`full-line-space basic-fx ${this.state.jointBet ? "justify-center-fx": " justify-between-fx"}`}>
+                                <div className={`full-line-space basic-fx ${this.state.jointBet ? "justify-center-fx" : " justify-between-fx"}`}>
                                     {!this.state.jointBet ? <button type="button" className="add-clause-participant-button" onClick={this.addNewParticipant}>Add participant</button> : null}
                                     <button type="button" id="jointBet" className="add-clause-participant-button" onClick={this.jointBetFunction}>Group bet</button>
                                 </div>
                                 <AddCheckbox id="moneyBetCheck" function={this.moneyClickFunction} text="Money bet?" />
                                 {!this.state.jointBet && this.state.participants.length < 3 ?
-                                <AddCheckbox id="moneyBetEquality" function={this.moneyEqualBets.bind(this, this.state.participants.length)} text="Different bets?" /> : null}
+                                    <AddCheckbox id="moneyBetEquality" function={this.moneyEqualBets.bind(this, this.state.participants.length)} text="Different bets?" /> : null}
                                 <AddCheckbox id="durationLimitedCheck" function={this.handleLimitedCheck} text="Time limited?" />
                                 {this.state.limitedCheck ? <InputField id="durationLimitedValue" text="Until when?" /> : null}
                                 {!this.state.jointBet ? !this.state.equalBets ?
@@ -997,24 +1036,54 @@ class AddNewBet extends Component {
                                     )
                                 })}
                                 <button type="button" className="add-clause-participant-button" onClick={this.addNewAdditionalClause}>Add clause</button>
-                                {this.state.error ? <ErrorMessage text={this.state.errorMessage} /> : null}
-                                {this.state.success ? <SuccessMessage text={this.state.successMessage} classToDisplay="message-space"  /> : null}
+                                {this.state.error ? <ErrorMessage text={this.state.errorMessage} classToDisplay="message-space" /> : null}
                                 {this.props.editMode ?
                                     <div className="basic-fx justify-around-fx align-center-fx">
                                         <ConfirmButton classToDisplay="confirm-button-space" text="Edit bet" type="submit" />
                                         <DangerButton disabled={false} handleDangerButton={this.props.hideModal} text="Quit" type="button" />
                                     </div>
-                                    : <ConfirmButton classToDisplay="basic-fx justify-center-fx confirm-button-space" text={"Add bet"} type="submit" />}
+                                    : <ConfirmButton classToDisplay="basic-fx justify-center-fx confirm-button-space" text="Add bet" type="submit" />}
                             </form>
                         </div>
                         {this.props.editMode ? null : <ReturnButton
                             returnToMain={returnToMain.bind(null, this.props)}
                             classToDisplay="return-button-space return-button-medium" text="Main menu" />}
-                    </Fragment> : null}
+                    </Fragment> : <Loader loading={this.state.pageLoaded} />}
+                    {this.state.success ? <SuccessModal message={this.state.successMessage} /> : null}
                 </div>
             </DndProvider>
         );
     }
 }
 
-export default AddNewBet;
+const mapStateToProps = (state) => {
+    return {
+        appLoaded: state.appStates.appLoaded,
+        selectedGroup: state.appStates.selectedGroup,
+        selectedGroupName: state.appStates.selectedGroupName,
+        groups: state.groups,
+        user: state.user
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        setGroup: (id) => {
+            dispatch({ type: "appStates/setGroup", payload: id })
+        },
+
+        setGroups: (groups) => {
+            dispatch({ type: "groups/setGroups", payload: groups })
+        },
+
+        setGroupName: (name) => {
+            dispatch({ type: "appStates/setGroupName", payload: name })
+        },
+
+        setShortStats: (stats) => {
+            dispatch({ type: "appStates/setShortStats", payload: stats })
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(AddNewBet));

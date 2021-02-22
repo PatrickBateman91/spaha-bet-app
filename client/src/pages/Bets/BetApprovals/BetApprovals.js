@@ -1,8 +1,8 @@
 import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
-import { getUserData } from '../../../services/Axios/UserRequests';
-import { returnToMain, rightUserCheck } from '../../../services/HelperFunctions/HelperFunctions';
+import { calculateBalance, changeSingleGroup, getShortStats, returnToMain, rightUserCheck } from '../../../services/HelperFunctions/HelperFunctions';
 import { uploadApprovalRequest } from '../../../services/Axios/BetRequests';
 import ApproveBox from '../../../components/ApproveBox/ApproveBox';
 import DifferentStakes from '../../../parts/Bets/DifferentStakes';
@@ -10,73 +10,102 @@ import JointBet from '../../../parts/Bets/JointBet';
 import Loader from '../../../components/Loaders/Loader';
 import ReturnButton from '../../../components/Buttons/ReturnButton';
 import SameStakes from '../../../parts/Bets/SameStakes';
+import SuccessModal from '../../../components/Modals/SuccessModal';
 import './styles.scss';
 
 class WaitingForApproval extends Component {
     state = {
         appLoading: true,
-        pageLoaded: false,
         error: false,
         errorMessage: "",
+        pageLoaded: false,
         success: false,
         successMessage: ""
     }
 
     componentDidMount() {
         window.scrollTo(0, 0);
-        this.readDataFromServer();
+        document.getElementById('root').style.height = "100%";
+        if (this.props.appLoaded) {
+            this.updateData(this.props.groups, this.props.user.nickname);
+        }
+    }
+
+    componentDidUpdate(prevProps) {
+        if (!prevProps.appLoaded && this.props.appLoaded) {
+            if (this.props.user === "guest") {
+                this.props.history.push('/');
+            } else {
+                this.updateData();
+            }
+        }
+        if (this.props.needsUpdate) {
+            let statsObject = getShortStats(this.props.groups, this.props.user.nickname);
+            statsObject.balance = calculateBalance(this.props.groups, this.props.user.nickname);
+            this.props.setShortStats(statsObject);
+            this.updateData();
+            this.props.setNeedsUpdate(false);
+        }
     }
 
     getUserProfile = (e, name) => {
         this.props.history.push(`/profile/${name}`)
     }
 
-    handleApproval = (e, functionProps) => {
+    handleApproval = (e, functionProps, answer) => {
         e.stopPropagation();
         const divs = document.querySelector('.all-bets-container div');
         divs.style.pointerEvents = "none";
         document.body.style.cursor = "wait";
 
-        const answer = e.target.innerHTML;
-        const approvalPromise = uploadApprovalRequest(functionProps.requestType, functionProps.bet, functionProps.groupId, answer);
-        approvalPromise.then(res => {
+        const approvalPromise = uploadApprovalRequest(functionProps.requestType, functionProps.bet, functionProps.groupID, answer);
+        approvalPromise.then(groupResponse => {
+            document.body.style.pointerEvents = 'none';
+            document.body.style.cursor = 'wait';
             let message = "";
             if (answer === "Accept") {
                 message = "You approved the bet!"
             }
             else {
-                message = "You declined bet!"
+                message = "You declined the bet!"
             }
             this.setState({
                 success: true,
                 successMessage: message
             }, () => {
-                setTimeout(() => {
-                    this.readDataFromServer();
-                }, 1000)
-            })
+                document.getElementById('success-modal-container').style.top = `${window.pageYOffset}px`;
+            });
+
+            const changedGroups = changeSingleGroup(this.props.groups, functionProps.groupID, groupResponse.data.payload);
+            this.props.setGroups(changedGroups);
+
+            setTimeout(() => {
+                this.props.setNeedsUpdate(true);
+                document.body.style.pointerEvents = 'auto';
+                document.body.style.cursor = 'auto';
+                this.setState({ success: false, successMessage: "" });
+            }, 1000)
         }).catch(err => {
             this.setState({
                 error: true,
-                errorMessage: "Oops. Something went wrong!"
+                errorMessage: err.response.data.message
             })
         })
-
     }
 
-    updateData = (updateData, updateNickname, updateUser) => {
+    updateData = () => {
         let addBets = [];
         let editBets = [];
         let finishBets = [];
-        updateData.forEach(group => {
+        this.props.groups.forEach(group => {
             group.betsWaitingForAddApproval.forEach(bet => {
-                if (bet.approvedAddArray.indexOf(updateNickname) === -1) {
+                if (bet.approvedAddArray.indexOf(this.props.user.nickname) === -1) {
                     let userCheck;
                     if (bet.jointBet) {
-                        userCheck = rightUserCheck(updateNickname, "jointBet", bet);
+                        userCheck = rightUserCheck(this.props.user.nickname, "jointBet", bet);
                     }
                     else {
-                        userCheck = rightUserCheck(updateNickname, "regular", bet);
+                        userCheck = rightUserCheck(this.props.user.nickname, "regular", bet);
                     }
                     if (userCheck) {
                         addBets.push({
@@ -87,13 +116,13 @@ class WaitingForApproval extends Component {
                 }
             })
             group.betsWaitingForEditApproval.forEach(bet => {
-                if (bet.approvedEditArray.indexOf(updateNickname) === -1) {
+                if (bet.approvedEditArray.indexOf(this.props.user.nickname) === -1) {
                     let userCheck;
                     if (bet.jointBet) {
-                        userCheck = rightUserCheck(updateNickname, "jointBet", bet);
+                        userCheck = rightUserCheck(this.props.user.nickname, "jointBet", bet);
                     }
                     else {
-                        userCheck = rightUserCheck(updateNickname, "regular", bet);
+                        userCheck = rightUserCheck(this.props.user.nickname, "regular", bet);
                     }
                     if (userCheck) {
                         editBets.push({
@@ -104,13 +133,13 @@ class WaitingForApproval extends Component {
                 }
             })
             group.betsWaitingForFinishedApproval.forEach(bet => {
-                if (bet.approvedFinishArray.indexOf(updateNickname) === -1) {
+                if (bet.approvedFinishArray.indexOf(this.props.user.nickname) === -1) {
                     let userCheck;
                     if (bet.jointBet) {
-                        userCheck = rightUserCheck(updateNickname, "jointBet", bet);
+                        userCheck = rightUserCheck(this.props.user.nickname, "jointBet", bet);
                     }
                     else {
-                        userCheck = rightUserCheck(updateNickname, "regular", bet);
+                        userCheck = rightUserCheck(this.props.user.nickname, "regular", bet);
                     }
                     if (userCheck) {
                         finishBets.push({
@@ -122,7 +151,7 @@ class WaitingForApproval extends Component {
             })
         })
         this.setState({
-            appLoading:false,
+            appLoading: false,
             addBets,
             editBets,
             error: false,
@@ -130,34 +159,11 @@ class WaitingForApproval extends Component {
             finishBets,
             pageLoaded: true,
             success: false,
-            successMessage: "",
-            user: updateUser
+            successMessage: ""
         }, () => {
             const divs = document.querySelector('.all-bets-container div');
             divs.style.pointerEvents = "auto";
             document.body.style.cursor = "auto";
-        })
-    }
-
-    readDataFromServer = () => {
-        const getUserPromise = getUserData('get user');
-        getUserPromise.then(resUser => {
-            const getDataPromise = getUserData('get groups')
-            getDataPromise.then(resData => {
-                this.updateData(resData.data, resUser.data.nickname, resUser.data);
-            }).catch(err => {
-                this.setState({
-                    appLoading:false,
-                    error: true,
-                    errorMessage: "Could not get data!"
-                })
-            })
-        }).catch(err => {
-            this.setState({
-                appLoading:false,
-                error: true,
-                errorMessage: "Could not get user"
-            })
         })
     }
 
@@ -175,15 +181,12 @@ class WaitingForApproval extends Component {
                     return <Fragment key={add.bet._id}>
                         <JointBet
                             bet={add.bet}
-                            finishedBetToServer={this.finishedBetToServer}
-                            filterUserBets={this.filterUserBets}
                             getUserProfile={this.getUserProfile}
-                            handleEdit={this.handleEdit}
                             rightUserCheck={rightUserCheck}
-                            type={'approve-add'}
-                            user={this.state.user}
+                            type='approve-add'
+                            user={this.props.user}
                         />
-                        <ApproveBox handleApproval={this.handleApproval} bet={add.bet._id} groupId={add.groupId} requestType="add" />
+                        <ApproveBox handleApproval={this.handleApproval} bet={add.bet._id} groupID={add.groupId} requestType="add" />
                     </Fragment>
                 }
                 else {
@@ -192,15 +195,12 @@ class WaitingForApproval extends Component {
                         return <Fragment key={add.bet._id}>
                             <DifferentStakes
                                 bet={add.bet}
-                                finishedBetToServer={this.finishedBetToServer}
-                                filterUserBets={this.filterUserBets}
                                 getUserProfile={this.getUserProfile}
-                                handleEdit={this.handleEdit}
                                 rightUserCheck={rightUserCheck}
-                                type={'approve-add'}
-                                user={this.state.user}
+                                type='approve-add'
+                                user={this.props.user}
                             />
-                            <ApproveBox handleApproval={this.handleApproval} bet={add.bet._id} groupId={add.groupId} requestType="add" />
+                            <ApproveBox handleApproval={this.handleApproval} bet={add.bet._id} groupID={add.groupId} requestType="add" />
                         </Fragment>
                     }
 
@@ -208,14 +208,11 @@ class WaitingForApproval extends Component {
                         return <Fragment key={add.bet._id}>
                             <SameStakes
                                 bet={add.bet}
-                                finishedBetToServer={this.finishedBetToServer}
-                                filterUserBets={this.filterUserBets}
                                 getUserProfile={this.getUserProfile}
-                                handleEdit={this.handleEdit}
                                 rightUserCheck={rightUserCheck}
-                                type={'approve-add'}
-                                user={this.state.user} />
-                            <ApproveBox handleApproval={this.handleApproval} bet={add.bet._id} groupId={add.groupId} requestType="add" />
+                                type='approve-add'
+                                user={this.props.user} />
+                            <ApproveBox handleApproval={this.handleApproval} bet={add.bet._id} groupID={add.groupId} requestType="add" />
                         </Fragment>
                     }
                 }
@@ -226,15 +223,12 @@ class WaitingForApproval extends Component {
                     return <Fragment key={edit.bet._id}>
                         <JointBet
                             bet={edit.bet}
-                            finishedBetToServer={this.finishedBetToServer}
-                            filterUserBets={this.filterUserBets}
                             getUserProfile={this.getUserProfile}
-                            handleEdit={this.handleEdit}
                             rightUserCheck={rightUserCheck}
-                            type={'approve-edit'}
-                            user={this.state.user}
+                            type='approve-edit'
+                            user={this.props.user}
                         />
-                        <ApproveBox handleApproval={this.handleApproval} bet={edit.bet._id} groupId={edit.groupId} requestType="edit" />
+                        <ApproveBox handleApproval={this.handleApproval} bet={edit.bet._id} groupID={edit.groupId} requestType="edit" />
                     </Fragment>
                 }
                 else {
@@ -243,15 +237,12 @@ class WaitingForApproval extends Component {
                         return <Fragment key={edit.bet._id}>
                             <DifferentStakes
                                 bet={edit.bet}
-                                finishedBetToServer={this.finishedBetToServer}
-                                filterUserBets={this.filterUserBets}
                                 getUserProfile={this.getUserProfile}
-                                handleEdit={this.handleEdit}
                                 rightUserCheck={rightUserCheck}
-                                type={'approve-edit'}
-                                user={this.state.user}
+                                type='approve-edit'
+                                user={this.props.user}
                             />
-                            <ApproveBox handleApproval={this.handleApproval} bet={edit.bet._id} groupId={edit.groupId} requestType="edit" />
+                            <ApproveBox handleApproval={this.handleApproval} bet={edit.bet._id} groupID={edit.groupId} requestType="edit" />
                         </Fragment>
                     }
 
@@ -259,14 +250,11 @@ class WaitingForApproval extends Component {
                         return <Fragment key={edit.bet._id}>
                             <SameStakes
                                 bet={edit.bet}
-                                finishedBetToServer={this.finishedBetToServer}
-                                filterUserBets={this.filterUserBets}
                                 getUserProfile={this.getUserProfile}
-                                handleEdit={this.handleEdit}
                                 rightUserCheck={rightUserCheck}
-                                type={'approve-edit'}
-                                user={this.state.user} />
-                            <ApproveBox handleApproval={this.handleApproval} bet={edit.bet._id} groupId={edit.groupId} requestType="edit" />
+                                type='approve-edit'
+                                user={this.props.user} />
+                            <ApproveBox handleApproval={this.handleApproval} bet={edit.bet._id} groupID={edit.groupId} requestType="edit" />
                         </Fragment>
                     }
                 }
@@ -277,19 +265,12 @@ class WaitingForApproval extends Component {
                     return <Fragment key={finish.bet._id}>
                         <JointBet
                             bet={finish.bet}
-                            chooseBetWinner={this.chooseBetWinner}
-                            finishedBetToServer={this.finishedBetToServer}
-                            finishID={this.state.finishID}
-                            filterUserBets={this.filterUserBets}
                             getUserProfile={this.getUserProfile}
-                            handleEdit={this.handleEdit}
-                            handleFinish={this.handleFinish}
                             rightUserCheck={rightUserCheck}
-                            type={'approve-finish'}
-                            winner={finish.bet.winner}
-                            user={this.state.user}
+                            type='approve-finish'
+                            user={this.props.user}
                         />
-                        <ApproveBox handleApproval={this.handleApproval} bet={finish.bet._id} groupId={finish.groupId} requestType="finish" />
+                        <ApproveBox handleApproval={this.handleApproval} bet={finish.bet._id} groupID={finish.groupId} requestType="finish" />
                     </Fragment>
                 }
                 else {
@@ -298,19 +279,12 @@ class WaitingForApproval extends Component {
                         return <Fragment key={finish.bet._id}>
                             <DifferentStakes
                                 bet={finish.bet}
-                                chooseBetWinner={this.chooseBetWinner}
-                                finishedBetToServer={this.finishedBetToServer}
-                                finishID={this.state.finishID}
-                                filterUserBets={this.filterUserBets}
                                 getUserProfile={this.getUserProfile}
-                                handleFinish={this.handleFinish}
-                                handleEdit={this.handleEdit}
                                 rightUserCheck={rightUserCheck}
                                 type={'approve-finish'}
-                                winner={finish.bet.winner}
-                                user={this.state.user}
+                                user={this.props.user}
                             />
-                            <ApproveBox handleApproval={this.handleApproval} bet={finish.bet._id} groupId={finish.groupId} requestType="finish" />
+                            <ApproveBox handleApproval={this.handleApproval} bet={finish.bet._id} groupID={finish.groupId} requestType="finish" />
                         </Fragment>
                     }
 
@@ -318,60 +292,87 @@ class WaitingForApproval extends Component {
                         return <Fragment key={finish.bet._id}>
                             <SameStakes
                                 bet={finish.bet}
-                                chooseBetWinner={this.chooseBetWinner}
-                                finishedBetToServer={this.finishedBetToServer}
-                                finishID={this.state.finishID}
-                                filterUserBets={this.filterUserBets}
                                 getUserProfile={this.getUserProfile}
-                                handleFinish={this.handleFinish}
-                                handleEdit={this.handleEdit}
                                 rightUserCheck={rightUserCheck}
-                                type={'approve-finish'}
-                                winner={finish.bet.winner}
-                                user={this.state.user} />
-                            <ApproveBox handleApproval={this.handleApproval} bet={finish.bet._id} groupId={finish.groupId} requestType="finish" />
+                                type='approve-finish'
+                                user={this.props.user} />
+                            <ApproveBox handleApproval={this.handleApproval} bet={finish.bet._id} groupID={finish.groupId} requestType="finish" />
                         </Fragment>
                     }
                 }
             })
         }
         return (
-            <div className="all-bets-container basic-column-fx wrap-fx align-center-fx">
-                {this.state.appLoading ? <Loader loading={this.state.appLoading} /> : !addTrigger && !editTrigger && !finishTrigger ?
-                    <div id="no-waiting-bets-container" className="basic-column-fx justify-evenly-fx">
-                        <div id="no-waiting-bets-holder" className="basic-fx justify-evenly-fx">
-                            You approved everything!
+            <Fragment>
+                <div className="all-bets-container basic-column-fx wrap-fx align-center-fx">
+                    {!this.props.appLoaded ? <Loader loading={!this.props.appLoaded} /> : !addTrigger && !editTrigger && !finishTrigger ?
+                        <div id="no-waiting-bets-container" className="basic-column-fx justify-evenly-fx">
+                            <div id="no-waiting-bets-holder" className="basic-fx justify-evenly-fx">
+                                You approved everything!
                         <FontAwesomeIcon
-                                icon={faCheck} />
+                                    icon={faCheck} />
+                            </div>
+                            <ReturnButton
+                                classToDisplay="justify-center-fx return-button-medium"
+                                returnToMain={returnToMain.bind(null, this.props)}
+                                text="Main menu" />
                         </div>
-                        <ReturnButton
-                            classToDisplay="justify-center-fx return-button-medium"
-                            returnToMain={returnToMain.bind(null, this.props)}
-                            text="Main menu" />
-                    </div>
-                    :
-                    <div className="basic-column-fx justify-around-fx">
-                        <div className="approve-single-box basic-column-fx">
-                            <span className="approve-item-title">Added bets</span>
-                            {addTrigger ? addBets : <span className="approve-item">No added bets that are awaiting your approval!</span>}
-                        </div>
-                        <div className="approve-single-box basic-column-fx">
-                            <span className="approve-item-title">Edited bets</span>
-                            {editTrigger ? editBets : <span className="approve-item">No edited bets are awaiting your approval!</span>}
-                        </div>
+                        :
+                        <div className="basic-column-fx justify-around-fx">
+                            <div className="approve-single-box basic-column-fx">
+                                <span className="approve-item-title">Added bets</span>
+                                {addTrigger ? addBets : <span className="approve-item">No added bets that are awaiting your approval!</span>}
+                            </div>
+                            <div className="approve-single-box basic-column-fx">
+                                <span className="approve-item-title">Edited bets</span>
+                                {editTrigger ? editBets : <span className="approve-item">No edited bets are awaiting your approval!</span>}
+                            </div>
 
-                        <div className="approve-single-box basic-column-fx">
-                            <span className="approve-item-title">Finished bets</span>
-                            {finishTrigger ? finishBets : <span className="approve-item">No finished bets are awaiting your approval!</span>}
-                        </div>
-                        <ReturnButton
-                            classToDisplay="justify-center-fx return-button-space return-button-medium"
-                            returnToMain={returnToMain.bind(null, this.props)}
-                            text="Main menu" />
-                    </div>}
-            </div>
+                            <div className="approve-single-box basic-column-fx">
+                                <span className="approve-item-title">Finished bets</span>
+                                {finishTrigger ? finishBets : <span className="approve-item">No finished bets are awaiting your approval!</span>}
+                            </div>
+                            <ReturnButton
+                                classToDisplay="justify-center-fx return-button-space return-button-medium"
+                                returnToMain={returnToMain.bind(null, this.props)}
+                                text="Main menu" />
+                        </div>}
+                </div>
+                {this.state.success ? <SuccessModal message={this.state.successMessage} /> : null}
+            </Fragment>
         )
     }
 }
 
-export default WaitingForApproval;
+const mapStateToProps = (state) => {
+    return {
+        appLoaded: state.appStates.appLoaded,
+        groups: state.groups,
+        needsUpdate: state.appStates.needsUpdate,
+        shortStats: state.appStates.shortStats,
+        user: state.user
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        setAppLoaded: (bool) => {
+            dispatch({ type: "appStates/setAppLoaded", payload: bool })
+        },
+
+        setGroups: (groups) => {
+            dispatch({ type: "groups/setGroups", payload: groups })
+        },
+
+        setNeedsUpdate: (bool) => {
+            dispatch({ type: "appStates/setNeedsUpdate", payload: bool })
+        },
+
+        setShortStats: (stats) => {
+            dispatch({ type: "appStates/setShortStats", payload: stats })
+        }
+
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(WaitingForApproval);

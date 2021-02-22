@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import {fieldObjects} from './FieldsObjects';
-import { returnToMain, checkCorrectMailFormat, emptyFieldsCheck, passwordCheck, isMobile } from '../../../services/HelperFunctions/HelperFunctions';
-import { signInRequest, signUpRequest, getUserData } from '../../../services/Axios/UserRequests';
+import { connect } from 'react-redux';
+import { fieldObjects } from './FieldsObjects';
+import { checkCorrectMailFormat, emptyFieldsCheck, passwordCheck, returnToMain, isMobile } from '../../../services/HelperFunctions/HelperFunctions';
+import { getGroups } from '../../../services/HelperFunctions/RequestFunctions';
+import { signInRequest, signUpRequest } from '../../../services/Axios/UserRequests';
 import AuthButton from '../../../components/Buttons/AuthButton';
 import ErrorMessage from '../../../components/Messages/ErrorMessage';
 import InputField from '../../../components/Auth/InputField';
@@ -24,10 +26,10 @@ class MainAuth extends Component {
 
   componentDidMount() {
     window.scrollTo(0, 0);
-    const getUserPromise = getUserData('get user');
-    getUserPromise.then(resUser => {
+    document.getElementById('root').style.height = "100%";
+    if (this.props.user !== "guest") {
       this.props.history.push('/');
-    }).catch(err => {
+    } else {
       let whichPage;
 
       switch (this.props.match.path) {
@@ -42,11 +44,12 @@ class MainAuth extends Component {
         default:
           break;
       }
+
       this.setState({
         pageLoaded: true,
         whichPage
       })
-    })
+    }
   }
 
   handleProfilePicture = (e) => {
@@ -94,20 +97,31 @@ class MainAuth extends Component {
     }
 
     const signInPromise = signInRequest(path, email, password);
-    signInPromise.then(res => {
-      this.setState({
-        success: true,
-        successMessage: "You have signed in successfully!"
-      }, () => {
-        ;
-        setTimeout(this.props.history.push('/'), 1500);
-      })
+    signInPromise.then(userResponse => {
+      localStorage.setItem('bet-app-token', userResponse.data.payload.token);
+      this.props.updateUser(userResponse.data.payload.user);
+
+      if (userResponse.data.payload.user.groups.length > 0) {
+        getGroups(this.props, userResponse.data.payload.user.nickname);
+        this.setState({
+          success: true,
+          successMessage: "You have signed in successfully!"
+        }, () => {
+          setTimeout(() => this.props.history.push('/'), 500);
+        })
+      } else {
+        this.props.setAppLoaded(true);
+        this.setState({
+          success: true,
+          successMessage: "You have signed in successfully!"
+        }, () => {
+          setTimeout(() => this.props.history.push('/'), 500);
+        })
+      }
     }).catch(err => {
-      console.log(err);
-      console.log(err.response.data)
       this.setState({
         error: true,
-        errorMessage: err.response.data || "Can't access page at the moment!"
+        errorMessage: err.response.data.message
       })
     })
   }
@@ -150,7 +164,7 @@ class MainAuth extends Component {
     }
 
     if (newGroupCheck && !emptyFieldsCheck(groupName)) {
-      this.setState({
+      return this.setState({
         error: true,
         errorMessage: "Group name cannot be empty!"
       })
@@ -172,37 +186,34 @@ class MainAuth extends Component {
     formData.append('groupName', groupName);
     formData.append('file', this.state.selectedFile);
     const signUpPromise = signUpRequest('sign-up', formData);
-    signUpPromise.then(res => {
-      localStorage.setItem('bet-app-token', res.data.token)
-      this.setState({
-        success: true,
-        successMessage: "Account created!"
-      }, () => {
-        setTimeout(() => this.props.history.push('/'), 1500);
-      })
-    }).catch(err => {
-      let errorMessage;
-      let duplicateErrorCheck;
-      if (err.response.data.errmsg && err.response.data.errmsg.indexOf("E11000 duplicate key error") !== -1) {
-        duplicateErrorCheck = true;
-      }
+    signUpPromise.then(userResponse => {
+      localStorage.setItem('bet-app-token', userResponse.data.payload.token);
+      this.props.updateUser(userResponse.data.payload.user);
 
-      if (duplicateErrorCheck) {
-        if (err.response.data.errmsg.indexOf("nickname") !== -1) {
-          errorMessage = `Nickname ${err.response.data.keyValue.nickname} already in use!`
-        }
-        else if (err.response.data.errmsg.indexOf("email") !== -1) {
-          errorMessage = `Email ${err.response.data.keyValue.email} already in use!`
-        }
+      if (userResponse.data.payload.user.groups.length > 0) {
+        getGroups(this.props, userResponse.data.payload.user.nickname);
+
+        this.setState({
+          success: true,
+          successMessage: "Account created!"
+        }, () => {
+          setTimeout(() => this.props.history.push('/'), 1500);
+        })
+      } else {
+        this.props.setAppLoaded(true);
+        this.setState({
+          success: true,
+          successMessage: "Account created!"
+        }, () => {
+          setTimeout(() => this.props.history.push('/'), 1500);
+        })
       }
-      else {
-        errorMessage = err.response.data || "Our server is down. Unable to sign up at the moment!";
-      }
+    }).catch(err => {
       this.setState({
         success: false,
         successMessage: "",
         error: true,
-        errorMessage: errorMessage
+        errorMessage: err.response.data.message
       })
     })
   }
@@ -292,14 +303,14 @@ class MainAuth extends Component {
 
   render() {
     return (
-      <div className={`auth-form-main-container basic-column-fx justify-center-fx ${isMobile(480) ? "mobile-alternative-background": ""}`}>
+      <div className={`auth-form-main-container basic-column-fx justify-center-fx ${isMobile(480) ? "mobile-alternative-background" : ""}`}>
         {this.state.pageLoaded ? <div className="basic-column-fx justify-between-fx align-center-fx wrap-fx">
           <form name={fieldObjects[this.state.whichPage].formName} id={fieldObjects[this.state.whichPage].formName} onChange={this.hideMessages} onSubmit={this.handleSubmit} encType="multipart/form-data">
             <div className="auth-form-holder basic-column-fx wrap-fx justify-center-fx align-center-fx">
               <div>
                 <InputField
                   autoComplete={fieldObjects[this.state.whichPage].formOneAutocomplete}
-                  classToDisplay={`auth-line ${this.state.whichPage === "signInPage" ?  "hide-placeholder" : ""}`}
+                  classToDisplay={`auth-line ${this.state.whichPage === "signInPage" ? "hide-placeholder" : ""}`}
                   id={fieldObjects[this.state.whichPage].formOneName}
                   label={fieldObjects[this.state.whichPage].labelOneName}
                   placeholder={fieldObjects[this.state.whichPage].placeholderOne}
@@ -307,7 +318,7 @@ class MainAuth extends Component {
 
                 <InputField
                   autoComplete={fieldObjects[this.state.whichPage].formTwoAutocomplete}
-                  classToDisplay={`auth-line ${this.state.whichPage === "signInPage" ?  "hide-placeholder" : ""}`}
+                  classToDisplay={`auth-line ${this.state.whichPage === "signInPage" ? "hide-placeholder" : ""}`}
                   id={fieldObjects[this.state.whichPage].formTwoName}
                   label={fieldObjects[this.state.whichPage].labelTwoName}
                   placeholder={fieldObjects[this.state.whichPage].placeholderTwo}
@@ -357,10 +368,10 @@ class MainAuth extends Component {
               {this.state.error ? <ErrorMessage classToDisplay="message-space" text={this.state.errorMessage} /> : null}
               {this.state.success ? <SuccessMessage classToDisplay="message-space" text={this.state.successMessage} /> : null}
 
-              <AuthButton 
-              classToDisplay="auth-button-space" 
-              form={fieldObjects[this.state.whichPage].formName} 
-              text={fieldObjects[this.state.whichPage].buttonText} />
+              <AuthButton
+                classToDisplay="auth-button-space"
+                form={fieldObjects[this.state.whichPage].formName}
+                text={fieldObjects[this.state.whichPage].buttonText} />
 
             </div>
           </form>
@@ -372,4 +383,44 @@ class MainAuth extends Component {
 
 }
 
-export default MainAuth;
+const mapStateToProps = (state) => {
+  return {
+    user: state.user
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setError: (bool) => {
+      dispatch({ type: 'appStates/setError', payload: bool })
+    },
+    setErrorMessage: (message) => {
+      dispatch({ type: 'appStates/setErrorMessage', payload: message })
+    },
+    setGroup: (group) => {
+      dispatch({ type: 'appStates/setGroup', payload: group })
+    },
+
+    setGroupName: (name) => {
+      dispatch({ type: 'appStates/setGroupName', payload: name })
+    },
+
+    setGroups: (groups) => {
+      dispatch({ type: 'groups/setGroups', payload: groups })
+    },
+
+    setAppLoaded: (bool) => {
+      dispatch({ type: 'appStates/setAppLoaded', payload: bool })
+    },
+
+    setShortStats: (stats) => {
+      dispatch({ type: 'appStates/setShortStats', payload: stats })
+    },
+
+    updateUser: (user) => {
+      dispatch({ type: "user/updateUser", payload: user });
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MainAuth);

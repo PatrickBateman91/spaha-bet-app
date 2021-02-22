@@ -17,7 +17,7 @@ const SelectRegularWinner = (props) => {
                             </span>)
                     })}
                 </div>
-                <div className={`no-winner ${props.winner === "nobody" ? "winner-marked" : ""}`} onClick={e => props.chooseBetWinner(e, "nobody")}>Nije niko?</div>
+                <div className={`no-winner ${props.winner === "nobody" ? "winner-marked" : ""}`} onClick={e => props.chooseBetWinner(e, "nobody")}>Nobody won?</div>
                 <button onClick={e => props.finishedBetToServer(e, props.bet, props.bet._id)} type="button">Confirm</button>
             </div>
         </div>

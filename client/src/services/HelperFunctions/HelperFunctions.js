@@ -116,6 +116,17 @@ export const calculateBalance = (groups, nickname) => {
     return balance;
 }
 
+export const changeSingleGroup = (groups, ID, updatedGroup) => {
+    let newGroups = JSON.parse(JSON.stringify(groups));
+    for (let i = 0; i < newGroups.length; i++) {
+        if (newGroups[i]._id.toString() === ID.toString()) {
+            newGroups[i] = updatedGroup;
+            break;
+        }
+    }
+    return newGroups;
+}
+
 export const choosePicture = (ulog) => {
     if (ulog === 1) {
         return "https://spaha-bets.herokuapp.com\\public\\general\\One-dollar-bill.jpg";
@@ -212,6 +223,127 @@ export const getDate = (type, givenDate) => {
 
 }
 
+export const getSuggestions = (groups, nickname) => {
+    let peopleToAdd = [];
+    for (let i = 0; i < groups.length; i++) {
+        for (let j = 0; j < groups[i].people.length; j++) {
+            const nameCheck = groups[i].people[j];
+            if (peopleToAdd.indexOf(nameCheck) === -1 && nickname !== nameCheck) {
+                peopleToAdd.push(groups[i].people[j])
+            }
+        }
+    }
+    return peopleToAdd;
+}
+
+export const getShortStats = (groups, nickname) => {
+    let waitingNotifications = 0;
+    let totalNumberOfBets = 0;
+    groups.forEach(group => {
+        if (group.betsWaitingForAddApproval.length) {
+            group.betsWaitingForAddApproval.forEach(bet => {
+                if (bet.approvedAddArray.indexOf(nickname) === -1) {
+                    if (bet.jointBet) {
+                        if (bet.participants[0].participants.indexOf(nickname) !== -1) {
+                            waitingNotifications++;
+                        }
+                        if (bet.participants[1].participants.indexOf(nickname) !== -1) {
+                            waitingNotifications++;
+                        }
+                    }
+                    else {
+                        let userTrigger = false;
+                        for (let i = 0; i < bet.participants.length; i++) {
+                            if (bet.participants[i].name === nickname) {
+                                userTrigger = true;
+                                break;
+                            }
+                        }
+                        if (userTrigger) {
+                            waitingNotifications++;
+                        }
+                    }
+                }
+            })
+        }
+        if (group.betsWaitingForEditApproval.length) {
+            group.betsWaitingForEditApproval.forEach(bet => {
+                if (bet.approvedEditArray.indexOf(nickname) === -1) {
+                    if (bet.jointBet) {
+                        if (bet.participants[0].participants.indexOf(nickname) !== -1) {
+                            waitingNotifications++;
+                        }
+                        if (bet.participants[1].participants.indexOf(nickname) !== -1) {
+                            waitingNotifications++;
+                        }
+                    }
+                    else {
+                        let userTrigger = false;
+                        for (let i = 0; i < bet.participants.length; i++) {
+                            if (bet.participants[i].name === nickname) {
+                                userTrigger = true;
+                                break;
+                            }
+                        }
+                        if (userTrigger) {
+                            waitingNotifications++;
+                        }
+                    }
+                }
+            })
+        }
+        if (group.betsWaitingForFinishedApproval.length) {
+            group.betsWaitingForFinishedApproval.forEach(bet => {
+                if (bet.approvedFinishArray.indexOf(nickname) === -1) {
+                    if (bet.jointBet) {
+                        if (bet.participants[0].participants.indexOf(nickname) !== -1) {
+                            waitingNotifications++;
+                        }
+                        if (bet.participants[1].participants.indexOf(nickname) !== -1) {
+                            waitingNotifications++;
+                        }
+                    }
+                    else {
+                        let userTrigger = false;
+                        for (let i = 0; i < bet.participants.length; i++) {
+                            if (bet.participants[i].name === nickname) {
+                                userTrigger = true;
+                                break;
+                            }
+                        }
+                        if (userTrigger) {
+                            waitingNotifications++;
+                        }
+                    }
+                }
+            })
+        }
+
+        if (group.activeBets.length) {
+            group.activeBets.forEach(bet => {
+                if (bet.jointBet) {
+                    if (bet.participants[0].participants.indexOf(nickname) !== -1 || bet.participants[1].participants.indexOf(nickname) !== -1) {
+                        totalNumberOfBets++;
+                    }
+                } else {
+                    let userTrigger = false;
+                    for (let i = 0; i < bet.participants.length; i++) {
+                        if (bet.participants[i].name === nickname) {
+                            userTrigger = true;
+                            break;
+                        }
+                    }
+                    if (userTrigger) {
+                        totalNumberOfBets++;
+                    }
+                }
+            })
+        }
+    })
+
+    return { totalNumberOfBets, waitingNotifications };
+}
+
 export const isMobile = () => {
     if (window.innerWidth < 480) {
         return true;
@@ -242,6 +374,12 @@ export const passwordCheck = (password) => {
     }
     const regex = /^(?=.*\d).{6,16}$/;
     return regex.test(password);
+}
+
+export const removeGroup = (groups, ID) => {
+    let newGroups = JSON.parse(JSON.stringify(groups));
+    const changedGroups = newGroups.filter(group => group._id.toString() !== ID.toString());
+    return changedGroups;
 }
 
 export const returnToMain = (props) => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import AddNewBet from '../../../pages/Bets/AddNewBet/AddNewBet';
-import './styles.scss';
+import '../styles.scss';
 
 const EditBet = (props) => {
     return (

@@ -87,17 +87,18 @@
 .no-winner-check{
     position: absolute;
     top:0px;
-    right:-40px;
+    left:-40px;
     font-size:0.8em;
     z-index: 30;
     background-color: variables.$warningColor;
     padding:5px 10px;
     border-radius: 12px;
-    transform: rotate(40deg);
+    transform: rotate(-40deg);
+    -ms-transform: rotate(-40deg);
 
     @include mixins.mQ-phones(480px){
         font-size:0.6em;
-        right:-30px;
+        left:-30px;
         top:0px;
     }
 }

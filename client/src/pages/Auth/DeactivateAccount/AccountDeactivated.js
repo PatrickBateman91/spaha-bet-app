@@ -1,14 +1,9 @@
 import React from 'react';
-import { getUserData } from '../../../services/Axios/UserRequests';
 import './styles.scss';
 
 const AccountDeactivated = (props) => {
-    const getUserPromise = getUserData('get user');
-    getUserPromise.then(res => {
-        props.history.push('/');
-    }).catch(err => {
-        setTimeout(() => props.history.push('/'), 1500)
-    })
+    document.getElementById('root').style.height = "100%";
+    setTimeout(() => window.location.replace("https://spaha-betapp.netlify.app"), 2000);
     return (
         <div className="main-container main-background basic-fx align-center-fx justify-center-fx">
             <div id="goodbye-container" className="basic-column-fx justify-around-fx align-center-fx">

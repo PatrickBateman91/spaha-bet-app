@@ -1,13 +1,19 @@
 import React, { Fragment, useState } from 'react';
+import { connect } from 'react-redux';
 import { signOutRequest } from '../../../services/Axios/UserRequests';
 import './styles.scss';
 
 const SignedOutPage = (props) => {
+    document.getElementById('root').style.height = "100%";
     const [success, setSuccess] = useState(false);
     const [errorMessage, setMessage] = useState("");
 
     const signOutPromise = signOutRequest();
-    signOutPromise.then(res => {
+    signOutPromise.then(userResponse => {
+        props.emptyGroups();
+        props.logOutUser();
+        props.revertToDefault();
+        props.setAppLoaded(true);
         setSuccess(true);
         setTimeout(() => props.history.push('/'), 1000)
     }).catch(err => {
@@ -26,4 +32,24 @@ const SignedOutPage = (props) => {
     );
 };
 
-export default SignedOutPage;
+const mapDispatchToProps = (dispatch) => {
+    return {
+        emptyGroups: () => {
+            dispatch({ type: 'groups/emptyGroups' })
+        },
+
+        logOutUser: () => {
+            dispatch({ type: 'user/logOutUser' })
+        },
+
+        revertToDefault: () => {
+            dispatch({ type: 'appStates/revertToDefault' })
+        },
+
+        setAppLoaded: (bool) => {
+            dispatch({ type: "appStates/setAppLoaded", payload: bool })
+        }
+    }
+}
+
+export default connect(null, mapDispatchToProps)(SignedOutPage)

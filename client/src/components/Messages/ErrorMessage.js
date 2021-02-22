@@ -3,7 +3,7 @@ import './styles.scss';
 
 const ErrorMessage = (props) => {
     return (
-        <div className={`error-message ${props.classToDisplay}`}><span>{props.text}</span></div>
+        <div className={`error-message ${props.classToDisplay ? props.classToDisplay : ""}`}><span>{props.text}</span></div>
     );
 };
 

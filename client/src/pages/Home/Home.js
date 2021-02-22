@@ -1,12 +1,13 @@
 import React, { Component, Fragment } from 'react';
-import { calculateBalance, getDate, windowWidth } from '../../services/HelperFunctions/HelperFunctions';
-import { getUserData } from '../../services/Axios/UserRequests';
+import { connect } from 'react-redux';
+import { changeSingleGroup, windowWidth } from '../../services/HelperFunctions/HelperFunctions';
 import { notificationRequests } from '../../services/Axios/OtherRequests';
 import Profile from '../../parts/Profile/Profile';
 import ManageBets from '../../parts/Menu/ManageBets';
 import ManageGroups from '../../parts/Menu/ManageGroups';
 import NonAuthHome from '../Public/Home/NonAuthHome';
 import Notifications from '../../parts/Notifications/Notifications';
+import ServerError from '../../components/ServerError/ServerError';
 import SignOutNav from '../../parts/Menu/SignOutNav';
 import './styles.scss';
 
@@ -35,16 +36,10 @@ class Home extends Component {
         editID: "",
         finishBetModal: false,
         finishID: "",
-        filteredData: [],
-        filterState: "",
-        filterName: "",
-        filterTitle: "",
         hoverProfile: false,
         pageLoaded: false,
         payedModal: false,
         payedModalBet: "",
-        selectedGroup: "default",
-        selectedGroupName: "",
         success: false,
         successMessage: "",
         usingFilter: false
@@ -53,25 +48,16 @@ class Home extends Component {
     componentDidMount() {
         window.scrollTo(0, 0);
         document.getElementById('root').style.height = "100%";
-        this.getUser(true, this.readDataFromServer);
+        document.body.style.overflowY = "auto";
+        if (this.props.appLoaded && this.props.user !== "guest" && this.props.firstRead) {
+            this.markAsSeen();
+        }
     }
 
-    getUser = (callbackB, callbackF) => {
-        const getUserPromise = getUserData('get user');
-        getUserPromise.then(resUser => {
-            this.setState({
-                user: resUser.data
-            }, () => {
-                if (callbackB) {
-                    callbackF(true);
-                }
-            })
-        })
-            .catch(err => {
-                this.setState({
-                    pageLoaded: true
-                })
-            })
+    componentDidUpdate() {
+        if (this.props.appLoaded && this.props.user !== "guest" && this.props.firstRead) {
+            this.markAsSeen();
+        }
     }
 
     handleAccountClick = (e) => {
@@ -111,24 +97,49 @@ class Home extends Component {
         const answer = e.target.innerHTML;
         if (functionProps.notification.type === "accept user to group") {
             const approveNewMemberPromise = notificationRequests("accept user to group", functionProps.notification.data.groupId, answer, functionProps.notification.data.user, functionProps.notification._id);
-            approveNewMemberPromise.then(res => {
-                this.getUser(false, null);
+            approveNewMemberPromise.then(groupResponse => {
+                let changedGroups = JSON.parse(JSON.stringify(this.props.groups));
+                changedGroups = changeSingleGroup(this.props.groups, groupResponse.data.payload._id.toString(), groupResponse.data.payload);
+                this.props.removeNotification(functionProps.notification._id.toString());
+                this.props.setGroups(changedGroups);
             }).catch(err => {
                 this.setState({
                     error: true,
                     errorMessage: "There was an error!"
+                }, () => {
+                    setTimeout(() => this.setState({ error: false, errorMessage: "" }), 1000)
                 })
             })
 
         }
-        else if ("pending group invite") {
+        else if (functionProps.notification.type === "pending group invite") {
             const pendingGroupInvitePromise = notificationRequests("accept group invite", functionProps.notification.data.groupId, answer, null, functionProps.notification._id)
-            pendingGroupInvitePromise.then(res => {
-                this.getUser(false, null);
+            pendingGroupInvitePromise.then(groupResponse => {
+                if (answer === "Accept") {
+                    const changedGroups = JSON.parse(JSON.stringify(this.props.groups));
+                    const newUserGroups = JSON.parse(JSON.stringify(this.props.user.groups));
+                    changedGroups.push(groupResponse.data.payload)
+                    newUserGroups.push(groupResponse.data.payload._id.toString());
+                    this.props.removeNotification(functionProps.notification._id.toString());
+                    this.props.setGroups(changedGroups);
+                    this.props.updateUserGroups(newUserGroups);
+
+                    this.setState({
+                        success: true,
+                        successMessage: `You joined ${groupResponse.data.payload.name}`
+                    }, () => setTimeout(() => this.setState({ success: false, successMessage: "" }), 1500))
+                }
+
+                else if (answer === "Decline") {
+                    this.props.removeNotification(functionProps.notification._id.toString());
+                }
+
             }).catch(err => {
                 this.setState({
                     error: true,
                     errorMessage: "There was an error!"
+                }, () => {
+                    setTimeout(() => this.setState({ error: false, errorMessage: "" }), 1000)
                 })
             })
         }
@@ -172,6 +183,7 @@ class Home extends Component {
 
     markAsSeen = () => {
         notificationRequests("read notifications");
+        this.props.setFirstRead(false);
     }
 
     menuClick = (e) => {
@@ -253,181 +265,37 @@ class Home extends Component {
         this.props.history.push('/change-profile-picture')
     }
 
-    readDataFromServer = (firstRead) => {
-        const getDataPromise = getUserData('get groups');
-        const nickname = this.state.user.nickname;
-        let totalNumberOfBets = 0;
-        getDataPromise.then(resData => {
-            if (resData.data === "User is not a part of any groups!") {
-                this.setState({
-                    balance: 0,
-                    groups: [],
-                    selectedGroup: "",
-                    selectedGroupName: "",
-                    pageLoaded: true,
-                    totalNumberOfBets: 0,
-                    waitingNotifications: 0
-                }, () => {
-                    if (firstRead) {
-                        this.markAsSeen();
-                    }
-                })
-            }
-            else {
-                let waitingNotifications = 0;
-                resData.data.forEach(group => {
-                    if (group.betsWaitingForAddApproval.length) {
-                        group.betsWaitingForAddApproval.forEach(bet => {
-                            if (bet.approvedAddArray.indexOf(nickname) === -1) {
-                                if (bet.jointBet) {
-                                    if (bet.participants[0].participants.indexOf(nickname) !== -1) {
-                                        waitingNotifications++;
-                                    }
-                                    if (bet.participants[1].participants.indexOf(nickname) !== -1) {
-                                        waitingNotifications++;
-                                    }
-                                }
-                                else {
-                                    let userTrigger = false;
-                                    for (let i = 0; i < bet.participants.length; i++) {
-                                        if (bet.participants[i].name === nickname) {
-                                            userTrigger = true;
-                                            break;
-                                        }
-                                    }
-                                    if (userTrigger) {
-                                        waitingNotifications++;
-                                    }
-                                }
-                            }
-                        })
-                    }
-                    if (group.betsWaitingForEditApproval.length) {
-                        group.betsWaitingForEditApproval.forEach(bet => {
-                            if (bet.approvedEditArray.indexOf(nickname) === -1) {
-                                if (bet.jointBet) {
-                                    if (bet.participants[0].participants.indexOf(nickname) !== -1) {
-                                        waitingNotifications++;
-                                    }
-                                    if (bet.participants[1].participants.indexOf(nickname) !== -1) {
-                                        waitingNotifications++;
-                                    }
-                                }
-                                else {
-                                    let userTrigger = false;
-                                    for (let i = 0; i < bet.participants.length; i++) {
-                                        if (bet.participants[i].name === nickname) {
-                                            userTrigger = true;
-                                            break;
-                                        }
-                                    }
-                                    if (userTrigger) {
-                                        waitingNotifications++;
-                                    }
-                                }
-                            }
-                        })
-                    }
-                    if (group.betsWaitingForFinishedApproval.length) {
-                        group.betsWaitingForFinishedApproval.forEach(bet => {
-                            if (bet.approvedFinishArray.indexOf(nickname) === -1) {
-                                if (bet.jointBet) {
-                                    if (bet.participants[0].participants.indexOf(nickname) !== -1) {
-                                        waitingNotifications++;
-                                    }
-                                    if (bet.participants[1].participants.indexOf(nickname) !== -1) {
-                                        waitingNotifications++;
-                                    }
-                                }
-                                else {
-                                    let userTrigger = false;
-                                    for (let i = 0; i < bet.participants.length; i++) {
-                                        if (bet.participants[i].name === nickname) {
-                                            userTrigger = true;
-                                            break;
-                                        }
-                                    }
-                                    if (userTrigger) {
-                                        waitingNotifications++;
-                                    }
-                                }
-                            }
-                        })
-                    }
-
-                    if (group.activeBets.length) {
-                        group.activeBets.forEach(bet => {
-                            if (bet.jointBet) {
-                                if (bet.participants[0].participants.indexOf(nickname) !== -1 || bet.participants[1].participants.indexOf(nickname) !== -1) {
-                                    totalNumberOfBets++;
-                                }
-                            } else {
-                                let userTrigger = false;
-                                for (let i = 0; i < bet.participants.length; i++) {
-                                    if (bet.participants[i].name === nickname) {
-                                        userTrigger = true;
-                                        break;
-                                    }
-                                }
-                                if (userTrigger) {
-                                    totalNumberOfBets++;
-                                }
-                            }
-                        })
-                    }
-                })
-
-                const balance = calculateBalance(resData.data, this.state.user.nickname);
-                this.setState({
-                    balance,
-                    groups: resData.data,
-                    selectedGroup: resData.data[0]._id,
-                    selectedGroupName: resData.data[0].name,
-                    pageLoaded: true,
-                    totalNumberOfBets: totalNumberOfBets,
-                    waitingNotifications
-                }, () => {
-                    if (firstRead) {
-                        this.markAsSeen();
-                    }
-                })
-            }
-
-        }).catch(err => {
-            console.log("Read data error");
-        })
-    }
-
     render() {
         return (
             <div className="main-container main-background basic-column-fx wrap-fx" onClick={this.hideAccountModal}>
-                {this.state.pageLoaded && !this.state.user ?
+                {this.props.error ? <ServerError message={this.props.errorMessage} /> : null}
+                {this.props.appLoaded && this.props.user === "guest" ?
                     <NonAuthHome navNonAuth={this.state.navNonAuth} handleNavigationClick={this.handleNavigationClick} /> :
-                    this.state.pageLoaded ? <Fragment><div id="upper-home-container" className="basic-fx justify-around-fx">
+                    this.props.appLoaded ? <Fragment><div id="upper-home-container" className="basic-fx justify-around-fx">
                         <div id="left-home-container" className="basic-fx justify-around-fx align-center-fx">
                             <Profile
                                 accountModalOpen={this.state.accountModalOpen}
-                                balance={this.state.balance}
+                                balance={this.props.shortStats.balance}
                                 handleAccountClick={this.handleAccountClick}
                                 handleAccountModal={this.handleAccountModal}
                                 handleNavigationClick={this.handleNavigationClick}
                                 hoverChangePicture={this.hoverChangePicture}
-                                imgSource={this.state.user.avatarLocation}
+                                imgSource={this.props.user.avatarLocation}
                                 menuClick={this.menuClick}
                                 navAuth={this.state.navAuth}
                                 reDirect={this.reDirect}
-                                totalNumberOfBets={this.state.totalNumberOfBets}
-                                user={this.state.user}
+                                totalNumberOfBets={this.props.shortStats.totalNumberOfBets}
+                                user={this.props.user}
                             />
                         </div>
-                        {this.state.pageLoaded && this.state.user ? windowWidth(480) ? <div id="right-home-container" className='basic-fx align-center-fx justify-center-fx'>
+                        {this.props.appLoaded && this.props.user !== "guest" ? windowWidth(480) ? <div id="right-home-container" className='basic-fx align-center-fx justify-center-fx'>
                             <SignOutNav navAuth={this.state.navAuth} handleNavigationClick={this.handleNavigationClick} />
                         </div> : null : null}
-                    
+
                     </div>
                         <div id="middle-home-container" className="basic-fx justify-around-fx">
-                            <Notifications user={this.state.user} handleNotificationApproval={this.handleNotificationApproval} />
-                            <ManageBets menuClick={this.menuClick} notifications={this.state.waitingNotifications} />
+                            <Notifications user={this.props.user} handleNotificationApproval={this.handleNotificationApproval} />
+                            <ManageBets menuClick={this.menuClick} notifications={this.props.shortStats.waitingNotifications} />
                             <ManageGroups menuClick={this.menuClick} />
                         </div>
                     </Fragment> : null
@@ -437,4 +305,34 @@ class Home extends Component {
     }
 }
 
-export default Home;
+const mapStateToProps = (state) => {
+    return {
+        appLoaded: state.appStates.appLoaded,
+        firstRead: state.appStates.firstRead,
+        groups: state.groups,
+        shortStats: state.appStates.shortStats,
+        user: state.user
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        removeNotification: (id) => {
+            dispatch({ type: 'user/removeNotification', payload: id })
+        },
+
+        setFirstRead: (bool) => {
+            dispatch({ type: 'appStates/setFirstRead', payload: bool })
+        },
+
+        setGroups: (groups) => {
+            dispatch({ type: 'groups/setGroups', payload: groups });
+        },
+
+        updateUserGroups: (groups) => {
+            dispatch({ type: 'user/updateUserGroups', payload: groups });
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

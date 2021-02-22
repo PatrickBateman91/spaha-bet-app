@@ -4,21 +4,38 @@
 .reset-password-container{
     margin-top:0px;
     width:100vw;
-    height:100vw;
+    height:100vh;
 
     form #change-account-holder{
-     margin-top:0px;
-     padding-top:35vh;
-     justify-content: flex-start;
-     width:100vw;
-     height:80vh;
+        background-image: none;
+        background-color:variables.$alternativeBackground;
+        margin: auto 0;
+        align-items: center;
+        justify-content: center;
+        width:50vw;
+        height:50vh;
 
-     input{
-         padding:5px;
-     }
+        input{
+            padding:5px;
+        }
 
-     .error-message{
-        width:80vw;
+        .error-message{
+            width:80vw;
+        }
     }
+
+    
+    @include mixins.mQ-phones(480px){
+        form #change-account-holder{
+            width:100vw;
+            height:100vh;
+        }
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        form #change-account-holder{
+            width:80vw;
+            height:80vh;
+        }
     }
 }

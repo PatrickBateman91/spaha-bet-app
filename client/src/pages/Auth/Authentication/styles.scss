@@ -31,9 +31,9 @@
 
 .auth-form-holder{
     padding:20px;
-    width:100%;
     background-image: url('../../../assets/images/paper-background3.jpg');
     border-radius:10px;
+    min-width:40vw;
     border:5px solid black;
     -webkit-box-shadow: 0px 3px 8px 1px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 3px 8px 1px rgba(0,0,0,0.75);
@@ -124,8 +124,8 @@
 
         input[type=text], input[type=password], input[type=email]{
             width:90vw;
-            padding:12px 6px;
-            font-size: 1.3em;
+            padding:10px 4px;
+            font-size: 1.2em;
             margin: 0 auto;
         }
 
@@ -146,8 +146,8 @@
             font-size:1.4em;
         }
         input[type=text], input[type=password], input[type=email]{
-            font-size: 1.4em;
-            padding:20px 10px;
+            font-size: 1.3em;
+            padding:15px 7px;
             width:90vw;
             margin:0 auto;
         }

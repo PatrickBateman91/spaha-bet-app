@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { changeGroup } from '../../../components/Groups/GroupsDropdown/ChangeGroupFunction';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
-import { getUserData } from '../../../services/Axios/UserRequests';
 import { rightUserCheck } from '../../../services/HelperFunctions/HelperFunctions';
 import DifferentStakes from '../../../parts/Bets/DifferentStakes';
 import JointBet from '../../../parts/Bets/JointBet';
@@ -13,43 +14,39 @@ import './styles.scss';
 
 class FinishedBets extends Component {
     state = {
-        filteredData: [],
-        filterTitle: "",
-        groups: [],
         groupsOpen: false,
         pageLoaded: false,
-        selectedGroup: "",
-        selectedGroupName: "",
-        usingFilter: false,
-        user: undefined
     }
 
     componentDidMount() {
         window.scrollTo(0, 0);
-        const getUserPromise = getUserData('get user');
-        getUserPromise.then(resUser => {
-            const getDataPromise = getUserData('get groups')
-            getDataPromise.then(resData => {
-                if (resData.data !== "User is not a part of any groups!") {
-                    this.setState({
-                        groups: resData.data,
-                        selectedGroup: resData.data[0]._id,
-                        selectedGroupName: resData.data[0].name,
-                        user: resUser.data
-                    }, () => {
-                        this.reRenderBets()
-                    })
+        document.getElementById('root').style.height = "100%";
+
+        if (this.props.appLoaded) {
+            if (this.props.user === "guest") {
+                this.props.history.push('/');
+            }
+
+            if (this.props.groups.length > 0) {
+                this.reRenderBets();
+            } else {
+                this.setState({ pageLoaded: true })
+            }
+        }
+    }
+
+    componentDidUpdate(prevProps) {
+        if (!prevProps.appLoaded && this.props.appLoaded) {
+            if (this.props.user === "guest") {
+                this.props.history.push('/');
+            } else {
+                if (this.props.groups.length > 0) {
+                    this.reRenderBets();
                 } else {
                     this.setState({ pageLoaded: true })
                 }
-
-
-            }).catch(err => {
-                this.props.history.push('/sign-in')
-            })
-        }).catch(err => {
-            this.props.history.push('/sign-in')
-        })
+            }
+        }
     }
 
     closeModals = (e) => {
@@ -64,37 +61,20 @@ class FinishedBets extends Component {
         this.props.history.push(`/profile/${name}`)
     }
 
-    handleGroupChange = (e) => {
-        if (e.target.innerHTML.indexOf("<") === -1) {
-            let newName = e.target.innerHTML;
-            const newGroup = this.state.groups.filter(group => group.name === newName);
-            this.setState({
-                filteredData: [],
-                filterTitle: "",
-                groupsOpen: false,
-                selectedGroup: newGroup[0]._id,
-                selectedGroupName: newGroup[0].name,
-                usingFilter: false,
-            }, () => {
-                this.reRenderBets();
-            })
-        }
-    }
-
-    handleGroupModal = () => {
+    handleGroupChange = (ID, e) => {
+        e.stopPropagation();
+        changeGroup(this.props.groups, ID, this.props.setGroup, this.props.setGroupName);
         this.setState({
-            groupsOpen: true
+            groupsOpen: false,
+        }, () => {
+            this.reRenderBets();
         })
     }
 
-    updateGroup = (selectedGroup, newGroup) => {
+    handleGroupModal = (e) => {
+        e.stopPropagation();
         this.setState({
-            groups: newGroup,
-            selectedGroup: selectedGroup[0]._id,
-            selectedGroupName: selectedGroup[0].name,
-            user: this.state.user
-        }, () => {
-            this.reRenderBets()
+            groupsOpen: true
         })
     }
 
@@ -102,7 +82,7 @@ class FinishedBets extends Component {
         let i = 0;
         let trigger;
         let bets;
-        let selectedGroup = this.state.groups.filter(group => group._id === this.state.selectedGroup);
+        let selectedGroup = this.props.groups.filter(group => group._id === this.props.selectedGroup);
         selectedGroup = selectedGroup[0].finishedBets;
 
         bets = selectedGroup.map(bet => {
@@ -118,7 +98,7 @@ class FinishedBets extends Component {
                     rightUserCheck={rightUserCheck}
                     type={'finished'}
                     winner={bet.winner}
-                    user={this.state.user}
+                    user={this.props.user}
                 />
             }
             else {
@@ -131,7 +111,7 @@ class FinishedBets extends Component {
                         rightUserCheck={rightUserCheck}
                         type={'finished'}
                         winner={bet.winner}
-                        user={this.state.user}
+                        user={this.props.user}
                     />
                 }
 
@@ -144,7 +124,7 @@ class FinishedBets extends Component {
                         rightUserCheck={rightUserCheck}
                         type={'finished'}
                         winner={bet.winner}
-                        user={this.state.user} />
+                        user={this.props.user} />
                 }
             }
         })
@@ -161,13 +141,13 @@ class FinishedBets extends Component {
                 <ShowBetsLayout
                     bets={this.state.bets}
                     closeModals={this.closeModals}
-                    groups={this.state.groups}
+                    groups={this.props.groups}
                     groupsOpen={this.state.groupsOpen}
                     handleGroupModal={this.handleGroupModal}
                     handleGroupChange={this.handleGroupChange}
                     pageLoaded={this.state.pageLoaded}
-                    selectedGroup={this.state.selectedGroup}
-                    selectedGroupName={this.state.selectedGroupName}
+                    selectedGroup={this.props.selectedGroup}
+                    selectedGroupName={this.props.selectedGroupName}
                     trigger={this.state.trigger}
                     user={this.props.user}
                 >
@@ -179,10 +159,32 @@ class FinishedBets extends Component {
             )
         } else {
             return (
-                <Loader loading={!this.state.pageLoaded} />
+                <Loader loading={!this.state.pageLoaded || !this.state.appLoaded} />
             )
         }
     }
 };
 
-export default FinishedBets;
+
+const mapStateToProps = (state) => {
+    return {
+        appLoaded: state.appStates.appLoaded,
+        groups: state.groups,
+        selectedGroup: state.appStates.selectedGroup,
+        selectedGroupName: state.appStates.selectedGroupName,
+        user: state.user
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        setGroup: (id) => {
+            dispatch({ type: "appStates/setGroup", payload: id })
+        },
+        setGroupName: (name) => {
+            dispatch({ type: "appStates/setGroupName", payload: name })
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(FinishedBets);

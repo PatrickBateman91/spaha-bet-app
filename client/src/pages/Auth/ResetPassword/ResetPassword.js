@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { checkEmailLink, changePasswordFromEmail } from '../../../services/Axios/UserRequests';
 import { emptyFieldsCheck, passwordCheck } from '../../../services/HelperFunctions/HelperFunctions';
 import AuthButton from '../../../components/Buttons/AuthButton';
@@ -7,10 +7,11 @@ import SuccessMessage from '../../../components/Messages/SuccessMessage';
 import './styles.scss';
 
 const NewPasswordFromEmail = (props) => {
-
+    document.getElementById('root').style.height = "100%";
     const [emailValid, setEmailValid] = useState(false);
     const [error, setError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const [pageLoaded, setPageLoaded] = useState(false);
     const [success, setSuccess] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
     window.scrollTo(0, 0);
@@ -39,9 +40,9 @@ const NewPasswordFromEmail = (props) => {
 
         }).catch(err => {
             setError(true);
-            setErrorMessage(err.response.data);
+            setErrorMessage(err.response.data.message);
 
-            if (err.response.data !== "New password cannot be same as the old password!") {
+            if (err.response.data.message !== "New password cannot be same as the old password!") {
                 setTimeout(() => props.history.push('/'), 1500);
             }
         })
@@ -54,18 +55,23 @@ const NewPasswordFromEmail = (props) => {
         setSuccessMessage("");
     }
 
-    const checkEmailPromise = checkEmailLink(props.match.params.uid, props.match.params.id);
-    checkEmailPromise.then(res => {
-        if (res.data === "Email link is valid!") {
-            setEmailValid(true);
+    useEffect(() => {
+        if (!pageLoaded) {
+            setPageLoaded(true);
+            const checkEmailPromise = checkEmailLink(props.match.params.uid, props.match.params.id);
+            checkEmailPromise.then(res => {
+                if (res.data.message === "Email link is valid!") {
+                    setEmailValid(true);
+                }
+            }).catch(err => {
+                props.history.push('/404')
+            })
         }
-    }).catch(err => {
-        props.history.push('/404')
-    })
+    }, [props.history, props.match.params.uid, props.match.params.id, pageLoaded])
 
     return (
         <div className="main-container main-background">
-            {emailValid ? <div className="fx-column fx-align-center reset-password-container">
+            {emailValid ? <div className="basic-column-fx justify-center-fx align-center-fx reset-password-container">
                 <form name="reset-password" id="reset-password" onChange={hideMessages} onSubmit={handleResetPassword}>
                     <div id="change-account-holder" className="basic-column-fx justify-between-fx align-center-fx wrap-fx">
                         <div className="change-account-line">

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { currentUrl } from '../../../services/Mode/Mode';
-import { getUserData, getPublicProfile } from '../../../services/Axios/UserRequests';
+import { getPublicProfile } from '../../../services/Axios/UserRequests';
 import { returnToMain } from '../../../services/HelperFunctions/HelperFunctions';
 import ReturnButton from '../../../components/Buttons/ReturnButton';
 import './styles.scss';
@@ -13,30 +13,25 @@ const PublicProfile = (props) => {
 
     useEffect(() => {
         if (!pageLoaded) {
-            const getUserPromise = getUserData('get user');
-            getUserPromise.then(responseUser => {
-                const getProfilePromise = getPublicProfile(nickname);
-                let imgSource;
-                getProfilePromise.then(profileResponse => {
-                    if (profileResponse.data.imgSource) {
-                        imgSource = `${currentUrl}\\${profileResponse.data.imgSource}`;
-                    } else {
-                        imgSource = `${currentUrl}\\public\\general\\default-profile.png}`;
-                    }
-                    const statObject = {
-                        activeBets: profileResponse.data.activeBets,
-                        balance: profileResponse.data.balance,
-                        betsLost: profileResponse.data.betsLost,
-                        betsWon: profileResponse.data.betsWon,
-                        finishedBets: profileResponse.data.finishedBets,
-                        groupNames: profileResponse.data.groupNames,
-                        imgSource,
-                    }
-                    setStatistics(statObject);
-                    setPageLoaded(true);
-                }).catch(err => {
-                    props.history.push('/sign-in');
-                })
+            const getProfilePromise = getPublicProfile(nickname);
+            let imgSource;
+            getProfilePromise.then(profileResponse => {
+                if (profileResponse.data.payload.imgSource) {
+                    imgSource = `${currentUrl}\\${profileResponse.data.payload.imgSource}`;
+                } else {
+                    imgSource = `${currentUrl}\\public\\general\\default-profile.png`;
+                }
+                const statObject = {
+                    activeBets: profileResponse.data.payload.activeBets,
+                    balance: profileResponse.data.payload.balance,
+                    betsLost: profileResponse.data.payload.betsLost,
+                    betsWon: profileResponse.data.payload.betsWon,
+                    finishedBets: profileResponse.data.payload.finishedBets,
+                    groupNames: profileResponse.data.payload.groupNames,
+                    imgSource,
+                }
+                setStatistics(statObject);
+                setPageLoaded(true);
             }).catch(err => {
                 props.history.push('/sign-in');
             })

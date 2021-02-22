@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { changeGroup } from '../../components/Groups/GroupsDropdown/ChangeGroupFunction';
 import * as d3 from "d3";
 import d3Tip from "d3-tip";
-import { getUserData } from '../../services/Axios/UserRequests';
 import { legendColor } from 'd3-svg-legend';
 import { returnToMain } from '../../services/HelperFunctions/HelperFunctions';
 import GroupsDropdown from '../../components/Groups/GroupsDropdown/GroupsDropdown';
+import Loader from '../../components/Loaders/Loader';
 import ReturnButton from '../../components/Buttons/ReturnButton';
 import './styles.scss';
 
@@ -15,39 +17,41 @@ class Stats extends Component {
         this.state = {
             data: [],
             finishedBets: false,
-            groups: [],
             groupsOpen: false,
             noGroups: false,
             selectedGroup: "",
-            selectedGroupName: "",
-            user: undefined
+            selectedGroupName: ""
         }
     }
 
     componentDidMount() {
+        document.getElementById('root').height = "100%";
         window.scrollTo(0, 0);
-        const getUserPromise = getUserData('get user');
-        getUserPromise.then(resUser => {
-            const getDataPromise = getUserData('get groups');
-            getDataPromise.then(resData => {
-                if (resData.data !== "User is not a part of any groups!") {
-                    this.setState({
-                        groups: resData.data,
-                        pageLoaded: true,
-                        selectedGroup: resData.data[0]._id,
-                        selectedGroupName: resData.data[0].name,
-                        user: resUser.data
-                    }, () => {
-                        this.filterData(this.state.groups)
-                    })
-                } else {
-                    this.setState({ pageLoaded: true, noGroups: true })
-                }
+        if (this.props.appLoaded) {
+            if (this.props.user === "guest") {
+                this.props.history.push('/');
+            } else {
+                this.setState({
+                    pageLoaded: true
+                }, () => {
+                    this.filterData()
+                })
+            }
+        }
+    }
 
-            })
-        }).catch(err => {
-            this.props.history.push('/sign-in')
-        })
+    componentDidUpdate(prevProps) {
+        if (!prevProps.appLoaded && this.props.appLoaded) {
+            if (this.props.user === "guest") {
+                this.props.history.push('/');
+            } else {
+                this.setState({
+                    pageLoaded: true
+                }, () => {
+                    this.filterData()
+                })
+            }
+        }
     }
 
     createSVGs = (finished, whichData, innerR, chartOrder, titleText) => {
@@ -196,8 +200,8 @@ class Stats extends Component {
 
     }
 
-    filterData = (data) => {
-        let selectedGroup = data.filter(group => group._id === this.state.selectedGroup);
+    filterData = () => {
+        let selectedGroup = this.props.groups.filter(group => group._id === this.props.selectedGroup);
         selectedGroup = selectedGroup[0];
         let people = [...selectedGroup.people];
         let countObject = [];
@@ -500,12 +504,12 @@ class Stats extends Component {
                                         countObject[j].betsWon++;
                                         countObject[j].totalMoneyEarned += parseFloat(bet.participants[i].singleStake);
                                     }
-                                    else if (bet.winner !== "Nije niko") {
+                                    else if (bet.winner !== "nobody") {
                                         countObject[j].numberOfFinishedBets++;
                                         countObject[j].betsLost++;
                                         countObject[j].totalMoneyLost += parseFloat(bet.participants[i + 1].singleStake);
                                     }
-                                    else if (bet.winner === "Nije niko") {
+                                    else if (bet.winner === "nobody") {
                                         countObject[j].numberOfFinishedBets++;
                                     }
                                 }
@@ -515,11 +519,11 @@ class Stats extends Component {
                                         countObject[j].betsWon++;
                                         countObject[j].totalMoneyEarned += parseFloat(bet.participants[i].singleStake);
                                     }
-                                    else if (bet.winner !== "Nije niko") {
+                                    else if (bet.winner !== "nobody") {
                                         countObject[j].numberOfFinishedBets++;
                                         countObject[j].totalMoneyLost += parseFloat(bet.participants[i - 1].singleStake);
                                     }
-                                    else if (bet.winner === "Nije niko") {
+                                    else if (bet.winner === "nobody") {
                                         countObject[j].numberOfFinishedBets++;
                                     }
                                 }
@@ -542,12 +546,12 @@ class Stats extends Component {
                                         countObject[j].betsWon++;
                                         countObject[j].totalMoneyEarned += parseFloat(bet.participants[0].bet / bet.participants[0].participants.length);
                                     }
-                                    else if ((bet.winner.indexOf("Nije niko") === -1)) {
+                                    else if ((bet.winner.indexOf("nobody") === -1)) {
                                         countObject[j].numberOfFinishedBets++;
                                         countObject[j].betsLost++;
                                         countObject[j].totalMoneyLost += parseFloat(bet.participants[1].bet / bet.participants[0].participants.length);
                                     }
-                                    else if ((bet.winner.indexOf("Nije niko") !== -1)) {
+                                    else if ((bet.winner.indexOf("nobody") !== -1)) {
                                         countObject[j].numberOfFinishedBets++;
                                     }
                                 }
@@ -563,12 +567,12 @@ class Stats extends Component {
                                         countObject[j].betsWon++;
                                         countObject[j].totalMoneyEarned += parseFloat(bet.participants[1].bet / bet.participants[1].participants.length);
                                     }
-                                    else if ((bet.winner.indexOf("Nije niko") === -1)) {
+                                    else if ((bet.winner.indexOf("nobody") === -1)) {
                                         countObject[j].numberOfFinishedBets++;
                                         countObject[j].betsLost++;
                                         countObject[j].totalMoneyLost += parseFloat(bet.participants[0].bet / bet.participants[1].participants.length);
                                     }
-                                    else if (bet.winner.indexOf("Nije niko") !== -1) {
+                                    else if (bet.winner.indexOf("nobody") !== -1) {
                                         countObject[j].numberOfFinishedBets++;
                                     }
 
@@ -588,12 +592,12 @@ class Stats extends Component {
                                         countObject[j].betsWon++;
                                         countObject[j].totalMoneyEarned += parseFloat(bet.amount * (bet.participants.length - 1));
                                     }
-                                    else if (bet.winner !== "Nije niko") {
+                                    else if (bet.winner !== "nobody") {
                                         countObject[j].numberOfFinishedBets++;
                                         countObject[j].betsLost++;
                                         countObject[j].totalMoneyLost += parseFloat(bet.amount)
                                     }
-                                    else if (bet.winner === "Nije niko") {
+                                    else if (bet.winner === "nobody") {
                                         countObject[j].numberOfFinishedBets++;
                                     }
                                 }
@@ -627,8 +631,6 @@ class Stats extends Component {
                                                 else {
                                                     countObject[j].nonMoneyWins += `, ${bet.participants[i].singleStake}`;
                                                 }
-
-
                                             }
 
                                             //Ako je broj
@@ -644,8 +646,6 @@ class Stats extends Component {
                                                 else {
                                                     countObject[j].nonMoneyWins += `, ${bet.participants[i].singleStake}`;
                                                 }
-
-
                                             }
                                             //Ako je broj
                                             else {
@@ -653,7 +653,7 @@ class Stats extends Component {
                                             }
                                         }
                                     }
-                                    else if (bet.winner !== "Nije niko") {
+                                    else if (bet.winner !== "nobody") {
                                         countObject[j].betsLost++;
                                         countObject[j].numberOfFinishedBets++;
                                         if (i === 0) {
@@ -665,7 +665,6 @@ class Stats extends Component {
                                                 else {
                                                     countObject[j].nonMoneyLosses += `, ${bet.participants[i + 1].singleStake}`;
                                                 }
-
                                             }
 
                                             //Ako je broj
@@ -689,7 +688,7 @@ class Stats extends Component {
                                             }
                                         }
 
-                                    } else if (bet.winner === "Nije niko") {
+                                    } else if (bet.winner === "nobody") {
                                         countObject[j].numberOfFinishedBets++;
                                     }
                                 }
@@ -721,11 +720,9 @@ class Stats extends Component {
                                             else {
                                                 countObject[j].nonMoneyWins += `, ${bet.participants[0].bet}`;
                                             }
-
-
                                         }
                                     }
-                                    else if (bet.winner.indexOf("Nije niko") === -1) {
+                                    else if (bet.winner.indexOf("nobody") === -1) {
                                         countObject[j].betsLost++;
                                         countObject[j].numberOfFinishedBets++;
                                         if (isNaN(bet.participants[1].bet) === false) {
@@ -742,7 +739,7 @@ class Stats extends Component {
 
                                         }
                                     }
-                                    else if (bet.winner.indexOf("Nije niko") !== -1) {
+                                    else if (bet.winner.indexOf("nobody") !== -1) {
                                         countObject[j].numberOfFinishedBets++;
                                     }
                                 }
@@ -770,7 +767,7 @@ class Stats extends Component {
                                         }
 
                                     }
-                                    else if (bet.winner.indexOf("Nije niko") === -1) {
+                                    else if (bet.winner.indexOf("nobody") === -1) {
                                         countObject[j].betsLost++;
                                         countObject[j].numberOfFinishedBets++;
                                         if (isNaN(bet.participants[0].bet) === false) {
@@ -786,7 +783,7 @@ class Stats extends Component {
 
                                         }
                                     }
-                                    else if (bet.winner.indexOf("Nije niko") !== -1) {
+                                    else if (bet.winner.indexOf("nobody") !== -1) {
                                         countObject[j].numberOfFinishedBets++;
                                     }
                                 }
@@ -812,7 +809,7 @@ class Stats extends Component {
 
 
                                     }
-                                    else if (bet.winner !== "Nije niko") {
+                                    else if (bet.winner !== "nobody") {
                                         countObject[j].betsLost++;
                                         countObject[j].numberOfFinishedBets++;
                                         if (countObject[j].nonMoneyLosses === "") {
@@ -822,7 +819,7 @@ class Stats extends Component {
                                             countObject[j].nonMoneyLosses += `, ${bet.stake}`;
                                         }
                                     }
-                                    else if (bet.winner === "Nije niko") {
+                                    else if (bet.winner === "nobody") {
                                         countObject[j].numberOfFinishedBets++;
                                     }
 
@@ -870,17 +867,14 @@ class Stats extends Component {
         });
     }
 
-    handleGroupChange = (e) => {
+    handleGroupChange = (ID, e) => {
         e.stopPropagation();
-        let newName = e.target.innerHTML;
-        const newGroup = this.state.groups.filter(group => group.name === newName);
+        changeGroup(this.props.groups, ID, this.props.setGroup, this.props.setGroupName);
         document.getElementById('stats-svg-holder').innerHTML = "";
         this.setState({
             groupsOpen: false,
-            selectedGroup: newGroup[0]._id,
-            selectedGroupName: newGroup[0].name
         }, () => {
-            this.filterData(this.state.groups)
+            this.filterData()
         })
     }
 
@@ -907,12 +901,12 @@ class Stats extends Component {
                             <div className="statistic-main-title">Stats</div>
                             <div id="active-bets-group-container" className="relative">
                                 <GroupsDropdown
-                                    groups={this.state.groups}
+                                    groups={this.props.groups}
                                     groupsOpen={this.state.groupsOpen}
                                     handleGroupModal={this.handleGroupModal}
                                     handleGroupChange={this.handleGroupChange}
-                                    selectedGroup={this.state.selectedGroup}
-                                    selectedGroupName={this.state.selectedGroupName}
+                                    selectedGroup={this.props.selectedGroup}
+                                    selectedGroupName={this.props.selectedGroupName}
                                 />
                             </div>
                             <ReturnButton
@@ -934,10 +928,31 @@ class Stats extends Component {
                             text="Main menu"
                         />
                     </div>
-                    : null}
+                    : <Loader loading={this.state.pageLoaded} />}
             </div>
         );
     }
 }
 
-export default Stats;
+const mapStateToProps = (state) => {
+    return {
+        appLoaded: state.appStates.appLoaded,
+        groups: state.groups,
+        selectedGroup: state.appStates.selectedGroup,
+        selectedGroupName: state.appStates.selectedGroupName,
+        user: state.user
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        setGroup: (id) => {
+            dispatch({ type: "appStates/setGroup", payload: id })
+        },
+        setGroupName: (name) => {
+            dispatch({ type: "appStates/setGroupName", payload: name })
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Stats);

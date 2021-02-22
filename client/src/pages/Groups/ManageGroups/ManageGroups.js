@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfo } from '@fortawesome/free-solid-svg-icons';
-import { getUserData } from '../../../services/Axios/UserRequests';
 import { manageGroupsRequest } from '../../../services/Axios/GroupRequests';
-import { returnToMain, joinArrays, isMobile } from '../../../services/HelperFunctions/HelperFunctions';
+import { calculateBalance, changeSingleGroup, getShortStats, joinArrays, isMobile, removeGroup, returnToMain } from '../../../services/HelperFunctions/HelperFunctions';
 import GroupLine from '../../../components/Groups/ManageGroups/GroupLine';
+import Loader from '../../../components/Loaders/Loader';
 import ManageGroupsModal from '../../../parts/Groups/ManageGroups/ManageGroupsModal';
 import ReturnButton from '../../../components/Buttons/ReturnButton';
 import ErrorMessage from '../../../components/Messages/ErrorMessage';
@@ -15,7 +16,6 @@ class ManageGroups extends Component {
     state = {
         error: false,
         errorMessage: "",
-        groups: [],
         groupName: "",
         pageLoaded: false,
         modalOpen: false,
@@ -34,10 +34,6 @@ class ManageGroups extends Component {
         warningCheck: false,
         whichModal: ""
 
-    }
-    componentDidMount() {
-        window.scrollTo(0, 0);
-        this.reRenderComponent();
     }
 
     addRemoveOutsider = (suggestion) => {
@@ -97,10 +93,31 @@ class ManageGroups extends Component {
         this.setState({ peopleToRemove: copyPeopleToRemove })
     }
 
+    componentDidMount() {
+        window.scrollTo(0, 0);
+        if (this.props.appLoaded) {
+            if (this.props.user === "guest") {
+                this.props.history.push('/');
+            } else {
+                this.setState({ pageLoaded: true })
+            }
+        }
+    }
+
+    componentDidUpdate(prevProps) {
+        if (!prevProps.appLoaded && this.props.appLoaded) {
+            if (this.props.user === "guest") {
+                this.props.history.push('/');
+            } else {
+                this.setState({ pageLoaded: true })
+            }
+        }
+    }
+
     handleChange = (e, typeOfChange, groupId) => {
         e.stopPropagation();
         let whichModal, suggestions, people, modalOpen;
-        const theGroup = this.state.groups.filter(group => group._id.toString() === groupId.toString())
+        const theGroup = this.props.groups.filter(group => group._id.toString() === groupId.toString())
         const groupName = theGroup[0].name;
         switch (typeOfChange) {
             case "delete-group":
@@ -116,13 +133,13 @@ class ManageGroups extends Component {
                 modalOpen = true;
                 whichModal = typeOfChange;
                 let peopleToAdd = [];
-                for (let i = 0; i < this.state.groups.length; i++) {
-                    for (let j = 0; j < this.state.groups[i].people.length; j++) {
-                        const nameCheck = this.state.groups[i].people[j];
+                for (let i = 0; i < this.props.groups.length; i++) {
+                    for (let j = 0; j < this.props.groups[i].people.length; j++) {
+                        const nameCheck = this.props.groups[i].people[j];
 
                         if (theGroup[0].people.indexOf(nameCheck) === -1) {
-                            if (peopleToAdd.indexOf(nameCheck) === -1 && this.state.user.nickname !== nameCheck) {
-                                peopleToAdd.push(this.state.groups[i].people[j])
+                            if (peopleToAdd.indexOf(nameCheck) === -1 && this.props.user.nickname !== nameCheck) {
+                                peopleToAdd.push(this.props.groups[i].people[j])
                             }
                         }
                     }
@@ -136,7 +153,7 @@ class ManageGroups extends Component {
                 modalOpen = true;
                 suggestions = [];
                 people = [...theGroup[0].people]
-                people = people.filter(person => person !== this.state.user.nickname)
+                people = people.filter(person => person !== this.props.user.nickname)
                 break;
 
             case "copy-id":
@@ -152,23 +169,23 @@ class ManageGroups extends Component {
             document.getElementById('deactivate-checkbox').checked = false;
         }
         this.setState({
-            modalOpen,
-            people,
-            suggestions,
-            selectedGroup: groupId,
-            warningCheck: false,
-            whichModal,
             error: false,
             errorMessage: "",
             groupName,
+            modalOpen,
             outsiderTrigger: false,
+            people,
             peopleToRemove: [],
-            selectedPeople: [],
+            selectedGroup: groupId,
             selectedOutsiders: [],
+            selectedPeople: [],
             success: false,
             successMessage: "",
             suggestionsTrigger: false,
-            suggestionsFromDatabase: []
+            suggestionsFromDatabase: [],
+            suggestions,
+            warningCheck: false,
+            whichModal
         })
     }
 
@@ -177,19 +194,23 @@ class ManageGroups extends Component {
         const newName = document.getElementById('new-group-name').value;
         if (newName !== "") {
             const manageGroupsPromise = manageGroupsRequest(this.state.whichModal, this.state.selectedGroup, null, null, newName);
-            manageGroupsPromise.then(res => {
+            manageGroupsPromise.then(groupResponse => {
+                const changedGroups = changeSingleGroup(this.props.groups, groupResponse.data.payload._id, groupResponse.data.payload);
+                this.props.setGroups(changedGroups);
+                this.props.setGroup(changedGroups[0]._id);
+                this.props.setGroupName(changedGroups[0].name);
                 this.setState({
                     modalOpen: false,
                     success: true,
                     successMessage: `You successfully changed the group's name!`,
                     whichModal: ""
                 }, () => {
-                    setTimeout(() => this.reRenderComponent(), 1000)
+                    setTimeout(() => this.setState({ success: false, successMessage: "" }), 1000)
                 })
             }).catch(err => {
                 this.setState({
                     error: true,
-                    errorMessage: err.response.data || `Could not change the group's name!`
+                    errorMessage: err.response.data.message
                 })
             })
         }
@@ -203,15 +224,28 @@ class ManageGroups extends Component {
     handleLeaveDelete = () => {
         let message = this.state.whichModal === "leave-group" ? "left" : "deleted";
         const manageGroupsPromise = manageGroupsRequest(this.state.whichModal, this.state.selectedGroup, null, null, null);
-        manageGroupsPromise.then(res => {
+        manageGroupsPromise.then(groupResponse => {
+            const changedGroups = removeGroup(this.props.groups, groupResponse.data.payload);
+            this.props.setGroups(changedGroups);
+
+            if (changedGroups > 0) {
+                let statsObject = getShortStats(changedGroups, this.props.user.nickname);
+                statsObject.balance = calculateBalance(changedGroups, this.props.user.nickname);
+                this.props.setShortStats(statsObject);
+                this.props.setGroup(changedGroups[0]._id);
+                this.props.setGroupName(changedGroups[0].name);
+            } else {
+                this.props.setShortStats({ balance: 0, totalNumberOfBets: 0, waitingNotifications: 0 });
+                this.props.setGroup("");
+                this.props.setGroupName("");
+            }
+
             this.setState({
                 modalOpen: false,
                 success: true,
                 successMessage: `You successfully ${message} the group!`,
                 whichModal: ""
-            }, () => {
-                setTimeout(() => this.reRenderComponent(), 1000)
-            })
+            }, () => setTimeout(() => this.setState({ success: false, successMessage: "" }), 1000));
         }).catch(err => {
             this.setState({
                 error: true,
@@ -262,34 +296,44 @@ class ManageGroups extends Component {
 
     handleRemoveMembers = (e) => {
         e.preventDefault();
-        const removeMembersPromise = manageGroupsRequest(this.state.whichModal, this.state.selectedGroup, null, this.state.peopleToRemove, null, null);
-        removeMembersPromise.then(res => {
-            this.setState({
-                modalOpen: false,
-                success: true,
-                successMessage: `You successfully removed members from the group!`,
-                whichModal: ""
-            }, () => {
-                setTimeout(() => this.reRenderComponent(), 1000)
+        if (this.state.peopleToRemove.length > 0) {
+            const removeMembersPromise = manageGroupsRequest(this.state.whichModal, this.state.selectedGroup, null, this.state.peopleToRemove, null, null);
+            removeMembersPromise.then(groupResponse => {
+                const changedGroups = changeSingleGroup(this.props.groups, groupResponse.data.payload._id, groupResponse.data.payload);
+                let statsObject = getShortStats(changedGroups, this.props.user.nickname);
+                statsObject.balance = calculateBalance(changedGroups, this.props.user.nickname);
+                this.props.setGroups(changedGroups);
+                this.props.setShortStats(statsObject);
+
+                this.setState({
+                    modalOpen: false,
+                    success: true,
+                    successMessage: `You successfully removed members from the group!`,
+                    whichModal: ""
+                }, () => {
+                    setTimeout(() => this.setState({ success: false, successMessage: "" }), 1000)
+                })
+            }).catch(err => {
+                this.setState({
+                    error: true,
+                    errorMessage: err.response.data.message
+                }, () => {
+                    setTimeout(() => this.setState({ error: false, errorMessage: "" }), 3000)
+                })
             })
-        }).catch(err => {
-            this.setState({
-                error: true,
-                errorMessage: `Could not remove members from the group!`
-            })
-        })
+        }
     }
 
     handleSuggestionsFromDatabase = () => {
         const field = document.getElementById("search-users-to-add").value;
         if (field !== "") {
             const findUsersPromise = manageGroupsRequest("get users", null, null, null, null, field);
-            findUsersPromise.then(res => {
-                const filteredArray = joinArrays(res.data, this.state.suggestions)
+            findUsersPromise.then(suggestionResponse => {
+                const filteredArray = joinArrays(suggestionResponse.data.payload, this.state.suggestions)
                 let newFiltered = [];
                 filteredArray.forEach(personDatabase => {
                     if (this.state.selectedOutsiders.indexOf(personDatabase) === -1) {
-                        const theGroup = this.state.groups.filter(group => group._id.toString() === this.state.selectedGroup.toString());
+                        const theGroup = this.props.groups.filter(group => group._id.toString() === this.state.selectedGroup.toString());
                         if (theGroup[0].people.indexOf(personDatabase) === -1) {
                             newFiltered.push(personDatabase);
                         }
@@ -320,39 +364,8 @@ class ManageGroups extends Component {
         })
     }
 
-    reRenderComponent = () => {
-        const getUserPromise = getUserData('get user');
-        getUserPromise.then(resUser => {
-            const getDataPromise = getUserData('get groups');
-            getDataPromise.then(resData => {
-                if (resData.data !== "User is not a part of any groups!") {
-
-                    const groups = resData.data;
-                    this.setState({
-                        error: false,
-                        errorMessage: "",
-                        groups: groups,
-                        pageLoaded: true,
-                        success: false,
-                        successMessage: "",
-                        user: resUser.data
-                    })
-                } else {
-                    this.setState({
-                        groups: [], pageLoaded: true, user: resUser.data
-                    })
-                }
-
-
-            }).catch(err => {
-                this.props.history.push('/sign-in')
-            })
-        }).catch(err => {
-            this.props.history.push('/sign-in')
-        })
-    }
-
     sendInvites = (e) => {
+        e.preventDefault();
         const invitedPeople = [...this.state.selectedPeople, ...this.state.selectedOutsiders];
         if (invitedPeople.length > 0) {
             const sendInvitesPromise = manageGroupsRequest("invite-people", this.state.selectedGroup, invitedPeople, null, null, null);
@@ -363,13 +376,13 @@ class ManageGroups extends Component {
                     successMessage: `You successfully invited user to the group!`,
                     whichModal: ""
                 }, () => {
-                    setTimeout(() => this.reRenderComponent())
+                    setTimeout(() => this.setState({ success: false, successMessage: "" }), 1000)
                 })
             }).catch(err => {
                 this.setState({
                     error: true,
-                    errorMessage: `Could not invite people to the group!`
-                })
+                    errorMessage: err.response.data.message
+                }, () => setTimeout(() => this.setState({ error: false, errorMessage: "" }), 3000))
             })
         }
     }
@@ -377,15 +390,15 @@ class ManageGroups extends Component {
     render() {
         let groupLines;
         if (this.state.pageLoaded) {
-            if (this.state.groups.length !== 0) {
-                groupLines = this.state.groups.map(group => {
+            if (this.props.groups.length !== 0) {
+                groupLines = this.props.groups.map(group => {
                     let selectedLine = false;
                     if (this.state.selectedGroup === group._id) {
                         selectedLine = true
                     }
                     return (
                         <GroupLine
-                            admin={group.admin === this.state.user.nickname}
+                            admin={group.admin === this.props.user.nickname}
                             handleChange={this.handleChange}
                             handleMouseOver={this.handleMouseOver}
                             groupName={group.name}
@@ -442,10 +455,43 @@ class ManageGroups extends Component {
                         classToDisplay="return-button-space return-button-medium"
                         returnToMain={returnToMain.bind(null, this.props)}
                         text="Main menu" />
-                </div> : null}
+                </div> : <Loader loading={this.state.pageLoaded} />}
             </div>
         );
     }
 }
 
-export default ManageGroups;
+const mapStateToProps = (state) => {
+    return {
+        appLoaded: state.appStates.appLoaded,
+        groups: state.groups,
+        needsUpdate: state.appStates.needsUpdate,
+        user: state.user
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        setNeedsUpdate: (bool) => {
+            dispatch({ type: "appStates/setNeedsUpdate", payload: bool })
+        },
+
+        setGroup: (id) => {
+            dispatch({ type: "appStates/setGroup", payload: id })
+        },
+
+        setGroups: (groups) => {
+            dispatch({ type: "groups/setGroups", payload: groups })
+        },
+
+        setGroupName: (name) => {
+            dispatch({ type: "appStates/setGroupName", payload: name })
+        },
+
+        setShortStats: (stats) => {
+            dispatch({ type: "appStates/setShortStats", payload: stats })
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ManageGroups);

@@ -1,0 +1,22 @@
+@use '../../assets//Sass//mixins.scss';
+@use '../../assets//Sass//variables.scss';
+
+.server-error-container{
+    width:100vw;
+    height:100vh;
+    position: absolute;
+    top:0;
+    left:0;
+    z-index:20;
+    background-color: rgba(0,0,0, 0.9);
+}
+
+.server-error-holder{
+    width:50vw;
+    height:50vh;
+
+    span{
+        font-size:2em;
+        color:white;
+    }
+}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import { deactivateAccount } from '../../../services/Axios/UserRequests';
 import { returnToMain } from '../../../services/HelperFunctions/HelperFunctions';
 import DangerButton from '../../../components/Buttons/DangerButton';
@@ -6,15 +7,23 @@ import ReturnButton from '../../../components/Buttons/ReturnButton';
 import './styles.scss';
 
 const DeactivateAccount = (props) => {
+    document.getElementById('root').style.height = "100%";
+    if (props.user === "guest") {
+        window.location.replace("https://spaha-betapp.netlify.app");
+    }
+
     const deleteAccount = () => {
         const deactivateAccountPromise = deactivateAccount();
         deactivateAccountPromise.then(res => {
             props.history.push('/goodbye');
         }).catch(err => {
-            props.history.push('/');
+            console.log(err.response);
+            window.location.replace("/");
         })
     }
     const [checkBoxClicked, handleCheckbox] = useState(false);
+
+
     return (
         <div className="main-container">
             <div className="deactivate-container basic-column-fx justify-between-fx align-center-fx">
@@ -32,4 +41,10 @@ const DeactivateAccount = (props) => {
     );
 };
 
-export default DeactivateAccount;
+const mapStateToProps = (state) => {
+    return {
+        user: state.user
+    }
+}
+
+export default connect(mapStateToProps, null)(DeactivateAccount);

@@ -116,13 +116,15 @@
 
         #non-auth-main-title{
             font-size: 2em;
+            right:50px;
         }
     }
     
-    @include mixins.mQ-other(769px,1149px){
+    @include mixins.mQ-other(769px,1280px){
         font-size:0.8em;
 
         #non-auth-main-title{
+            right:50px;
             font-size:2.5em;
         }
     }

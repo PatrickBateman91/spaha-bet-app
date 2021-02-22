@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { getUserData } from '../../../services/Axios/UserRequests';
+import { connect } from 'react-redux';
+import { changeGroup } from '../../../components/Groups/GroupsDropdown/ChangeGroupFunction';
 import { finishBetRequest } from '../../../services/Axios/BetRequests';
-import { rightUserCheck } from '../../../services/HelperFunctions/HelperFunctions';
+import { changeSingleGroup, rightUserCheck } from '../../../services/HelperFunctions/HelperFunctions';
 import BetLegend from '../../../components/ShowBets/BetLegend';
 import EditBet from '../../../components/Modals/EditBet/EditBet';
 import ErrorMessage from '../../../components/Messages/ErrorMessage';
@@ -10,7 +11,7 @@ import JointBet from '../../../parts/Bets/JointBet';
 import Loader from '../../../components/Loaders/Loader';
 import SameStakes from '../../../parts/Bets/SameStakes';
 import ShowBetsLayout from './ShowBetsLayout';
-import SuccessMessage from '../../../components/Messages/SuccessMessage';
+import SuccessModal from '../../../components/Modals/SuccessModal';
 import './styles.scss';
 
 class ActiveBets extends Component {
@@ -20,8 +21,6 @@ class ActiveBets extends Component {
         editId: "",
         error: false,
         errorMessage: "",
-        filteredData: [],
-        filterTitle: "",
         finishID: "",
         finishBetModal: false,
         groupsOpen: false,
@@ -35,30 +34,34 @@ class ActiveBets extends Component {
 
     componentDidMount() {
         window.scrollTo(0, 0);
-        const getUserPromise = getUserData('get user');
-        getUserPromise.then(resUser => {
-            const getDataPromise = getUserData('get groups')
-            getDataPromise.then(resData => {
-                if (resData.data !== "User is not a part of any groups!") {
-                    this.setState({
-                        groups: resData.data,
-                        selectedGroup: resData.data[0]._id,
-                        selectedGroupName: resData.data[0].name,
-                        user: resUser.data
-                    }, () => {
-                        this.reRenderBets()
-                    })
-                }
-                else {
+        document.getElementById('root').style.height = "100%";
+        document.body.style.overflowY = "auto";
+
+        if (this.props.appLoaded) {
+            if (this.props.user === "guest") {
+                this.props.history.push('/');
+            }
+
+            if (this.props.groups.length > 0) {
+                this.reRenderBets();
+            } else {
+                this.setState({ pageLoaded: true })
+            }
+        }
+    }
+
+    componentDidUpdate(prevProps) {
+        if (!prevProps.appLoaded && this.props.appLoaded) {
+            if (this.props.user === "guest") {
+                this.props.history.push('/');
+            } else {
+                if (this.props.groups.length > 0) {
+                    this.reRenderBets();
+                } else {
                     this.setState({ pageLoaded: true })
                 }
-            }).catch(err => {
-                this.props.history.push('/sign-in')
-            })
-        }).catch(err => {
-            this.props.history.push('/sign-in')
-        })
-
+            }
+        }
     }
 
     chooseBetWinner = (e, name) => {
@@ -84,33 +87,27 @@ class ActiveBets extends Component {
     finishedBetToServer = (e, bet, id) => {
         e.stopPropagation();
         if (this.state.winner !== "") {
-            const finishBetPromise = finishBetRequest('finishRequest', this.state.selectedGroup, bet, this.state.winner);
-            finishBetPromise.then(res => {
+            document.body.style.pointerEvents = 'none';
+            document.body.style.cursor = 'wait';
+            const finishBetPromise = finishBetRequest('finishRequest', this.props.selectedGroup, bet, this.state.winner);
+            finishBetPromise.then(groupResponse => {
                 window.scrollTo(0, 0);
+                const changedGroups = changeSingleGroup(this.props.groups, this.props.selectedGroup, groupResponse.data.payload);
+                this.props.setGroups(changedGroups);
                 this.setState({
                     finishID: "",
                     finishBetModal: false,
                     success: true,
-                    successMessage: "Bet has been sent for approval!",
+                    successMessage: groupResponse.data.message,
                     winner: ""
                 }, () => {
-                    const getDataPromise = getUserData('get groups')
-                    getDataPromise.then(resData => {
-                        const selGroup = this.state.selectedGroup;
-                        const selName = this.state.selectedGroupName;
-                        this.setState({
-                            groups: resData.data,
-                            selectedGroup: selGroup,
-                            selectedGroupName: selName
-                        }, () => {
-                            this.reRenderBets()
-                        })
-                    }).catch(err => {
-                        this.setState({
-                            error: true,
-                            errorMessage: "Error getting bets!"
-                        })
-                    })
+                    document.getElementById('success-modal-container').style.top = `${window.pageYOffset}px`;
+                    setTimeout(() => {
+                        document.body.style.pointerEvents = 'auto';
+                        document.body.style.cursor = 'auto';
+                        this.setState({ success: false, successMessage: "" })
+                        this.reRenderBets();
+                    }, 1000)
                 })
             }).catch(err => {
                 this.setState({
@@ -123,7 +120,6 @@ class ActiveBets extends Component {
                 })
             })
         }
-
     }
 
     getUserProfile = (e, name) => {
@@ -147,21 +143,14 @@ class ActiveBets extends Component {
         })
     }
 
-    handleGroupChange = (e) => {
+    handleGroupChange = (ID, e) => {
         e.stopPropagation();
-        if (e.target.innerHTML.indexOf(">") === -1) {
-            let newName = e.target.innerHTML;
-            const newGroup = this.state.groups.filter(group => group.name === newName);
-            this.setState({
-                usingFilter: false,
-                filterTitle: "",
-                groupsOpen: false,
-                selectedGroup: newGroup[0]._id,
-                selectedGroupName: newGroup[0].name
-            }, () => {
-                this.updateGroup(newGroup, this.state.groups)
-            })
-        }
+        changeGroup(this.props.groups, ID, this.props.setGroup, this.props.setGroupName);
+        this.setState({
+            groupsOpen: false,
+        }, () => {
+            this.reRenderBets();
+        })
     }
 
     handleGroupModal = (e) => {
@@ -186,7 +175,7 @@ class ActiveBets extends Component {
         let trigger;
         let bets;
 
-        let selectedGroup = this.state.groups.filter(group => group._id === this.state.selectedGroup);
+        let selectedGroup = this.props.groups.filter(group => group._id === this.props.selectedGroup);
         selectedGroup = selectedGroup[0].activeBets;
 
         bets = selectedGroup.map(bet => {
@@ -207,7 +196,7 @@ class ActiveBets extends Component {
                         rightUserCheck={rightUserCheck}
                         type={'active'}
                         winner={this.state.winner}
-                        user={this.state.user}
+                        user={this.props.user}
                     />
                 }
                 else {
@@ -225,7 +214,7 @@ class ActiveBets extends Component {
                             rightUserCheck={rightUserCheck}
                             type={'active'}
                             winner={this.state.winner}
-                            user={this.state.user}
+                            user={this.props.user}
                         />
                     }
 
@@ -243,7 +232,7 @@ class ActiveBets extends Component {
                             rightUserCheck={rightUserCheck}
                             type={'active'}
                             winner={this.state.winner}
-                            user={this.state.user} />
+                            user={this.props.user} />
                     }
                 }
             }
@@ -262,52 +251,68 @@ class ActiveBets extends Component {
         })
     }
 
-    updateGroup = (selectedGroup, newGroup) => {
-        this.setState({
-            groups: newGroup,
-            selectedGroup: selectedGroup[0]._id,
-            selectedGroupName: selectedGroup[0].name,
-            user: this.state.user
-        }, () => {
-            this.reRenderBets()
-        })
-    }
-
     render() {
         if (this.state.pageLoaded) {
             return (
                 <ShowBetsLayout
                     bets={this.state.bets}
                     closeModals={this.closeModals}
-                    groups={this.state.groups}
+                    groups={this.props.groups}
                     groupsOpen={this.state.groupsOpen}
                     handleGroupModal={this.handleGroupModal}
                     handleGroupChange={this.handleGroupChange}
                     pageLoaded={this.state.pageLoaded}
-                    selectedGroup={this.state.selectedGroup}
-                    selectedGroupName={this.state.selectedGroupName}
+                    selectedGroup={this.props.selectedGroup}
+                    selectedGroupName={this.props.selectedGroupName}
                     trigger={this.state.trigger}
                     user={this.props.user}>
                     {this.state.trigger ? this.state.bets : <div className="no-bets-to-show">No active bets to show</div>}
                     <BetLegend />
                     {this.state.error ? <ErrorMessage classToDisplay="message-space" text={this.state.errorMessage} /> : null}
-                    {this.state.success ? <SuccessMessage classToDisplay="message-space" text={this.state.successMessage} /> : null}
                     {this.state.editModalOpen ? <EditBet
                         editMode={true}
                         editId={this.state.editId}
                         hideModal={this.hideModal}
-                        groups={this.state.groups}
-                        selectedGroup={this.state.selectedGroup}
-                        user={this.state.user}
+                        groups={this.props.groups}
+                        selectedGroup={this.props.selectedGroup}
+                        user={this.props.user}
                     /> : null}
+                    {this.state.success ? <SuccessModal message={this.state.successMessage} /> : null}
                 </ShowBetsLayout>
             );
         } else {
             return (
-                <Loader loading={!this.state.pageLoaded} />
+                <Loader loading={!this.state.pageLoaded || !this.props.appLoaded} />
             )
         }
     };
 }
 
-export default ActiveBets;
+const mapStateToProps = (state) => {
+    return {
+        appLoaded: state.appStates.appLoaded,
+        groups: state.groups,
+        selectedGroup: state.appStates.selectedGroup,
+        selectedGroupName: state.appStates.selectedGroupName,
+        user: state.user
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        setGroup: (id) => {
+            dispatch({ type: "appStates/setGroup", payload: id })
+        },
+
+        setGroups: (groups) => {
+            dispatch({ type: "groups/setGroups", payload: groups })
+        },
+
+        setGroupName: (name) => {
+            dispatch({ type: "appStates/setGroupName", payload: name })
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ActiveBets);
+

@@ -1,21 +1,23 @@
 import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import { createNewGroupRequest } from '../../../services/Axios/GroupRequests';
-import { findUsersByNicknameRequest, getUserData } from '../../../services/Axios/UserRequests';
-import { windowWidth as usingMobile, joinArrays, returnToMain } from '../../../services/HelperFunctions/HelperFunctions';
+import { findUsersByNicknameRequest } from '../../../services/Axios/UserRequests';
+import { getSuggestions, windowWidth as usingMobile, joinArrays, returnToMain } from '../../../services/HelperFunctions/HelperFunctions';
 import ConfirmButton from '../../../components/Buttons/ConfirmButton';
 import ErrorMessage from '../../../components/Messages/ErrorMessage';
+import Loader from '../../../components/Loaders/Loader';
 import ReturnButton from '../../../components/Buttons/ReturnButton';
 import SearchUsers from '../../../components/SearchUsers/SearchUsers';
 import Suggestions from '../../../components/SearchUsers/Suggestions';
-import SuccessMessage from '../../../components/Messages/SuccessMessage';
+import SuccessModal from '../../../components/Modals/SuccessModal';
 import './styles.scss';
 
 class CreateNewGroup extends Component {
     state = {
-        pageLoaded: false,
         error: false,
         errorMessage: "",
         outsiderTrigger: false,
+        pageLoaded: false,
         selectedPeople: [],
         selectedOutsiders: [],
         success: false,
@@ -77,42 +79,41 @@ class CreateNewGroup extends Component {
     }
 
     componentDidMount() {
-        const getUserPromise = getUserData('get user');
-        getUserPromise.then(resUser => {
-            const getDataPromise = getUserData('get groups');
-            getDataPromise.then(resData => {
-                const groups = resData.data;
-                let peopleToAdd = [];
-                const userNickname = resUser.data.nickname;
-                if (groups !== "User is not a part of any groups!") {
-                    for (let i = 0; i < groups.length; i++) {
-                        for (let j = 0; j < groups[i].people.length; j++) {
-                            const nameCheck = groups[i].people[j];
-                            if (peopleToAdd.indexOf(nameCheck) === -1 && userNickname !== nameCheck) {
-                                peopleToAdd.push(groups[i].people[j])
-                            }
-                        }
-                    }
-                    this.setState({ suggestions: peopleToAdd, pageLoaded: true, user: resUser.data })
+        if (this.props.appLoaded) {
+            if (this.props.user === "guest") {
+                this.props.history.push('/');
+            } else {
+                if (this.props.groups.length > 0) {
+                    const peopleToAdd = getSuggestions(this.props.groups, this.props.user.nickname);
+                    this.setState({ suggestions: peopleToAdd, pageLoaded: true })
                 } else {
-                    this.setState({ suggestions: [], pageLoaded: true, user: resUser.data })
+                    this.setState({ suggestions: [], pageLoaded: true })
                 }
+            }
+        }
+    }
 
-
-            }).catch(err => {
-                this.props.history.push('/sign-in')
-            })
-        }).catch(err => {
-            this.props.history.push('/sign-in')
-        })
+    componentDidUpdate(prevProps) {
+        if (!prevProps.appLoaded && this.props.appLoaded) {
+            if (this.props.user === "guest") {
+                this.props.history.push('/');
+            } else {
+                if (this.props.groups.length > 0) {
+                    const peopleToAdd = getSuggestions(this.props.groups, this.props.user.nickname);
+                    this.setState({ suggestions: peopleToAdd, pageLoaded: true })
+                } else {
+                    this.setState({ suggestions: [], pageLoaded: true })
+                }
+            }
+        }
     }
 
     handleSuggestionsFromDatabase = () => {
         const field = document.getElementById("search-users-to-add").value;
         if (field !== "") {
             const findUsersPromise = findUsersByNicknameRequest(field);
-            findUsersPromise.then(res => {
-                const filteredArray = joinArrays(res.data, this.state.suggestions)
+            findUsersPromise.then(suggestionsResponse => {
+                const filteredArray = joinArrays(suggestionsResponse.data.payload, this.state.suggestions)
                 let newFiltered = [];
                 filteredArray.forEach(personDatabase => {
                     if (this.state.selectedOutsiders.indexOf(personDatabase) === -1) {
@@ -149,17 +150,21 @@ class CreateNewGroup extends Component {
         const groupName = document.getElementById('new-group-name').value;
         if (groupName.length > 1) {
             const newGroupPromise = createNewGroupRequest(groupName, this.state.selectedPeople, this.state.selectedOutsiders);
-            newGroupPromise.then(res => {
+            newGroupPromise.then(groupResponse => {
+                const changedGroups = JSON.parse(JSON.stringify(this.props.groups));
+                changedGroups.push(groupResponse.data.payload);
+                this.props.setGroups(changedGroups);
                 this.setState({
                     success: true,
                     successMessage: "Group added successfully!"
                 }, () => {
+                    document.getElementById('success-modal-container').style.top = `${window.pageYOffset}px`;
                     setTimeout(() => this.props.history.push('/'), 1000)
                 })
             }).catch(err => {
                 this.setState({
                     error: true,
-                    errorMessage: err.response.data || "Group could not be added"
+                    errorMessage: err.response.data.message || "Group could not be added"
                 })
             })
         }
@@ -228,13 +233,13 @@ class CreateNewGroup extends Component {
                                 {this.state.suggestionsTrigger ?
                                     <Suggestions addRemoveOutsider={this.addRemoveOutsider} suggestionsFromDatabase={this.state.suggestionsFromDatabase} /> : null}
                                 {this.state.error ? <ErrorMessage text={this.state.errorMessage} /> : null}
-                                {this.state.success ? <SuccessMessage text={this.state.successMessage} /> : null}
                                 <ConfirmButton classToDisplay="confirm-button-space" form="create-new-group" text="Add group" type="submit" />
                                 <ReturnButton
                                     classToDisplay="return-button-space return-button-medium"
                                     returnToMain={returnToMain.bind(null, this.props)}
                                     text="Main menu" />
-                            </Fragment> : null}
+                                {this.state.success ? <SuccessModal message={this.state.successMessage} /> : null}
+                            </Fragment> : <Loader loading={this.state.pageLoaded} />}
                     </div>
                 </form>
             </div>
@@ -242,4 +247,20 @@ class CreateNewGroup extends Component {
     }
 }
 
-export default CreateNewGroup;
+const mapStateToProps = (state) => {
+    return {
+        appLoaded: state.appStates.appLoaded,
+        groups: state.groups,
+        user: state.user
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        setGroups: (groups) => {
+            dispatch({ type: "groups/setGroups", payload: groups })
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreateNewGroup);

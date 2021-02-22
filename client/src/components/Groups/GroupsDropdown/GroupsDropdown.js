@@ -7,7 +7,7 @@ const GroupsDropdown = (props) => {
   const groupTrigger = props.groups.length > 0;
   const otherGroups = props.groups.map((group, idx) => {
     return (
-      <div className="other-group-item" key={group.name + idx}>
+      <div className="other-group-item" key={group.name + idx} onClick={props.handleGroupChange.bind(this, group._id)}>
         {group.name}
       </div>
     )
@@ -20,7 +20,7 @@ const GroupsDropdown = (props) => {
         {props.groupsOpen ? <FontAwesomeIcon icon={faCaretSquareUp} /> : <FontAwesomeIcon icon={faCaretSquareDown} />}
       </div>
         : null}
-      {props.groupsOpen && groupTrigger ? <div id="other-groups-container" onClick={props.handleGroupChange}>
+      {props.groupsOpen && groupTrigger ? <div id="other-groups-container">
         {otherGroups}
       </div> : null}
 

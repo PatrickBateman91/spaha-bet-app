@@ -3,7 +3,7 @@ import './styles.scss';
 
 const SuccessMessage = (props) => {
     return (
-        <div className={`success-message ${props.classToDisplay}`}><span>{props.text}</span></div>
+        <div className={`success-message ${props.classToDisplay ? props.classToDisplay : ""}`}><span>{props.text}</span></div>
     );
 };
 

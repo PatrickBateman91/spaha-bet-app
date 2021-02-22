@@ -7,24 +7,26 @@ import ReturnButton from '../../../components/Buttons/ReturnButton';
 import SuccessMessage from '../../../components/Messages/SuccessMessage';
 
 const ResendPassword = (props) => {
-    const [error, handleError] = useState(false);
-    const [success, handleSuccess] = useState(false);
-    const [errorMessage, handleErrorMessage] = useState("");
+    document.getElementById('root').style.height = "100%";
+    const [error, setError] = useState(false);
+    const [success, setSuccess] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+
     const handleResetPassword = (e) => {
         e.preventDefault();
         const email = document.getElementById('resend-password-input').value;
         if (checkCorrectMailFormat(email)) {
             const resendPasswordPromise = resendPasswordRequest(email);
             resendPasswordPromise.then(res => {
-                handleSuccess(true);
-                setTimeout(props.history.push('/'), 1500);
+                setSuccess(true);
+                setTimeout(() => props.history.push('/'), 1500);
             }).catch(err => {
-                handleError(true);
-                handleErrorMessage(err.response.data);
+                setError(true);
+                setErrorMessage(err.response.data.message);
             })
         } else {
-            handleError(true);
-            handleErrorMessage("Email is not correctly formatted!");
+            setError(true);
+            setErrorMessage("Email is not correctly formatted!");
         }
     }
     return (
