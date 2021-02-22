@@ -1,173 +1,176 @@
 const express = require('express');
+const auth = require('../middleware/AuthUserCheck');
+const createCustomError = require('../helperFunctions/createCustomError');
+const createSendObject = require('../helperFunctions/createSendObjects');
 const groupRouter = new express.Router();
-const ObjectID = require('mongodb').ObjectID; 
+const notificationEmitter = require('../emitters/sendNotifications');
+const ObjectID = require('mongodb').ObjectID;
 const Group = require('../models/GroupModel');
 const User = require('../models/UserModel');
-const auth = require('../middleware/AuthUserCheck');  
+
 const helpers = require('../helperFunctions/BasicFunctions');
 
 groupRouter.post('/create-new-group', auth, async (req, res) => {
-    if(req.headers.type === "upload group"){
-        try{
+    if (req.headers.type === "upload group") {
+        try {
             const group = new Group({
                 activeBets: [],
-                finishedBets:[],
-                betsWaitingForAddApproval:[],
-                betsWaitingForFinishedApproval:[],
-                betsWaitingForEditApproval:[],
-                people:[],
-                invitedPeople:[],
-                name:req.body.groupName,
-                admin:req.user.nickname
+                finishedBets: [],
+                betsWaitingForAddApproval: [],
+                betsWaitingForFinishedApproval: [],
+                betsWaitingForEditApproval: [],
+                people: [],
+                invitedPeople: [],
+                name: req.body.groupName,
+                admin: req.user.nickname
             })
-            group.people.push(req.user.nickname)
-            group.invitedPeople.push(...req.body.invitedPeople);
-            group.invitedPeople.push(...req.body.invitedOutsiders);
-            
-            req.user.groups.push(group._id.toString());
 
-            await group.invitedPeople.forEach(async person => {
-                User.find({nickname:person}, async(err, responseUser) => {
-                    if(err){
-                        return res.status(400).send("Could not add public user to the group!")
-                    }
-                    const newNotification = {
-                        title: `${req.user.nickname} invited you to the group ${group.name}`,
-                        data: {groupId:group._id},
-                        seen:false,
-                        timestamp: new Date(),
-                        type: "pending group invite",
-                        needsResolving:true,
-                         _id: new ObjectID()
-                    }
-                   responseUser[0].notifications.push(newNotification);
-                   await responseUser[0].save();
-                })
-            })
+            if (req.body.groupName.length > 24) {
+                const customError = createCustomError(400, "Group name has to be shorter", []);
+                res.status(400).send(customError);
+            }
+
+            else {
+                group.people.push(req.user.nickname)
+                group.invitedPeople.push(...req.body.invitedPeople);
+                group.invitedPeople.push(...req.body.invitedOutsiders);
+
+                req.user.groups.push(group._id.toString());
+                const notificationText = `${req.user.nickname} invited you to the group ${group.name}`;
+
+                notificationEmitter.emit('send notifications', req.user.nickname, group.invitedPeople, { data: { groupId: group._id }, needsResolving: true, notificationText, seen: false, type: "pending group invite" }, false, null);
                 await req.user.save()
-                await group.save()
-                res.send("Group added successfully!")
-                   
-        } catch(err){
-           res.status(500).send("Could not add group to database!")
+                await group.save();
+                const sendObject = createSendObject(201, "Group added successfully!", group)
+                res.status(203).send(sendObject);
+            }
+        }
+
+        catch (err) {
+            const customError = createCustomError(500, "Could not add group to the database!", err);
+            res.status(500).send(customError)
         }
     }
 
-    else if(req.headers.type === "get users"){
-        const regex = `^${req.body.nickname}` 
-        const results = await User.find({nickname:  {$regex : regex, $options : "i"}})
+    else if (req.headers.type === "get users") {
+        const regex = `^${req.body.nickname}`
+        const results = await User.find({ nickname: { $regex: regex, $options: "i" } })
         const nicknames = results.map(result => result.nickname);
         const newNicknames = nicknames.filter(name => name !== req.user.nickname);
-        res.send(newNicknames);
+        const sendObject = createSendObject(200, "Suggestions sent!", newNicknames)
+        res.status(200).send(sendObject);
     }
 })
 
 groupRouter.post('/join-new-group', auth, async (req, res) => {
     let id;
-    try{
-         id = new ObjectID(req.body.groupId);
-         Group.findById(id, async (err, responseGroup) => {
-            if(err){
-                res.status(400).send("Could not find group with that ID!")
+
+    try {
+        id = new ObjectID(req.body.groupId);
+        Group.findById(id, async (err, responseGroup) => {
+            if (err) {
+                const customError = createCustomError(404, "Could not find group with that ID!", err)
+                res.status(404).send(customError)
             }
-            else if(responseGroup !== null){
-                if(responseGroup.people.indexOf(req.user.nickname) !== -1){
-                    res.send({
-                        error:true,
-                        errorMessage:"You are already part of this group!"
-                    })
-                } else{
-                    User.find({nickname:responseGroup.admin}, async(err, responseUser) => {
-                        const newNotification = {
-                            title: `${req.user.nickname} wants to join your group ${responseGroup.name}`,
-                            data: {user: req.user.nickname, groupId: responseGroup._id},
-                            seen:false,
-                            timestamp: new Date(),
-                            type:"accept user to group",
-                            needsResolving:true,
-                            _id: new ObjectID()
+            else if (responseGroup !== null) {
+                if (responseGroup.people.indexOf(req.user.nickname) !== -1) {
+                    const customError = createCustomError(400, "You are already part of this group!", [])
+                    res.status(400).send(customError);
+                }
+
+                else {
+                    User.find({ nickname: responseGroup.admin }, async (err, responseUser) => {
+                        if (err || !responseUser) {
+                            const customError = createCustomError(404, "Can't find user!", [])
+                            res.status(404).send(customError);
                         }
-                        responseUser[0].notifications.push(newNotification);
-                        await responseUser[0].save();
-                        res.send('Group inquiry has been sent to the group admin.')
+                        const duplicateCheck = helpers.joinGroupDuplicateCheck(responseUser[0].notifications, req.user.nickname, id);
+                        if (duplicateCheck) {
+                            const customError = createCustomError(400, "You already asked to join this group!", [])
+                            res.status(400).send(customError);
+                        }
+
+                        else {
+                            const notificationText = `${req.user.nickname} wants to join your group ${responseGroup.name}`;
+                            notificationEmitter.emit('send notifications', req.user.nickname, [responseUser[0].nickname], { data: { user: req.user.nickname, groupId: responseGroup._id }, needsResolving: true, notificationText, seen: false, type: "accept user to group" }, false, null);
+                            const sendObject = createSendObject(200, 'Group inquiry has been sent to the group admin!', []);
+                            res.status(200).send(sendObject)
+                        }
                     })
                 }
             }
-            else{
-                res.send({
-                    error:true,
-                    errorMessage:"Could not find group with that ID!!"
-                })
+
+            else {
+                const customError = createCustomError(404, "Could not find group with that ID!!", []);
+                res.status(404).send(customError);
             }
         })
     }
-    catch(err){
-        res.send({
-            error:true,
-            errorMessage:"Group ID is not valid!"
-        })
+
+    catch (err) {
+        const customError = createCustomError(400, "Group ID is not valid!", err);
+        res.status(400).send(customError);
     }
-  
 })
 
 groupRouter.post('/manage-groups', auth, async (req, res) => {
     const id = new ObjectID(req.body.groupId);
-    if(req.headers.type === "delete-group"){
-        Group.findById(id, async (err, groupResponse) =>{
-            if(err){
-                return res.status(400).send('Could not find the group!')
+    if (req.headers.type === "delete-group") {
+        Group.findById(id, async (err, groupResponse) => {
+            if (err || !groupResponse) {
+                const customError = createCustomError(404, "Could not find the group!", [])
+                return res.status(400).send(customError)
             }
-            if(req.user.nickname === groupResponse.admin){
-                groupResponse.people.forEach(async person => {
-                    if(person !== req.user.nickname){
-                        User.find({nickname:person}, async (err, userResponse) => {
-                            if(err){
-                                res.status(400).send("Could not send user notifications!")
-                            }
-                            const newNotification = {
-                                title: `${req.user.nickname} deleted the group ${groupResponse.name}`,
-                                data: {},
-                                seen:false,
-                                timestamp: new Date(),
-                                type: "group deleted",
-                                needsResolving:false,
-                                 _id: new ObjectID()
-                            }
-                            const newGroups = userResponse[0].groups.filter(group => group.toString() !== req.body.groupId.toString());
-                            userResponse[0].groups = newGroups;
-                            userResponse[0].notifications.push(newNotification);
-                            userResponse[0].markModified('groups');
-                            await userResponse[0].save();
-                        })
-                    }
-                })
+
+            if (req.user.nickname === groupResponse.admin) {
+                const notificationText = `${req.user.nickname} deleted the group ${groupResponse.name}`;
+                notificationEmitter.emit('send notifications', req.user.nickname, groupResponse.people, { data: {}, needsResolving: false, notificationText, seen: false, type: "group deleted" }, true, groupResponse._id);
+
                 const newUserGroups = req.user.groups.filter(group => group.toString() !== req.body.groupId.toString());
                 req.user.groups = newUserGroups;
                 req.user.markModified('groups');
                 await req.user.save();
                 await groupResponse.remove();
-                res.send("Group deleted!")
-            } else{
-                return res.status(401).send("You can only delete groups you are admin off!")
+                const sendObject = createSendObject(200, "Group deleted!", id)
+                res.status(200).send(sendObject)
+            }
+
+            else {
+                const customError = createCustomError(403, "You can only delete groups you are admin off!", [])
+                return res.status(403).send(customError)
             }
         })
-    } else if(req.headers.type === "leave-group"){
+    }
+
+    else if (req.headers.type === "leave-group") {
         Group.findById(id, async (err, groupResponse) => {
-            if(err){
-                return res.status(400).send("Could not find user's group!");
+            if (err || !groupResponse) {
+                const customError = createCustomError(404, "Could not find user's group!", [])
+                return res.status(404).send(customError);
             }
-            if(req.user.nickname === groupResponse.admin){
-                if(groupResponse.people.length === 1){
-                    await groupResponse.remove();
+
+            let adminSwitch = false;
+            let groupDeleted = false;
+
+            if (req.user.nickname === groupResponse.admin) {
+                if (groupResponse.people.length === 1) {
+                    groupDeleted = true;
                     const newGroups = req.user.groups.filter(group => group !== req.body.groupId);
                     req.user.groups = newGroups;
                     req.user.markModified('groups');
+                    await groupResponse.remove();
                     await req.user.save();
-                    res.send('You left the group!');
-                } else{
-                    groupResponse.admin = groupResponse.people[1];
+                    const sendObject = createSendObject(200, 'You left the group!', req.body.groupId)
+                    res.status(201).send(sendObject);
                 }
-            } else {
+                //Prebacivanje admina na drugu osobu
+                else {
+                    groupResponse.admin = groupResponse.people[1];
+                    adminSwitch = true;
+                }
+            }
+
+            if (!groupDeleted) {
                 const newPeople = groupResponse.people.filter(person => person !== req.user.nickname);
                 groupResponse.people = newPeople;
                 groupResponse.activeBets = helpers.deleteUserBets(groupResponse.activeBets, req.user.nickname);
@@ -175,6 +178,11 @@ groupRouter.post('/manage-groups', auth, async (req, res) => {
                 groupResponse.betsWaitingForAddApproval = helpers.deleteUserBets(groupResponse.betsWaitingForAddApproval, req.user.nickname);
                 groupResponse.betsWaitingForEditApproval = helpers.deleteUserBets(groupResponse.betsWaitingForEditApproval, req.user.nickname);
                 groupResponse.betsWaitingForFinishedApproval = helpers.deleteUserBets(groupResponse.betsWaitingForFinishedApproval, req.user.nickname);
+
+                if (adminSwitch) {
+                    groupResponse.markModified('admin');
+                }
+
                 groupResponse.markModified('people');
                 groupResponse.markModified('activeBets');
                 groupResponse.markModified('finishedBets');
@@ -182,171 +190,150 @@ groupRouter.post('/manage-groups', auth, async (req, res) => {
                 groupResponse.markModified('betsWaitingForEditApproval');
                 groupResponse.markModified('betsWaitingForFinishedApproval');
 
-                groupResponse.people.forEach(async person => {
-                    User.find({nickname:person}, async (err, userResponse) => {
-                        const newNotification = {
-                            title: `${req.user.nickname} left the group ${groupResponse.name}`,
-                            data: {},
-                            seen:false,
-                            timestamp: new Date(),
-                            type: "user left the group",
-                            needsResolving:false,
-                             _id: new ObjectID()
-                        }
-                        userResponse[0].notifications.push(newNotification);
-                        await userResponse[0].save();
-                    })
-                })
-                const newGroups = req.user.groups.filter(group => group !== req.body.groupId);
+                const notificationText = `${req.user.nickname} left the group ${groupResponse.name}`;
+                notificationEmitter.emit('send notifications', req.user.nickname, groupResponse.people, { data: {}, needsResolving: false, notificationText, seen: false, type: "user left the group" }, false, null);
+
+                const newGroups = req.user.groups.filter(group => group.toString() !== req.body.groupId.toString());
                 req.user.groups = newGroups;
                 req.user.markModified('groups');
-                await req.user.save();
+                try {
+                    await groupResponse.save();
+                    await req.user.save();
+                    const sendObject = createSendObject(200, "You left the group!", req.body.groupId);
+                    res.status(200).send(sendObject);
+                }
 
-                await groupResponse.save(function (err, doc) {
-                    if (err) return req.status(400).send("Could not leave the group!");
-                res.send('You left the group!')
-                });
+                catch (err) {
+                    const customError = createCustomError(500, "Could not leave group at the moment!", err);
+                    res.status(500).send(customError);
+                }
             }
         })
-    } else if(req.headers.type === "edit-group-name"){
+    }
+
+    else if (req.headers.type === "edit-group-name") {
         Group.findById(id, async (err, groupResponse) => {
-            if(err){
-                return res.status(400).send('Could not find the group!')
+            if (err || !groupResponse) {
+                ž
+                const customError = createCustomError(404, 'Could not find the group!', []);
+                return res.status(404).send(customError);
             }
-            if(req.user.nickname === groupResponse.admin){
-                if(req.body.newGroupName === ""){
-                    return res.status(400).send("Group name cannot be empty!")
+            if (req.user.nickname === groupResponse.admin) {
+                if (req.body.newGroupName === "") {
+                    const customError = createCustomError(400, "Group name cannot be empty!", []);
+                    return res.status(400).send(customError);
                 }
-                console.log(req.body.newGroupName)
-                const oldGroupName = groupResponse.name;
-                groupResponse.people.forEach(person => {
-                    if(person !== req.user.nickname){
-                        User.find({nickname:person}, async (err, userResponse) => {
-                            const newNotification = {
-                                title: `${req.user.nickname} changed the group name from ${oldGroupName} to ${req.body.newGroupName}`,
-                                data: {},
-                                seen:false,
-                                timestamp: new Date(),
-                                type: "group name changed",
-                                needsResolving:false,
-                                 _id: new ObjectID()
-                            }          
-                            userResponse[0].notifications.push(newNotification);
-                            await userResponse[0].save();
-                        })
+
+                const notificationText = `${req.user.nickname} changed the group name from ${groupResponse.name} to ${req.body.newGroupName}`;
+                notificationEmitter.emit('send notifications', req.user.nickname, [groupResponse.people], { data: {}, needsResolving: false, notificationText, seen: false, type: "group name changed" }, false, null);
+
+                groupResponse.name = req.body.newGroupName;
+                try {
+                    await groupResponse.save()
+                    const sendObject = createSendObject(200, "Group name changed!", groupResponse);
+                    res.status(200).send(sendObject);
+                }
+
+                catch (err) {
+                    const customError = createCustomError(400, err.message || "Could not edit name!", err);
+                    res.status(400).send(customError);
+                }
+            }
+
+            else {
+                const customError = createCustomError(401, "You can change only names of the groups you are admin of!", [])
+                res.status(401).send(customError)
+            }
+        })
+    }
+
+    else if (req.headers.type === "invite-people") {
+        const groupPromise = Group.findById(id).exec();
+        groupPromise.then(async groupResponse => {
+            if (groupResponse.people.indexOf(req.user.nickname) !== -1) {
+                const nonMembers = [];
+                req.body.invitedPeople.forEach(async (person, personIndex) => {
+                    //Provjera da user već ne pripada grupi
+                    if (groupResponse.people.indexOf(person) === -1 && groupResponse.invitedPeople.indexOf(person) === -1) {
+                        groupResponse.invitedPeople.push(person);
+                        nonMembers.push(person);
                     }
                 })
-                groupResponse.name = req.body.newGroupName;
-                    await groupResponse.save()
-                    res.send("Group name changed!")
-            } else{
-                res.status(401).send("You can change only names of the groups you are admin of!")
-            }
-        })
-    } else if(req.headers.type === "invite-people"){
-        const groupPromise = Group.findById(id).exec();
-        groupPromise.then(async groupResponse =>{
-            if(groupResponse.people.indexOf(req.user.nickname) !== -1){
-                    req.body.invitedPeople.forEach(async (person, personIndex) => {
-                       //Provjera da user već ne pripada grupi
-                       if(groupResponse.people.indexOf(person) === -1 && groupResponse.invitedPeople.indexOf(person) === -1){
-                           const userPromise = User.find({nickname:person}).exec();
-                                 userPromise.then(async userResponse => {
-                                    const newNotification = {
-                                        title: `${req.user.nickname} invited you to the group ${groupResponse.name}`,
-                                        data: {groupId:req.body.groupId},
-                                        seen:false,
-                                        timestamp: new Date(),
-                                        type: "pending group invite",
-                                        needsResolving:true,
-                                         _id: new ObjectID()
-                                    }
-                                   userResponse[0].notifications.push(newNotification);
-                                   groupResponse.invitedPeople.push(person);
-                                   await userResponse[0].save();
 
-                                   if(req.body.invitedPeople.length === personIndex + 1){
-                                    await groupResponse.save();
-                                    res.send("Users have been invited to the group!")
-                                   }
+                if (nonMembers.length === 0) {
+                    const message = req.body.invitedPeople.length > 1 ? "Everyone" : "This person";
+                    const customError = createCustomError(400, `${message} has already been invited or is a part of the group already!`, []);
+                    res.status(400).send(customError);
+                }
 
-                                 }).catch(err => {
-                                    return res.status(400).send("Could not invite user to the group!")
-                                 })
-                       }
-                   })
-            } else{
-                return res.status(401).send("You are not authorized to invite people to this group!")
-            }
-        }).catch(err => {
-            return res.status(400).send("Could not find group!")
-        })
-
-    } else if(req.headers.type === "remove-people"){
-        const groupPromise = Group.findById(id);
-        groupPromise.then(groupResponse => {
-            if(groupResponse.admin === req.user.nickname){
-               req.body.peopleToRemove.forEach((person, index) => {
-                   if(groupResponse.people.indexOf(person) !== -1){
-                    const newPeople = groupResponse.people.filter(personToRemove => personToRemove !== person);
-                    groupResponse.people = newPeople;
-                    groupResponse.activeBets = helpers.deleteUserBets(groupResponse.activeBets, person);
-                    groupResponse.finishedBets = helpers.deleteUserBets(groupResponse.finishedBets, person);
-                    groupResponse.betsWaitingForAddApproval = helpers.deleteUserBets(groupResponse.betsWaitingForAddApproval, person);
-                    groupResponse.betsWaitingForEditApproval = helpers.deleteUserBets(groupResponse.betsWaitingForEditApproval, person);
-                    groupResponse.betsWaitingForFinishedApproval = helpers.deleteUserBets(groupResponse.betsWaitingForFinishedApproval, person);
-                    const userPromise = User.find({nickname:person})
-                    userPromise.then(async userResponse => {
-                        const newGroups = userResponse[0].groups.filter(group => group.toString() !== req.body.groupId.toString());
-                        
-                        userResponse[0].groups = newGroups;
-
-                        const newNotification = {
-                            title: `${req.user.nickname} removed you from the gorup ${groupResponse.name}`,
-                            data: {},
-                            seen:false,
-                            timestamp: new Date(),
-                            type:"accept user to group",
-                            needsResolving:false,
-                            _id: new ObjectID()
-                        }
-
-                        userResponse[0].markModified('groups');
-                        userResponse[0].notifications.push(newNotification);
-                      
-                        await userResponse[0].save();
-                        console.log(req.body.peopleToRemove.length, index +1)
-                        if(req.body.peopleToRemove.length === index + 1){
-                            groupResponse.markModified('people');
-                            groupResponse.markModified('activeBets');
-                            groupResponse.markModified('finishedBets');
-                            groupResponse.markModified('betsWaitingForAddApproval');
-                            groupResponse.markModified('betsWaitingForEditApproval');
-                            groupResponse.markModified('betsWaitingForFinishedApproval');
-                            await groupResponse.save();
-                            res.send("Users removed succesfully!")
-                            }
-
-                    }).catch(err => {
-                        res.status(400).send("User not found!")
-                    })
-
-                } else{
-                       res.status(400).send("Could not find user to remove!")
-                   }
-               })
+                else {
+                    const notificationText = `${req.user.nickname} invited you to the group ${groupResponse.name}`
+                    notificationEmitter.emit('send notifications', req.user.nickname, nonMembers, { data: { groupId: req.body.groupId }, needsResolving: true, notificationText, seen: false, type: "pending group invite" }, false, null);
+                    await groupResponse.save();
+                    const sendObject = createSendObject(200, '', []);
+                    res.status(200).send(sendObject);
+                }
             } else {
-                res.status(401).send("You are not authorized to remove people from this group!")
+                const customError = createCustomError(401, "You are not authorized to invite people to this group!", [])
+                return res.status(401).send(customError)
             }
         }).catch(err => {
-            res.status(400).send("Can't find group!")
+            const customError = createCustomError(500, "Could not invite people", err)
+            return res.status(500).send(customError)
         })
-    } else if(req.headers.type === "get users"){
-        const regex = `^${req.body.searchField}` 
-        const results = await User.find({nickname:  {$regex : regex, $options : "i"}})
+
+    }
+
+    else if (req.headers.type === "remove-people") {
+        const groupPromise = Group.findById(id);
+        groupPromise.then(async groupResponse => {
+            let newPeople = [];
+            if (groupResponse.admin === req.user.nickname) {
+                req.body.peopleToRemove.forEach((person, index) => {
+                    if (groupResponse.people.indexOf(person) !== -1) {
+                        newPeople = groupResponse.people.filter(personToRemove => personToRemove !== person);
+                        groupResponse.people = newPeople;
+                        groupResponse.activeBets = helpers.deleteUserBets(groupResponse.activeBets, person);
+                        groupResponse.finishedBets = helpers.deleteUserBets(groupResponse.finishedBets, person);
+                        groupResponse.betsWaitingForAddApproval = helpers.deleteUserBets(groupResponse.betsWaitingForAddApproval, person);
+                        groupResponse.betsWaitingForEditApproval = helpers.deleteUserBets(groupResponse.betsWaitingForEditApproval, person);
+                        groupResponse.betsWaitingForFinishedApproval = helpers.deleteUserBets(groupResponse.betsWaitingForFinishedApproval, person);
+                    }
+                })
+
+                const notificationText = `${req.user.nickname} removed you from the group ${groupResponse.name}`;
+                await notificationEmitter.emit('send notifications', req.user.nickname, req.body.peopleToRemove, { data: {}, needsResolving: false, notificationText, seen: false, type: "removed from group" }, true, id);
+
+                groupResponse.markModified('people');
+                groupResponse.markModified('activeBets');
+                groupResponse.markModified('finishedBets');
+                groupResponse.markModified('betsWaitingForAddApproval');
+                groupResponse.markModified('betsWaitingForEditApproval');
+                groupResponse.markModified('betsWaitingForFinishedApproval');
+                await groupResponse.save();
+                const sendObject = createSendObject(200, "Removed successfully!", groupResponse);
+                res.status(200).send(sendObject);
+            }
+
+            else {
+                const customError = createCustomError(401, "You are not authorized to remove people from this group!", err);
+                res.status(401).send(customError);
+            }
+
+        }).catch(err => {
+            const customError = createCustomError(400, "Can't add people at the moment!", err);
+            res.status(400).send(customError)
+        })
+    }
+
+    else if (req.headers.type === "get users") {
+        const regex = `^${req.body.searchField}`
+        const results = await User.find({ nickname: { $regex: regex, $options: "i" } })
         const nicknames = results.map(result => result.nickname);
         const newNicknames = nicknames.filter(name => name !== req.user.nickname);
-        res.send(newNicknames);
+        const sendObject = createSendObject(200, "Suggestions sent!", newNicknames);
+        res.status(200).send(sendObject);
     }
 })
+
 module.exports = groupRouter;

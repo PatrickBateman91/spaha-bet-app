@@ -1,8 +1,10 @@
 const express = require('express');
-const Bet = require('../models/BetModel');
 const auth = require('../middleware/AuthUserCheck');
+const createCustomError = require('../helperFunctions/createCustomError');
+const createSendObject = require('../helperFunctions/createSendObjects');
+const notificationEmitter = require('../emitters/sendNotifications');
+const Bet = require('../models/BetModel');
 const Group = require('../models/GroupModel');
-const User = require('../models/UserModel');
 const ObjectID = require('mongodb').ObjectID;
 
 const betsRouter = new express.Router();
@@ -18,6 +20,7 @@ betsRouter.post('/add-bet', auth, async (req, res) => {
             peopleArray.push(...side.participants);
         })
     }
+
     else {
         req.body.bet.participants.forEach(participant => {
             if (participant.name === req.user.nickname) {
@@ -26,14 +29,18 @@ betsRouter.post('/add-bet', auth, async (req, res) => {
             peopleArray.push(participant.name);
         })
     }
+
     if (!includesUserCheck) {
-        return res.status(400).send("You can't add bets that don't involve you!")
+        const customError = createCustomError(403, "You can't add bets that don't involve you!", [])
+        return res.status(403).send(customError);
     }
+
     try {
         let bet = new Bet(req.body.bet);
         await Group.findById(req.body.selectedGroup, async (err, response) => {
             if (err) {
-                res.send("Unable to find group!")
+                const customError = createCustomError(404, "Unable to find group!", err)
+                res.status(404).send(customError)
             }
             else {
                 let outsiderTrigger = false;
@@ -42,21 +49,26 @@ betsRouter.post('/add-bet', auth, async (req, res) => {
                         outsiderTrigger = true;
                     }
                 })
+
                 if (outsiderTrigger) {
-                    return res.status(400).send("You can't add bets with unregistered people!")
+                    const customError = createCustomError(403, [], "You can't add bets with unregistered people!");
+                    return res.status(403).send(customError);
                 }
+
                 bet.approvedAddArray = [req.user.nickname];
                 response.betsWaitingForAddApproval.push(bet);
                 await response.save()
-                res.send('Success!')
+                const sendObject = createSendObject(201, "Bet has been sent to approval!", []);
+                res.status(201).send(sendObject);
             }
         })
 
     }
-    catch (err) {
-        console.log(err);
-    }
 
+    catch (err) {
+        const customError = createCustomError(500, "Could not upload bet!", err);
+        res.status(500).send(customError);
+    }
 })
 
 betsRouter.post('/active-bets', auth, async (req, res) => {
@@ -64,21 +76,30 @@ betsRouter.post('/active-bets', auth, async (req, res) => {
         const id = new ObjectID(req.body.groupId);
         Group.findById(id, async (err, groupResponse) => {
             if (err) {
-                return res.status(400).status("Could not finish bet!");
+                const customError = createCustomError(404, "Could not finish bet!", [])
+                return res.status(404).send(customError);
+            }
+            if (!groupResponse) {
+                const customError = createCustomError(404, "Could not finish bet!", [])
+                return res.status(404).send(customError);
             }
             const filteredActive = groupResponse.activeBets.filter(bet => {
                 return bet._id.toString() !== req.body.bet._id.toString();
             });
+
             groupResponse.activeBets = filteredActive;
             const changedBet = req.body.bet;
             changedBet.approvedFinishArray.push(req.user.nickname);
             changedBet.winner = req.body.winner;
             groupResponse.betsWaitingForFinishedApproval.push(changedBet);
+
             try {
-                await groupResponse.save()
-                res.send(groupResponse);
+                await groupResponse.save();
+                const sendObject = createSendObject(200, "Finished bet has been sent for approval!", groupResponse);
+                res.status(200).send(sendObject);
             } catch (err) {
-                res.status(500).send("Could not upload changes!")
+                const customError = createCustomError(500, 'Could not reach server to finish bet!', []);
+                res.status(500).send(customError);
             }
         })
     }
@@ -86,7 +107,13 @@ betsRouter.post('/active-bets', auth, async (req, res) => {
         const id = new ObjectID(req.body.groupId);
         Group.findById(id, async (err, groupResponse) => {
             if (err) {
-                return res.status(400).status("Could not edit bet!");
+                const customError = createCustomError(404, "Could not edit bet!", err);
+                return res.status(404).status(customError);
+            }
+
+            if (!groupResponse) {
+                const customError = createCustomError(404, "Could not find group", err);
+                return res.status(404).status(customError);
             }
             const filteredBets = groupResponse.activeBets.filter(bet => bet._id.toString() !== req.body.bet._id.toString());
             const originalBet = groupResponse.activeBets.filter(bet => bet._id.toString() === req.body.bet._id.toString());
@@ -95,16 +122,19 @@ betsRouter.post('/active-bets', auth, async (req, res) => {
             changedBet.originalBet = originalBet;
             changedBet.approvedEditArray.push(req.user.nickname);
             groupResponse.betsWaitingForEditApproval.push(changedBet);
-         
-           try{
-            groupResponse.markModified('activeBets');
-            groupResponse.markModified('betsWaitingForEditApproval');
-            await groupResponse.save();
-              res.send("Bet was edited succesfully!");
-           }catch(err){
-               console.log("Ja 2222")
-               res.status(400).send("Bet could not be edited!")
-           }
+
+            try {
+                groupResponse.markModified('activeBets');
+                groupResponse.markModified('betsWaitingForEditApproval');
+                await groupResponse.save();
+                const sendObject = createSendObject(200, "Bet was edited succesfully!", groupResponse);
+                res.status(200).send(sendObject);
+            }
+
+            catch (err) {
+                const customError = createCustomError(500, 'Could not reach server to edit bet!', err);
+                res.status(400).send(customError)
+            }
         })
     }
 })
@@ -117,29 +147,32 @@ betsRouter.post('/bet-approvals', auth, async (req, res) => {
             reqGroup = "betsWaitingForAddApproval";
             reqArray = "approvedAddArray";
             reqSecondArray = "activeBets";
-            notificationText = "declined the bet offer!"
+            notificationText = `${req.user.nickname} declined the bet offer!`
             break
 
         case "edit":
             reqGroup = "betsWaitingForEditApproval";
             reqArray = "approvedEditArray";
             reqSecondArray = "activeBets";
-            notificationText = "declined bet edit!"
+            notificationText = `${req.user.nickname} declined bet edit!`
             break
 
         case "finish":
             reqGroup = "betsWaitingForFinishedApproval";
             reqArray = "approvedFinishArray";
             reqSecondArray = "finishedBets";
-            notificationText = "denies that your bet finished!"
+            notificationText = `${req.user.nickname} denies that your bet finished!`
             break
 
         default:
-            return res.status(404).send('Bad request!')
+            const customError = createCustomError(400, "Bad request", [])
+            return res.status(400).send(customError);
     }
+
     Group.findById(id, async (err, groupResponse) => {
         if (err) {
-            return res.status(400).send("Oops. Can't approve bet at the moment!")
+            const customError = createCustomError(404, "Could not find the group!", []);
+            return res.status(404).send(customError)
         }
         let indexOfBet;
         let filteredBet = groupResponse[reqGroup].filter((bet, idx) => {
@@ -152,10 +185,10 @@ betsRouter.post('/bet-approvals', auth, async (req, res) => {
         filteredBet = filteredBet[0];
         if (req.body.answer === "Accept") {
             if (filteredBet[reqArray].indexOf(req.user.nickname) !== -1) {
-                return res.status(400).send("You already approved this bet!")
+                const customError = createCustomError(400, "You already approved this bet!", [])
+                return res.status(400).send(customError)
             }
             if (filteredBet.jointBet) {
-
                 if (filteredBet[reqArray].length + 1 === (filteredBet.participants[0].participants.length + filteredBet.participants[1].participants.length)) {
                     const newArray = groupResponse[reqGroup].filter(bet => {
                         return bet._id.toString() !== req.body.betId.toString()
@@ -167,13 +200,15 @@ betsRouter.post('/bet-approvals', auth, async (req, res) => {
                     groupResponse[reqSecondArray].push(filteredBet);
                     groupResponse[reqGroup] = newArray;
                     await groupResponse.save()
-                    res.send(groupResponse);
+                    const sendObject = createSendObject(200, 'Bet accepted!', groupResponse)
+                    res.status(200).send(sendObject);
                 }
                 else {
                     groupResponse[reqGroup][indexOfBet][reqArray].push(req.user.nickname);
                     groupResponse.markModified(reqGroup);
                     await groupResponse.save();
-                    res.send(groupResponse);
+                    const sendObject = createSendObject(200, 'Bet accepted!', groupResponse)
+                    res.status(200).send(sendObject);
                 }
             }
             else {
@@ -189,16 +224,19 @@ betsRouter.post('/bet-approvals', auth, async (req, res) => {
                     groupResponse[reqSecondArray].push(filteredBet);
                     groupResponse[reqGroup] = newArray;
                     await groupResponse.save()
-                    res.send(groupResponse);
+                    const sendObject = createSendObject(200, 'Bet accepted!', groupResponse)
+                    res.status(200).send(sendObject);
                 }
                 else {
                     groupResponse[reqGroup][indexOfBet][reqArray].push(req.user.nickname);
                     groupResponse.markModified(reqGroup);
                     await groupResponse.save();
-                    return res.send(groupResponse);
+                    const sendObject = createSendObject(200, 'Bet accepted!', groupResponse)
+                    res.status(200).send(sendObject);
                 }
             }
         }
+
         else if (req.body.answer === "Decline") {
             const newArray = groupResponse[reqGroup].filter(bet => {
                 return bet._id.toString() !== req.body.betId.toString()
@@ -212,37 +250,24 @@ betsRouter.post('/bet-approvals', auth, async (req, res) => {
             else {
                 usersToQuerry = filteredBet.participants.map(person => person.name);
             }
-            await usersToQuerry.forEach(user => {
-                User.find({ nickname: user }, async (err, userResponse) => {
-                    if (userResponse[0].nickname !== req.user.nickname) {
-                        const newNotification = {
-                            title: `${req.user.nickname} ${notificationText}`,
-                            data: { bet: filteredBet },
-                            seen:false,
-                            timestamp: new Date(),
-                            type:`${req.user.nickname} ${notificationText}`,
-                            needsResolving:false,
-                            _id: new ObjectID()
-                        }
-                        userResponse[0].notifications.push(newNotification);
-                        await userResponse[0].save();
-                    }
-                })
-            })
+            notificationEmitter.emit('send notifications', req.user.nickname, usersToQuerry, { data: { bet: filteredBet }, needsResolving: false, notificationText, seen: false, type: "bet declined" }, false, null);
+
             if (req.headers.type === "finish") {
                 filteredBet.winner = "";
                 filteredBet.approvedFinishArray = [];
                 groupResponse.activeBets.push(filteredBet);
             }
-            if(req.headers.type === "edit"){
+
+            if (req.headers.type === "edit") {
                 let originalBet = filteredBet.originalBet[0];
                 groupResponse.activeBets.push(originalBet);
             }
+
             await groupResponse.save();
-            res.send(groupResponse);
+            const sendObject = createSendObject(200, 'You declined!', groupResponse)
+            res.status(200).send(sendObject);
         }
     })
-
 })
 
 module.exports = betsRouter;
