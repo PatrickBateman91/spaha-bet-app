@@ -576,8 +576,6 @@ class AddNewBet extends Component {
         }
 
         else if (type === "jointBet") {
-
-
             if (id === "left") {
                 let newJointSelected = [...this.state.jointSelected];
                 newJointSelected.push({ name: item.name, id: id });
@@ -589,8 +587,6 @@ class AddNewBet extends Component {
                 newJointSelected.push({ name: item.name, id: id });
                 this.setState({ jointSelected: newJointSelected })
             }
-
-
         }
 
     }

@@ -10,6 +10,7 @@ import ChangeDataLayout from '../../../parts/Groups/ManageGroups/ChangeDataLayou
 import ErrorMessage from '../../../components/Messages/ErrorMessage';
 import InputField from '../../../components/Auth/InputField';
 import Loader from '../../../components/Loaders/Loader';
+import PasswordField from '../../../components/Auth/PasswordField';
 import ReturnButton from '../../../components/Buttons/ReturnButton';
 import SuccessMessage from '../../../components/Messages/SuccessMessage';
 import './styles.scss';
@@ -20,11 +21,12 @@ class ChangeAccountDetails extends Component {
     pageLoaded: false,
     error: false,
     errorMessage: "",
+    newGroupCheck: false,
+    passwordShown:false,
     success: false,
     successMessage: "",
     selected: false,
-    selectedChange: "",
-    newGroupCheck: false
+    selectedChange: ""
   }
 
   componentDidMount() {
@@ -247,6 +249,11 @@ class ChangeAccountDetails extends Component {
     })
   }
 
+  showPassword = () => {
+    const newValue = !this.state.passwordShown;
+    this.setState({ passwordShown: newValue });
+  }
+
   render() {
     return (
       <div className={`main-container basic-column-fx align-center-fx ${usingMobile(480) ? "main-background" : "mobile-alternative-background"}`}>
@@ -270,36 +277,61 @@ class ChangeAccountDetails extends Component {
             </div>
           </div> : <Loader loading={this.state.pageLoaded} />}
 
-        {this.state.selected ? <ChangeDataLayout className="justify-center-fx align-center-fx wrap-fx" id="change-account-holder">
+        {this.state.selected ? <ChangeDataLayout classToDisplay="justify-center-fx align-center-fx wrap-fx" id="change-account-holder">
 
           <form name={fieldsObjects[this.state.whichPage].formName} id={fieldsObjects[this.state.whichPage].formName} onChange={this.hideMessages} onSubmit={this.handleSubmit}>
             <div className="auth-form-holder basic-column-fx wrap-fx justify-center-fx align-center-fx">
               <div className="auth-fields">
 
                 {this.state.selectedChange === "Password" ?
-                  <InputField
-                    autoComplete={fieldsObjects[this.state.whichPage].formOneAutocomplete}
-                    classToDisplay="change-account-line"
-                    id={fieldsObjects[this.state.whichPage].formOneName}
-                    label={fieldsObjects[this.state.whichPage].labelOneName}
-                    placeholder={fieldsObjects[this.state.whichPage].placeholderOne}
-                    type={fieldsObjects[this.state.whichPage].firstFieldType} /> : null}
+                
+                <PasswordField
+                autoComplete={fieldsObjects[this.state.whichPage].formTwoAutocomplete}
+                classToDisplay="change-account-line"
+                id={fieldsObjects[this.state.whichPage].formOneName}
+                label={fieldsObjects[this.state.whichPage].labelOneName}
+                passwordShown={this.state.passwordShown}
+                placeholder={fieldsObjects[this.state.whichPage].placeholderOne}
+                showPassword={this.showPassword}
+                type={this.state.passwordShown ? "text" : "password"} /> : null}
 
-                {this.state.selectedChange !== "Nickname" ? <InputField
+                {this.state.selectedChange !== "Nickname" ? this.state.selectedChange === "Password" ?
+                  <PasswordField
+                  autoComplete={fieldsObjects[this.state.whichPage].formTwoAutocomplete}
+                  classToDisplay="change-account-line"
+                  id={fieldsObjects[this.state.whichPage].formTwoName}
+                  label={fieldsObjects[this.state.whichPage].labelTwoName}
+                    passwordShown={this.state.passwordShown}
+                    placeholder={fieldsObjects[this.state.whichPage].placeholderTwo}
+                    showPassword={this.showPassword}
+                    type={this.state.passwordShown ? "text" : "password"} /> 
+                : <InputField
                   autoComplete={fieldsObjects[this.state.whichPage].formTwoAutocomplete}
                   classToDisplay="change-account-line"
                   id={fieldsObjects[this.state.whichPage].formTwoName}
                   label={fieldsObjects[this.state.whichPage].labelTwoName}
                   placeholder={fieldsObjects[this.state.whichPage].placeholderTwo}
-                  type={this.state.selectedChange === "Password" ? "password" : "text"} /> : null}
+                  type={"text"} /> : null}
 
-                <InputField
+                {this.state.selectedChange === "Password" ?
+                  <PasswordField
                   autoComplete={fieldsObjects[this.state.whichPage].formThreeAutocomplete}
                   classToDisplay="change-account-line"
                   id={fieldsObjects[this.state.whichPage].formThreeName}
                   label={fieldsObjects[this.state.whichPage].labelThreeName}
-                  placeholder={fieldsObjects[this.state.whichPage].placeholderThree}
-                  type={this.state.selectedChange === "Password" ? "password" : "text"} />
+                    passwordShown={this.state.passwordShown}
+                    placeholder={fieldsObjects[this.state.whichPage].placeholderThree}
+                    showPassword={this.showPassword}
+                    type={this.state.passwordShown ? "text" : "password"} />
+                  :
+                  <InputField
+                    autoComplete={fieldsObjects[this.state.whichPage].formThreeAutocomplete}
+                    classToDisplay="change-account-line"
+                    id={fieldsObjects[this.state.whichPage].formThreeName}
+                    label={fieldsObjects[this.state.whichPage].labelThreeName}
+                    placeholder={fieldsObjects[this.state.whichPage].placeholderThree}
+                    type={"text"} />
+                } 
               </div>
 
               {this.state.error ? <ErrorMessage text={this.state.errorMessage} /> : null}

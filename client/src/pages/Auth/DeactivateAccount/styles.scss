@@ -51,23 +51,30 @@
 }
 
 .deactivate-container{
-
+    margin-top:20vh;
     @include mixins.mQ-phones(480px){
         height:70vh;
         margin-top:10vh;
         padding:20px 0px;
-        border-top:3px solid black;
-        border-bottom:3px solid black;
+
+        .auth-form-holder{
+            min-height: 300px;
+        }
     }
 
     @include mixins.mQ-other(481px,768px){
         padding-top: 20px;
-        font-size:1.5em;
-        height: 80vh;
+        font-size:1.2em;
+        height: 60vh;
+        margin-top:5vh;
+
+        .auth-form-holder{
+            height:60vh;
+        }
     }
 
     @include mixins.mQ-other(769px,1149px){
-        height:80vh;
+        height:50vh;
     }
 
     @include mixins.mQ-other(1150px, 1699px){
@@ -128,6 +135,7 @@
         text-align: center;
         font-size:1.8em;
         padding:10px;
+        padding-bottom:50px;
     }
 
     @include mixins.mQ-other(361px, 480px){
@@ -139,23 +147,6 @@
     @include mixins.mQ-other(481px,768px){
         text-align: center;
         padding:20px;
-        margin-top:50px;
-    }
-
-    @include mixins.mQ-other(769px,1149px){
-        margin-top:100px;
-    }
-
-    @include mixins.mQ-other(1150px, 1699px){
-        margin-top:150px;
-    }
-
-    @include mixins.mQ-other(1700px, 2299px){
-        margin-top:200px;
-    }
-
-    @include mixins.mQ-largerDesktops(2299px){
-        margin-top:250px;
     }
 }
 

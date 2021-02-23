@@ -5,7 +5,7 @@
     padding-top: 50px;
     padding-bottom:50px;
     min-height:100vh;
-    background-color: #fffff2;
+    background-color: variables.$alternativeBackground;
 
     .single-bet-container:nth-child(odd){
         background-color: #fe4891;

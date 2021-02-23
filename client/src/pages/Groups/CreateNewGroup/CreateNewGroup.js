@@ -180,9 +180,10 @@ class CreateNewGroup extends Component {
         return (
             <div className={`main-container basic-fx justify-center-fx align-center-fx ${!usingMobile(480) ? "alternative-mobile-background" : "main-background"}`}>
                 <form name="create-new-group" id="create-new-group" onSubmit={this.uploadGroup}>
-                    <div id="create-new-group-container" className="basic-column-fx align-center-fx justify-between-fx">
+                    <div id="create-new-group-container" className="basic-column-fx align-center-fx">
                         {this.state.pageLoaded ?
                             <Fragment>
+                                <div className="create-new-group-body basic-column-fx align-center-fx justify-between-fx">
                                 <div className="create-new-group-line basic-fx justify-between-fx">
                                     <label htmlFor="new-group-name">Enter group name</label>
                                     <input
@@ -234,6 +235,7 @@ class CreateNewGroup extends Component {
                                     <Suggestions addRemoveOutsider={this.addRemoveOutsider} suggestionsFromDatabase={this.state.suggestionsFromDatabase} /> : null}
                                 {this.state.error ? <ErrorMessage text={this.state.errorMessage} /> : null}
                                 <ConfirmButton classToDisplay="confirm-button-space" form="create-new-group" text="Add group" type="submit" />
+                                </div>
                                 <ReturnButton
                                     classToDisplay="return-button-space return-button-medium"
                                     returnToMain={returnToMain.bind(null, this.props)}

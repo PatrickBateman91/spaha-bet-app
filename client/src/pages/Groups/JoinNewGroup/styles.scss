@@ -4,7 +4,7 @@
 .join-new-group{
     width:500px;
     min-height:400px;
-    background-image: url('../../../assets/images/paper-background3.jpg');
+    background-color:variables.$alternativeBackground;
     padding:30px;
     border-radius:10px;
     border:5px solid black;
@@ -27,14 +27,11 @@
     }
 
     @include mixins.mQ-phones(360px){
+        padding:0px;
         font-size:1em;
         min-height:200px;
         width:100vw;
-        background-image: none;
-        border-top:3px solid black;
-        border-bottom:3px solid black;
-        border-left:none;
-        border-right:none;
+        border:none;
         border-radius: 0px;
         box-shadow: none;
         label{
@@ -43,18 +40,21 @@
         input{
             height:40px;
             font-size:1.2em;
+        }
+        .joint-new-group-body{
+            width:100vw;
+            padding:10px;
+            border-bottom: 3px solid black;
+            padding-bottom:30px;
         }
     }
 
     @include mixins.mQ-other(361px, 480px){
-        background-image: none;
+        padding:0px;
         font-size:1em;
         min-height:200px;
         width:100vw;
-        border-top:3px solid black;
-        border-bottom:3px solid black;
-        border-left:none;
-        border-right:none;
+        border:none;
         border-radius: 0px;
         box-shadow: none;
         label{
@@ -63,6 +63,12 @@
         input{
             height:40px;
             font-size:1.2em;
+        }
+        .joint-new-group-body{
+            width:100vw;
+            padding:10px;
+            border-bottom: 3px solid black;
+            padding-bottom:30px;
         }
     }
 
@@ -79,7 +85,7 @@
     }
 
     @include mixins.mQ-other(769px,1149px){
-        font-size:0.7em;
+        font-size:0.8em;
         min-height:250px;
         label{
             margin-bottom: 10px;

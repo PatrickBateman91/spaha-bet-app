@@ -1,16 +1,20 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { fieldObjects } from './FieldsObjects';
-import { checkCorrectMailFormat, emptyFieldsCheck, passwordCheck, returnToMain, isMobile } from '../../../services/HelperFunctions/HelperFunctions';
+import { checkCorrectMailFormat, emptyFieldsCheck, passwordCheck, returnToMain, shortenWord, isMobile } from '../../../services/HelperFunctions/HelperFunctions';
 import { getGroups } from '../../../services/HelperFunctions/RequestFunctions';
 import { signInRequest, signUpRequest } from '../../../services/Axios/UserRequests';
 import AuthButton from '../../../components/Buttons/AuthButton';
 import ErrorMessage from '../../../components/Messages/ErrorMessage';
 import InputField from '../../../components/Auth/InputField';
+import PasswordField from '../../../components/Auth/PasswordField';
 import ReturnButton from '../../../components/Buttons/ReturnButton';
 import SuccessMessage from '../../../components/Messages/SuccessMessage';
-
+import UploadPicture from '../../../components/Auth/UploadPicture';
 import './styles.scss';
+
+import { DndProvider, } from 'react-dnd'
+import Backend from 'react-dnd-html5-backend';
 
 class MainAuth extends Component {
   state = {
@@ -18,6 +22,7 @@ class MainAuth extends Component {
     pageLoaded: false,
     error: false,
     errorMessage: "",
+    passwordShown: false,
     selectedFile: "",
     success: false,
     successMessage: "",
@@ -60,13 +65,41 @@ class MainAuth extends Component {
             selectedFile: e.target.files[0]
           }, () => {
           })
-        } else {
+        }
+
+        else {
           this.setState({
             error: true,
             errorMessage: "Max picture size is 3 mb"
           })
         }
-      } else {
+      }
+
+      else {
+        window.location.reload();
+      }
+    }
+  }
+
+  handlePictureDrop = (item) => {
+    if (item && item.files && item.files.length === 1) {
+      if (item.files[0].type === "image/png" || item.files[0].type === "image/jpg" || item.files[0].type === "image/jpeg") {
+        if (item.files[0].size < 3097152) {
+          this.setState({
+            selectedFile: item.files[0]
+          }, () => {
+          })
+        }
+
+        else {
+          this.setState({
+            error: true,
+            errorMessage: "Max picture size is 3 mb"
+          })
+        }
+      }
+
+      else {
         window.location.reload();
       }
     }
@@ -301,83 +334,89 @@ class MainAuth extends Component {
     })
   }
 
+  showPassword = () => {
+    const newValue = !this.state.passwordShown;
+    this.setState({ passwordShown: newValue });
+  }
+
   render() {
     return (
-      <div className={`auth-form-main-container basic-column-fx justify-center-fx ${isMobile(480) ? "mobile-alternative-background" : ""}`}>
-        {this.state.pageLoaded ? <div className="basic-column-fx justify-between-fx align-center-fx wrap-fx">
-          <form name={fieldObjects[this.state.whichPage].formName} id={fieldObjects[this.state.whichPage].formName} onChange={this.hideMessages} onSubmit={this.handleSubmit} encType="multipart/form-data">
-            <div className="auth-form-holder basic-column-fx wrap-fx justify-center-fx align-center-fx">
-              <div>
-                <InputField
-                  autoComplete={fieldObjects[this.state.whichPage].formOneAutocomplete}
-                  classToDisplay={`auth-line ${this.state.whichPage === "signInPage" ? "hide-placeholder" : ""}`}
-                  id={fieldObjects[this.state.whichPage].formOneName}
-                  label={fieldObjects[this.state.whichPage].labelOneName}
-                  placeholder={fieldObjects[this.state.whichPage].placeholderOne}
-                  type={fieldObjects[this.state.whichPage].firstFieldType} />
+      <DndProvider backend={Backend}>
+        <div className={`auth-form-main-container basic-column-fx justify-center-fx ${isMobile(480) ? "mobile-alternative-background" : ""}`}>
+          {this.state.pageLoaded ? <div className="basic-column-fx justify-between-fx align-center-fx wrap-fx">
+            <form name={fieldObjects[this.state.whichPage].formName} id={fieldObjects[this.state.whichPage].formName} onChange={this.hideMessages} onSubmit={this.handleSubmit} encType="multipart/form-data">
+              <div className="auth-form-holder basic-column-fx wrap-fx justify-center-fx align-center-fx">
+                <div>
+                  <InputField
+                    autoComplete={fieldObjects[this.state.whichPage].formOneAutocomplete}
+                    classToDisplay={`auth-line ${this.state.whichPage === "signInPage" ? "hide-placeholder" : ""}`}
+                    id={fieldObjects[this.state.whichPage].formOneName}
+                    label={fieldObjects[this.state.whichPage].labelOneName}
+                    placeholder={fieldObjects[this.state.whichPage].placeholderOne}
+                    type={fieldObjects[this.state.whichPage].firstFieldType} />
 
-                <InputField
-                  autoComplete={fieldObjects[this.state.whichPage].formTwoAutocomplete}
-                  classToDisplay={`auth-line ${this.state.whichPage === "signInPage" ? "hide-placeholder" : ""}`}
-                  id={fieldObjects[this.state.whichPage].formTwoName}
-                  label={fieldObjects[this.state.whichPage].labelTwoName}
-                  placeholder={fieldObjects[this.state.whichPage].placeholderTwo}
-                  type={"password"} />
+                  <PasswordField
+                    autoComplete={fieldObjects[this.state.whichPage].formTwoAutocomplete}
+                    classToDisplay={`auth-line ${this.state.whichPage === "signInPage" ? "hide-placeholder" : ""}`}
+                    id={fieldObjects[this.state.whichPage].formTwoName}
+                    label={fieldObjects[this.state.whichPage].labelTwoName}
+                    passwordShown={this.state.passwordShown}
+                    placeholder={fieldObjects[this.state.whichPage].placeholderTwo}
+                    showPassword={this.showPassword}
+                    type={this.state.passwordShown ? "text" : "password"} />
+                </div>
+
+                {this.state.whichPage === "signUpPage" ?
+                  <InputField
+                    autoComplete={fieldObjects[this.state.whichPage].formThreeAutocomplete}
+                    classToDisplay="auth-line"
+                    id={fieldObjects[this.state.whichPage].formThreeName}
+                    label={fieldObjects[this.state.whichPage].labelThreeName}
+                    placeholder={fieldObjects[this.state.whichPage].placeholderThree}
+                    type={fieldObjects[this.state.whichPage].firstFieldType} />
+                  : null}
+
+                {this.state.whichPage === "signUpPage" && !this.state.newGroupCheck ?
+                  <InputField
+                    autoComplete={fieldObjects[this.state.whichPage].formFourAutocomplete}
+                    classToDisplay="auth-line"
+                    id={fieldObjects[this.state.whichPage].formFourName}
+                    label={fieldObjects[this.state.whichPage].labelFourName}
+                    placeholder={fieldObjects[this.state.whichPage].placeholderFour}
+                    type={fieldObjects[this.state.whichPage].firstFieldType} /> : null}
+
+                {this.state.whichPage === "signUpPage" && this.state.newGroupCheck ?
+                  <InputField
+                    autoComplete={fieldObjects[this.state.whichPage].formSixAutocomplete}
+                    classToDisplay="auth-line"
+                    id={fieldObjects[this.state.whichPage].formSixName}
+                    label={fieldObjects[this.state.whichPage].labelSixName}
+                    placeholder={fieldObjects[this.state.whichPage].placeholderSix}
+                    type="text" /> : null}
+
+                {this.state.whichPage === "signUpPage" ? <div className="auth-line">
+                  <label htmlFor={fieldObjects[this.state.whichPage].formFiveName}>{fieldObjects[this.state.whichPage].labelFiveName}</label>
+                  <input type="checkbox" id={fieldObjects[this.state.whichPage].formFiveName} onClick={this.newGroupCheckFunction} />
+                </div> : null}
+
+                {this.state.whichPage === "signUpPage" ? <UploadPicture handleProfilePicture={this.handleProfilePicture} handlePictureDrop={this.handlePictureDrop} id={fieldObjects[this.state.whichPage].formSevenName} labelText={fieldObjects[this.state.whichPage].labelSevenName} selectedFile={this.state.selectedFile !== "" ? shortenWord(this.state.selectedFile.name, 30) : null} /> : null}
+
+                {this.state.whichPage === "signInPage" ? <div className="basic-fx justify-center-fx" onClick={this.handleResendPassword}><span className="forgot-password-link">Forgot your password?</span></div> : null}
+
+                {this.state.error ? <ErrorMessage classToDisplay="message-space" text={this.state.errorMessage} /> : null}
+                {this.state.success ? <SuccessMessage classToDisplay="message-space" text={this.state.successMessage} /> : null}
+
+                <AuthButton
+                  classToDisplay="auth-button-space"
+                  form={fieldObjects[this.state.whichPage].formName}
+                  text={fieldObjects[this.state.whichPage].buttonText} />
+
               </div>
-
-              {this.state.whichPage === "signUpPage" ?
-                <InputField
-                  autoComplete={fieldObjects[this.state.whichPage].formThreeAutocomplete}
-                  classToDisplay="auth-line"
-                  id={fieldObjects[this.state.whichPage].formThreeName}
-                  label={fieldObjects[this.state.whichPage].labelThreeName}
-                  placeholder={fieldObjects[this.state.whichPage].placeholderThree}
-                  type={fieldObjects[this.state.whichPage].firstFieldType} />
-                : null}
-
-              {this.state.whichPage === "signUpPage" && !this.state.newGroupCheck ?
-                <InputField
-                  autoComplete={fieldObjects[this.state.whichPage].formFourAutocomplete}
-                  classToDisplay="auth-line"
-                  id={fieldObjects[this.state.whichPage].formFourName}
-                  label={fieldObjects[this.state.whichPage].labelFourName}
-                  placeholder={fieldObjects[this.state.whichPage].placeholderFour}
-                  type={fieldObjects[this.state.whichPage].firstFieldType} /> : null}
-
-              {this.state.whichPage === "signUpPage" && this.state.newGroupCheck ?
-                <InputField
-                  autoComplete={fieldObjects[this.state.whichPage].formSixAutocomplete}
-                  classToDisplay="auth-line"
-                  id={fieldObjects[this.state.whichPage].formSixName}
-                  label={fieldObjects[this.state.whichPage].labelSixName}
-                  placeholder={fieldObjects[this.state.whichPage].placeholderSix}
-                  type="text" /> : null}
-
-              {this.state.whichPage === "signUpPage" ? <div className="auth-line">
-                <label htmlFor={fieldObjects[this.state.whichPage].formFiveName}>{fieldObjects[this.state.whichPage].labelFiveName}</label>
-                <input type="checkbox" id={fieldObjects[this.state.whichPage].formFiveName} onClick={this.newGroupCheckFunction} />
-              </div> : null}
-
-              {this.state.whichPage === "signUpPage" ? <div className="basic-column-fx justify-center-fx align-center-fx upload-picture-form">
-                <label htmlFor={fieldObjects[this.state.whichPage].formSevenName}>{fieldObjects[this.state.whichPage].labelSevenName}</label>
-                <input type="file" accept="image/x-png,image/jpg,image/jpeg" name={fieldObjects[this.state.whichPage].formSevenName} id={fieldObjects[this.state.whichPage].formSevenName} onChange={this.handleProfilePicture}></input>
-              </div> : null}
-
-              {this.state.whichPage === "signInPage" ? <div className="basic-fx justify-center-fx" onClick={this.handleResendPassword}><span className="forgot-password-link">Forgot your password?</span></div> : null}
-
-              {this.state.error ? <ErrorMessage classToDisplay="message-space" text={this.state.errorMessage} /> : null}
-              {this.state.success ? <SuccessMessage classToDisplay="message-space" text={this.state.successMessage} /> : null}
-
-              <AuthButton
-                classToDisplay="auth-button-space"
-                form={fieldObjects[this.state.whichPage].formName}
-                text={fieldObjects[this.state.whichPage].buttonText} />
-
-            </div>
-          </form>
-          <ReturnButton classToDisplay="return-button-space return-button-medium" returnToMain={returnToMain.bind(null, this.props)} whereTo='Home' text="Home" />
-        </div> : null}
-      </div>
+            </form>
+            <ReturnButton classToDisplay="return-button-space return-button-medium" returnToMain={returnToMain.bind(null, this.props)} whereTo='Home' text="Home" />
+          </div> : null}
+        </div>
+      </DndProvider>
     );
   }
 

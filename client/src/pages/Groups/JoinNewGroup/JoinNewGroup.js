@@ -49,20 +49,23 @@ const JoinNewGroup = (props) => {
     return (
         <div className={`basic-fx justify-center-fx align-center-fx main-container ${usingMobile(480) ? "main-background" : "alternative-mobile-background"}`}>
             <form id="join-new-group-form" onSubmit={joinNewGroupFunction}>
-                {pageLoaded ? <div className="join-new-group basic-column-fx justify-between-fx">
-                    <label htmlFor="join-new-group">Enter the ID of the group you want to join:</label>
-                    <input
-                        onChange={hideMessages}
-                        type="text"
-                        name="join-new-group"
-                        id="join-new-group"
-                        placeholder="Enter group ID"
-                        autoComplete="Group id"
-                    ></input>
-                    {error ? <ErrorMessage text={errorMessage} /> : null}
-                    <ConfirmButton classToDisplay="basic-fx justify-center-fx confirm-button-space" form="join-new-group-form" text="Join group" type="submit" />
-                    <ReturnButton classToDisplay="justify-center-fx return-button-space return-button-medium" returnToMain={returnToMain.bind(null, props)} text="Main menu" />
-                </div> : null}
+                {pageLoaded ?
+                    <div className="join-new-group basic-column-fx justify-around-fx">
+                        <div className="joint-new-group-body basic-column-fx justify-between-fx">
+                            <label htmlFor="join-new-group">Enter the ID of the group you want to join:</label>
+                            <input
+                                onChange={hideMessages}
+                                type="text"
+                                name="join-new-group"
+                                id="join-new-group"
+                                placeholder="Enter group ID"
+                                autoComplete="Group id"
+                            ></input>
+                            {error ? <ErrorMessage text={errorMessage} /> : null}
+                            <ConfirmButton classToDisplay="basic-fx justify-center-fx confirm-button-space" form="join-new-group-form" text="Join group" type="submit" />
+                        </div>
+                        <ReturnButton classToDisplay="justify-center-fx return-button-space return-button-medium" returnToMain={returnToMain.bind(null, props)} text="Main menu" />
+                    </div> : null}
             </form>
             {success ? <SuccessModal message={successMessage} /> : null}
         </div>

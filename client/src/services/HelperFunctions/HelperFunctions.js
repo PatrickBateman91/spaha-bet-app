@@ -411,6 +411,17 @@ export const rightUserCheck = (name, type, bet) => {
     return trigger;
 }
 
+export const shortenWord = (str, howMuch) => {
+    if(str.length < 30){
+        return str;
+    } 
+
+    else{
+        let newStr = str.split("").splice(str.length - howMuch).join(" ");
+        return "..." + newStr;
+    }
+}
+
 export const windowWidth = (size) => {
     return window.screen.width > size;
 }
