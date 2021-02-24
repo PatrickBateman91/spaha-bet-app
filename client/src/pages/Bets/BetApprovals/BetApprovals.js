@@ -306,11 +306,12 @@ class WaitingForApproval extends Component {
             <Fragment>
                 <div className="all-bets-container basic-column-fx wrap-fx align-center-fx">
                     {!this.props.appLoaded ? <Loader loading={!this.props.appLoaded} /> : !addTrigger && !editTrigger && !finishTrigger ?
-                        <div id="no-waiting-bets-container" className="basic-column-fx justify-evenly-fx">
-                            <div id="no-waiting-bets-holder" className="basic-fx justify-evenly-fx">
-                                You approved everything!
-                        <FontAwesomeIcon
-                                    icon={faCheck} />
+                        <div id="no-waiting-bets-container" className="basic-column-fx">
+                            <div id="no-waiting-bets-holder" className="basic-fx justify-evenly-fx align-center-fx">
+                                    <div className="no-waiting-bets-body basic-fx justify-evenly-fx align-center-fx">
+                                        <span>You approved everything!</span>
+                                        <FontAwesomeIcon icon={faCheck} />
+                                    </div>
                             </div>
                             <ReturnButton
                                 classToDisplay="justify-center-fx return-button-medium"
@@ -319,6 +320,7 @@ class WaitingForApproval extends Component {
                         </div>
                         :
                         <div className="basic-column-fx justify-around-fx">
+
                             <div className="approve-single-box basic-column-fx">
                                 <span className="approve-item-title">Added bets</span>
                                 {addTrigger ? addBets : <span className="approve-item">No added bets that are awaiting your approval!</span>}

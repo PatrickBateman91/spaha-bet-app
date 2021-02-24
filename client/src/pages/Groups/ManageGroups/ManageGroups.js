@@ -10,6 +10,7 @@ import ManageGroupsModal from '../../../parts/Groups/ManageGroups/ManageGroupsMo
 import ReturnButton from '../../../components/Buttons/ReturnButton';
 import ErrorMessage from '../../../components/Messages/ErrorMessage';
 import SuccessMessage from '../../../components/Messages/SuccessMessage';
+import SuccessModal from '../../../components/Modals/SuccessModal';
 import './styles.scss';
 
 class ManageGroups extends Component {
@@ -95,6 +96,8 @@ class ManageGroups extends Component {
 
     componentDidMount() {
         window.scrollTo(0, 0);
+        document.getElementById('root').style.height = "100%";
+        
         if (this.props.appLoaded) {
             if (this.props.user === "guest") {
                 this.props.history.push('/');
@@ -202,10 +205,10 @@ class ManageGroups extends Component {
                 this.setState({
                     modalOpen: false,
                     success: true,
-                    successMessage: `You successfully changed the group's name!`,
-                    whichModal: ""
+                    successMessage: `You successfully changed the group's name!`
                 }, () => {
-                    setTimeout(() => this.setState({ success: false, successMessage: "" }), 1000)
+                    document.getElementById('success-modal-container').style.top = `${window.pageYOffset}px`;
+                    setTimeout(() => this.setState({ success: false, successMessage: "", whichModal: "" }), 1000)
                 })
             }).catch(err => {
                 this.setState({
@@ -243,9 +246,11 @@ class ManageGroups extends Component {
             this.setState({
                 modalOpen: false,
                 success: true,
-                successMessage: `You successfully ${message} the group!`,
-                whichModal: ""
-            }, () => setTimeout(() => this.setState({ success: false, successMessage: "" }), 1000));
+                successMessage: `You successfully ${message} the group!`
+            }, () => {
+                document.getElementById('success-modal-container').style.top = `${window.pageYOffset}px`;
+                setTimeout(() => this.setState({ success: false, successMessage: "", whichModal: "" }), 1000)
+            })
         }).catch(err => {
             this.setState({
                 error: true,
@@ -309,9 +314,10 @@ class ManageGroups extends Component {
                     modalOpen: false,
                     success: true,
                     successMessage: `You successfully removed members from the group!`,
-                    whichModal: ""
+
                 }, () => {
-                    setTimeout(() => this.setState({ success: false, successMessage: "" }), 1000)
+                    document.getElementById('success-modal-container').style.top = `${window.pageYOffset}px`;
+                    setTimeout(() => this.setState({ success: false, successMessage: "", whichModal: "" }), 1000)
                 })
             }).catch(err => {
                 this.setState({
@@ -374,9 +380,11 @@ class ManageGroups extends Component {
                     modalOpen: false,
                     success: true,
                     successMessage: `You successfully invited user to the group!`,
-                    whichModal: ""
                 }, () => {
-                    setTimeout(() => this.setState({ success: false, successMessage: "" }), 1000)
+                    document.getElementById('success-modal-container').style.top = `${window.pageYOffset}px`;
+                    setTimeout(() => {
+                        this.setState({ success: false, successMessage: "", whichModal:"" });
+                    }, 1000)
                 })
             }).catch(err => {
                 this.setState({
@@ -425,7 +433,6 @@ class ManageGroups extends Component {
                         </div>
                     </div>
                     {this.state.error ? <ErrorMessage text={this.state.errorMessage} /> : null}
-                    {this.state.success ? <SuccessMessage text={this.state.successMessage} /> : null}
                     {this.state.modalOpen ? <div className="basic-fx justify-center-fx align-center-fx currently-changing-title">
                         <span>Currently changing {this.state.groupName}</span>
                     </div> : null}
@@ -456,6 +463,7 @@ class ManageGroups extends Component {
                         returnToMain={returnToMain.bind(null, this.props)}
                         text="Main menu" />
                 </div> : <Loader loading={this.state.pageLoaded} />}
+               {this.state.success ?  <SuccessModal message={this.state.successMessage} /> : null}
             </div>
         );
     }

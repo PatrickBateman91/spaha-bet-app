@@ -15,10 +15,6 @@
         padding-left:5px;
     }
 
-    #joint-left-side-input2::placeholder, #joint-right-side-input1::placeholder{
-        font-size:0.5em;
-    }
-
     @include mixins.mQ-phones(480px){
         width:98vw;
         margin: 0 auto;
@@ -51,11 +47,11 @@
 
     #joint-left-side-input1,#joint-right-side-input2{
         margin:10px;
-        width:170px;
+        width:70%;
     }
 
     #joint-left-side-input2,#joint-right-side-input1{
-        width:50px;
+        width:25%;
         margin:5px;
     }
 
@@ -117,18 +113,44 @@
 
     @include mixins.mQ-other(481px,768px){
         display: flex;
-        justify-content: space-between;
+        flex-direction: column;
+        align-items: center;
+
+        &:last-of-type{
+            flex-direction: column-reverse;
+        }
         #joint-left-side-input1,#joint-right-side-input2{
-            width:27vw;
+            width: 80%;
             margin:5px 2px;
-            font-size:0.9em;
+            font-size:16px;
             padding:3px;
         }
 
         #joint-left-side-input2,#joint-right-side-input1{
-            width:15vw;
+            width:80%;
             margin:5px 2px;
-            font-size:0.8em;
+            font-size:16px;
+            padding:3px;
+        }
+    }
+
+    @include mixins.mQ-other(769px, 1149px){
+        #joint-left-side-input1,#joint-right-side-input2{
+            margin:3px;
+        }
+
+        #joint-left-side-input2,#joint-right-side-input1{
+            margin:2px,
+        }
+    }
+
+    @include mixins.mQ-other(1149px, 1150px){
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        font-size:1em;
+        input{
+            padding:3px;
         }
     }
 
@@ -151,11 +173,13 @@
             padding:3px;
         }
     }
+    
     @include mixins.mQ-largerDesktops(2299px){
         display:flex;
         justify-content: center;
         align-items: center;
         font-size:1em;
+        width:70%;
         input{
             padding:3px;
         }
@@ -188,7 +212,7 @@
         justify-content: center;
 
         input{
-            width: 32vw;
+            width: 30%;
             height:30px;
             padding:5px 3px;
             margin:2px;
@@ -197,6 +221,10 @@
     }
 
     @include mixins.mQ-other(481px,768px){
+        input[type=text]{
+            width: 30%;
+        }
+
         input{
             height:40px;
             font-size:0.7em;
@@ -207,7 +235,7 @@
         }
     }
 
-    @include mixins.mQ-other(1700px, 2299px){
+    @include mixins.mQ-largerDesktops(769px){
       input[type=text]{
           width: 30%;
       }
@@ -234,10 +262,10 @@
     }
 
     @include mixins.mQ-phones(480px){
-        width:94vw;
+        width:100%;
         flex-wrap: wrap;
         font-size:0.95em;
-        margin:3px 3vw;
+        padding:3px 3vw;
         align-items: center;
 
         #newBetSubject{
@@ -262,6 +290,11 @@
 
     @include mixins.mQ-other(481px,768px){
         padding:10px;
+
+        #newBetSubject{
+            width:150px;
+        }
+
         input{
             height:40px;
             font-size:0.7em;
@@ -291,10 +324,10 @@
     } 
 
     @include mixins.mQ-phones(360px){
-        right: -10px
+        right: 0px
     }
  
     @include mixins.mQ-other(361px, 480px){
-        right: -10px
+        right: 0px
     }
 }

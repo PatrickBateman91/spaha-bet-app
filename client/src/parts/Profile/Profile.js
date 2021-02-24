@@ -35,7 +35,7 @@ const MainProfile = (props) => {
                 <div className="profile-info-item basic-fx justify-between-fx"><span>Active bets:</span><span> {props.totalNumberOfBets}</span></div>
                 <div className="profile-info-item basic-fx justify-between-fx">Balance: {changedBalance}</div>
                 <div id="profile-info-more-stats" className="basic-fx justify-center-fx" onClick={props.menuClick}><span>More stats</span></div>
-                {windowWidth(480) ? null : <SignOutNav navAuth={props.navAuth} handleNavigationClick={props.handleNavigationClick} />}
+                {windowWidth(768) ? null : <SignOutNav navAuth={props.navAuth} handleNavigationClick={props.handleNavigationClick} />}
             </div>
         </div>
     );

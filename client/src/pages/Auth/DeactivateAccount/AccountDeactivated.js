@@ -2,6 +2,7 @@ import React from 'react';
 import './styles.scss';
 
 const AccountDeactivated = (props) => {
+    window.scrollTo(0, 0);
     document.getElementById('root').style.height = "100%";
     setTimeout(() => window.location.replace("https://spaha-betapp.netlify.app"), 2000);
     return (

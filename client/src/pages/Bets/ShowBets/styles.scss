@@ -120,9 +120,8 @@
         flex-direction: row !important;
         display:flex;
         justify-content: space-around;
-        order:1;
         flex-wrap: wrap;
-        margin-bottom: 20px;
+        margin-bottom: 30px;
         font-size:0.8em;
            .legend-section{
                width:45%;
@@ -138,9 +137,8 @@
         flex-direction: row !important;
         display:flex;
         justify-content: space-around;
-        order:1;
         flex-wrap: wrap;
-        margin-bottom: 20px;
+        margin-bottom: 40px;
         font-size:0.9em;
            .legend-section{
                width:45%;
@@ -156,7 +154,6 @@
      flex-direction: row !important;
      display:flex;
      justify-content: space-around;
-     order:1;
      flex-wrap: wrap;
      margin-bottom: 50px;
         .legend-section{
@@ -219,10 +216,24 @@
 .no-bets-to-show{
     display:flex;
     width:500px;
-    margin:150px 0px;
-    justify-content: center;
+    min-height:75vh;
+    text-align: center;
+
+    span{
+        font-size: 2em;
+    }
 
     @include mixins.mQ-phones(480px){
         width:90vw;
+        min-height: 60vh;
+        
+        span{
+            font-size:1.7em;
+        }
+    }
+
+
+    @include mixins.mQ-other(481px,768px){
+        min-height: 60vh;
     }
 }

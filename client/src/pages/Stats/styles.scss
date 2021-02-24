@@ -12,9 +12,12 @@
     }
 }
 
+.stats-body{
+    min-height: 85vh;
+}
+
 #stats-svg-holder{
     margin-top:50px;
-
     @media screen and (min-device-width: 320px) 
     and (max-device-width: 650px)
     and (orientation: landscape)
@@ -88,15 +91,15 @@
     }
 
     @include mixins.mQ-other(1150px, 1699px){
-        margin-top:75px;
+        margin-top:30px;
     }
 
     @include mixins.mQ-other(1700px, 2299px){
-        margin-top:100px;
+        margin-top:40px;
     }
 
     @include mixins.mQ-largerDesktops(2299px){
-        margin-top:100px;
+        margin-top:50px;
     }
 }
 
@@ -129,23 +132,47 @@
 
 .stats-no-finished-bets{
     text-align: center;
-    margin-top:50px;
-    margin-bottom: 50px;
+    margin: auto 0;
 
     span{
+        font-size:2em;
         padding:10px;
         background-color: variables.$titleColor;
         border-radius: 7px;
-        width:20vw;
+        width: 60%;
     }
 
     @include mixins.mQ-phones(480px){
-        margin-top:0px;
         span{
-            font-size:0.6em;
-           
+            width:95%;
+            font-size:1.2em;     
         }
-      
+    }
+
+    @include mixins.mQ-other(481px,768px){
+       span{
+            width:90%;
+            font-size: 1.5em;
+        }
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        span{
+            width:80%;
+            font-size: 1.7em;
+        }
+    }
+
+    @include mixins.mQ-other(1700px, 2298px){
+        span{
+            width: 35%;
+        }
+    }
+    
+    @include mixins.mQ-largerDesktops(2299px){
+        span{
+            width: 30%;
+        }
     }
 }
 

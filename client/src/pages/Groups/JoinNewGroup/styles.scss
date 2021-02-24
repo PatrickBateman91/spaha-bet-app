@@ -29,7 +29,7 @@
     @include mixins.mQ-phones(360px){
         padding:0px;
         font-size:1em;
-        min-height:200px;
+        min-height:auto;
         width:100vw;
         border:none;
         border-radius: 0px;
@@ -43,16 +43,18 @@
         }
         .joint-new-group-body{
             width:100vw;
+            min-height: 85vh;
             padding:10px;
             border-bottom: 3px solid black;
-            padding-bottom:30px;
+            padding-bottom:50px;
+            padding-top:50px;
         }
     }
 
     @include mixins.mQ-other(361px, 480px){
         padding:0px;
         font-size:1em;
-        min-height:200px;
+        min-height:auto;
         width:100vw;
         border:none;
         border-radius: 0px;
@@ -66,9 +68,11 @@
         }
         .joint-new-group-body{
             width:100vw;
+            min-height: 80vh;
             padding:10px;
             border-bottom: 3px solid black;
-            padding-bottom:30px;
+            padding-bottom:50px;
+            padding-top:50px;
         }
     }
 

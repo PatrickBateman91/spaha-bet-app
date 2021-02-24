@@ -12,31 +12,37 @@
     box-shadow: 0px 3px 8px 1px rgba(0,0,0,0.75);
 
     @include mixins.mQ-phones(360px){
-        min-height: 100vh;
         font-size:1em;
         width: 100vw;
         border:none;
         border-radius: 0px;
         box-shadow: none;
+        padding:0px;
+        min-height: auto;
 
         .create-new-group-body{
             width:100vw;
+            min-height:85vh;
             border-bottom: 3px solid black;
-            padding-bottom:30px;
+            padding-bottom:20px;
+            padding-top:20px;
         }
     }
 
     @include mixins.mQ-other(361px, 480px){
-        min-height: 300px;
         font-size:1em;
         width: 100vw;
         border:none;
         border-radius: 0px;
         box-shadow: none;
+        padding:0px;
+        min-height: auto;
 
         .create-new-group-body{
             width:100vw;
+            min-height: 85vh;
             border-bottom: 3px solid black;
+            padding-top:20px;
             padding-bottom:30px;
         }
     }

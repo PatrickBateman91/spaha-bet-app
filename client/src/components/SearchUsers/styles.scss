@@ -56,11 +56,10 @@
     border-bottom: 1px solid black;
 
     @include mixins.mQ-phones(360px){
-        font-size:1.3em;
+        font-size:1em;
         
         .search-add{
-            
-            padding:5px 10px;
+            padding:3px 7px;
         }
     }
 

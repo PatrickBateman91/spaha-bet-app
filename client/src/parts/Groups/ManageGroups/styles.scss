@@ -22,4 +22,20 @@
         border-radius: 0px;
         box-shadow: none;
     }
+
+    @include mixins.mQ-other(481px,768px){
+        width:85vw;
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        width: 500px;
+    }
+
+    @include mixins.mQ-other(1700px, 2298px){
+        width:800px;
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        width: 800px;
+    }
 }

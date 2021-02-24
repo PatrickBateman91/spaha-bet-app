@@ -9,12 +9,12 @@ const GroupLine = (props) => {
                 <div className="line-width group-name basic-fx align-center-fx">{props.groupName}</div>
 
                 <div className="line-width basic-fx justify-center-fx align-center-fx relative">
-                    <div className="group-line-invite" id="invite-people">INVITE PEOPLE</div>
+                    <div className="group-line-invite" id="invite-people">INVITE</div>
                 </div>
 
                 {props.admin ?
                     <div className="line-width basic-fx justify-center-fx align-center-fx relative">
-                        <span className="group-line-remove" id="remove-people">REMOVE PEOPLE</span>
+                        <span className="group-line-remove" id="remove-people">REMOVE</span>
                     </div> : <div className="line-width"></div>}
 
                 <div className="basic-fx justify-center-fx align-center-fx line-svg line-width">

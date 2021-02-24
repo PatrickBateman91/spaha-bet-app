@@ -7,6 +7,7 @@ import SuccessMessage from '../../../components/Messages/SuccessMessage';
 import './styles.scss';
 
 const NewPasswordFromEmail = (props) => {
+    window.scrollTo(0, 0);
     document.getElementById('root').style.height = "100%";
     const [emailValid, setEmailValid] = useState(false);
     const [error, setError] = useState(false);
@@ -14,7 +15,6 @@ const NewPasswordFromEmail = (props) => {
     const [pageLoaded, setPageLoaded] = useState(false);
     const [success, setSuccess] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
-    window.scrollTo(0, 0);
 
     const handleResetPassword = (e) => {
         e.preventDefault();

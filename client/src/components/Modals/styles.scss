@@ -19,10 +19,12 @@
     width:70vw;
 
     @include mixins.mQ-phones(360px){
+        background-color: variables.$alternativeBackground;
         width: 100vw;
     }
 
     @include mixins.mQ-other(361px, 480px){
+        background-color: variables.$alternativeBackground;
         padding:20px 10px;
         width:100vw;
     }

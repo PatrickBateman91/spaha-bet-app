@@ -7,6 +7,7 @@ import ReturnButton from '../../../components/Buttons/ReturnButton';
 import SuccessMessage from '../../../components/Messages/SuccessMessage';
 
 const ResendPassword = (props) => {
+    window.scrollTo(0, 0);
     document.getElementById('root').style.height = "100%";
     const [error, setError] = useState(false);
     const [success, setSuccess] = useState(false);

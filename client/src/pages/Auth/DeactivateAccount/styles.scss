@@ -51,22 +51,26 @@
 }
 
 .deactivate-container{
-    margin-top:20vh;
+    padding-top:20vh;
+    min-height:80vh;
+
+
     @include mixins.mQ-phones(480px){
-        height:70vh;
-        margin-top:10vh;
-        padding:20px 0px;
+        height:75vh;
+        margin-top:5vh;
+        padding:0px;
+        border-bottom:3px solid black;
 
         .auth-form-holder{
-            min-height: 300px;
+            min-height: 60vh;
+            border-bottom: none;
         }
     }
 
     @include mixins.mQ-other(481px,768px){
-        padding-top: 20px;
+        padding-top: 10vh;
         font-size:1.2em;
         height: 60vh;
-        margin-top:5vh;
 
         .auth-form-holder{
             height:60vh;

@@ -4,6 +4,7 @@ import { signOutRequest } from '../../../services/Axios/UserRequests';
 import './styles.scss';
 
 const SignedOutPage = (props) => {
+    window.scrollTo(0, 0);
     document.getElementById('root').style.height = "100%";
     const [success, setSuccess] = useState(false);
     const [errorMessage, setMessage] = useState("");

@@ -26,10 +26,19 @@ const Notifications = (props) => {
 
     seenToRender = seenNotifications.map((notification, index) => {
         seenTrigger = true;
-        const newDate = getDate(1, notification.timestamp)
-        return (
-            <SeenNotification date={newDate} key={notification.title + index} title={notification.title} />
-        )
+        if(!props.showNotifications){
+            if(index < 5){
+                const newDate = getDate(1, notification.timestamp)
+                return (
+                    <SeenNotification date={newDate} key={notification.title + index} title={notification.title} />
+                )
+            } else return null;
+        } else{
+            const newDate = getDate(1, notification.timestamp)
+            return (
+                <SeenNotification date={newDate} key={notification.title + index} title={notification.title} />
+            )
+        }   
     })
     unseenToRender = unseenNotifications.map((notification, index) => {
         unseenTrigger = true;
@@ -52,6 +61,9 @@ const Notifications = (props) => {
                         {seenTrigger ? seenToRender : null}
                     </div>
                 </Fragment>
+            {seenToRender.length > 5 ? <div className="show-more-notifications-container basic-fx justify-center-fx align-center-fx" onClick={props.handleShowNotifications}>
+                    <div className="show-more-notifications-holder">Show {props.showNotifications ? "less" : "more"} notifications</div>
+                </div> : null}
             </div>
             <div className="home-paper-pin-container">
                 <div>

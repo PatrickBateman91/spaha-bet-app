@@ -16,8 +16,9 @@
     }
 
     @include mixins.mQ-other(481px,768px){
-        font-size:0.85em;
-        width:150px;
+        align-items: flex-end;
+        font-size:1em;
+        width:25vw;
     }
 
     @include mixins.mQ-other(769px,1149px){
@@ -59,6 +60,10 @@
         font-size: 16px;
     }
 
+    @include mixins.mQ-other(481px,768px){
+        width:20vw;
+    }
+
     @include mixins.mQ-largerDesktops(2299px){
         font-size:1em;
         margin-bottom: 50px;
@@ -67,6 +72,10 @@
 
 .profile-info-item{
     font-size:0.85em;
+
+    @include mixins.mQ-other(481px,768px){
+        width:20vw;
+    }
 }
 
 #profile-info-icon{
@@ -112,9 +121,12 @@
     }
 
     @include mixins.mQ-other(481px,768px){
-        font-size:0.7em;
-        width:80px;
+        font-size:1em;
+        padding:3px 20px;
+        margin-bottom: 5px;
+        width:20vw;
         margin-top:5px;
+        align-self: flex-end;
     }
 
     @include mixins.mQ-other(769px,1149px){

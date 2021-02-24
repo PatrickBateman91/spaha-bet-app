@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { deactivateAccount } from '../../../services/Axios/UserRequests';
-import { returnToMain } from '../../../services/HelperFunctions/HelperFunctions';
+import { returnToMain, windowWidth } from '../../../services/HelperFunctions/HelperFunctions';
 import DangerButton from '../../../components/Buttons/DangerButton';
 import ReturnButton from '../../../components/Buttons/ReturnButton';
 import './styles.scss';
 
 const DeactivateAccount = (props) => {
+    window.scrollTo(0, 0);
     document.getElementById('root').style.height = "100%";
     if (props.user === "guest") {
         window.location.replace("https://spaha-betapp.netlify.app");
@@ -25,7 +26,7 @@ const DeactivateAccount = (props) => {
 
 
     return (
-        <div className="main-container">
+        <div className={`main-container ${windowWidth(480) ? "main-background" : "alternative-background"}`}>
             <div className="deactivate-container basic-column-fx justify-between-fx align-center-fx">
                 <div className="auth-form-holder basic-column-fx justify-between-fx align-center-fx">
                 <div id="deactivate-question">Are you sure you want to deactivate your account?</div>

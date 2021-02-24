@@ -1,9 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component} from 'react';
 import { connect } from 'react-redux';
 import { changeGroup } from '../../../components/Groups/GroupsDropdown/ChangeGroupFunction';
 import { finishBetRequest } from '../../../services/Axios/BetRequests';
 import { changeSingleGroup, rightUserCheck } from '../../../services/HelperFunctions/HelperFunctions';
+import {Link} from 'react-router-dom';
 import BetLegend from '../../../components/ShowBets/BetLegend';
+import ConfirmButton from '../../../components/Buttons/ConfirmButton';
 import EditBet from '../../../components/Modals/EditBet/EditBet';
 import ErrorMessage from '../../../components/Messages/ErrorMessage';
 import DifferentStakes from '../../../parts/Bets/DifferentStakes';
@@ -13,6 +15,7 @@ import SameStakes from '../../../parts/Bets/SameStakes';
 import ShowBetsLayout from './ShowBetsLayout';
 import SuccessModal from '../../../components/Modals/SuccessModal';
 import './styles.scss';
+
 
 class ActiveBets extends Component {
     state = {
@@ -266,7 +269,12 @@ class ActiveBets extends Component {
                     selectedGroupName={this.props.selectedGroupName}
                     trigger={this.state.trigger}
                     user={this.props.user}>
-                    {this.state.trigger ? this.state.bets : <div className="no-bets-to-show">No active bets to show</div>}
+                    {this.state.trigger ? this.state.bets : 
+                        <div className="no-bets-to-show basic-column-fx justify-center-fx align-center-fx">
+                            <span>No active bets to show</span>
+                            <Link to="/add-bet"><ConfirmButton classToDisplay="confirm-button-space" text="Add bet" type="button" /></Link>
+                        </div>
+                    }
                     <BetLegend />
                     {this.state.error ? <ErrorMessage classToDisplay="message-space" text={this.state.errorMessage} /> : null}
                     {this.state.editModalOpen ? <EditBet

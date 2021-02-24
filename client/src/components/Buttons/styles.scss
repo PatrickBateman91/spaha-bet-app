@@ -28,6 +28,11 @@
 .return-button-space{
     padding-top: 50px;
     padding-bottom: 50px;
+
+    @include mixins.mQ-phones(480px){
+        padding-top:25px;
+        padding-bottom: 25px;
+    }
 }
 
 .return-button-medium{
@@ -141,15 +146,15 @@
 
     @include mixins.mQ-phones(360px){
         button{
-            font-size:1.2em;
-            padding:5px 10px;
+            font-size:23px;
+            padding:7px 16px;
         }
     }
 
     @include mixins.mQ-other(361px, 480px){
         button{
-            font-size:1.3em;
-            padding:5px 10px;
+            font-size:25px;
+            padding:8px 16px;
         }
     }
 

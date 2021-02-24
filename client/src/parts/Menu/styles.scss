@@ -45,6 +45,17 @@
         }
     }
 
+    @include mixins.mQ-other(481px,768px){
+        div{
+            padding:5px 40px;
+        } 
+
+        #sign-out{
+            width:20vw;
+            font-size: 16px;
+        }
+    }
+
     @include mixins.mQ-other(769px,1149px){
         font-size:0.7em;
         div{
@@ -77,6 +88,11 @@
 
     @include mixins.mQ-other(361px, 480px){
         width:auto;
+        margin-top:5px;
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        width:20vw;
         margin-top:5px;
     }
 
@@ -287,31 +303,31 @@
     }
 
     @include mixins.mQ-other(481px,768px){
-        width:75vw;
-        min-height:65vw;
+        width:90vw;
+        min-height:75vw;
         margin-bottom:30px;
 
         #manage-bets-title{
             margin-top:10px;
             margin-bottom:30px;
-            font-size:1.5em;
+            font-size:2em;
         }
         #manage-bets-body div{
-            width:24vw;
-            height: 24vw;
+            width:30vw;
+            height: 30vw;
             span{
                 z-index:10;
                 max-width: 80%;
                 font-family: "Reenie Beanie";
                 font-weight: 300;
                 text-align: center;
-                font-size:1.5em;
+                font-size:2em;
             }
             img{
                 position: absolute;
                 top:0px;
                 left:0px;
-                width:24vw;
+                width:30vw;
             }
         }
         .home-paper-pin-container{
@@ -322,7 +338,7 @@
     }
 
     @include mixins.mQ-other(769px,1149px){
-        min-height:27vw;
+        min-height: 250px;
         margin-bottom:20px;
 
         #manage-bets-title{
@@ -613,30 +629,33 @@
     }
 
     @include mixins.mQ-other(481px,768px){
-        width:75vw;
-        height:500px;
+        width:90vw;
+        min-height:75vw;
         padding-left:10px;
         padding-right:10px;
         #manage-group-title{
             margin-top:10px;
             margin-bottom:20px;
-            font-size:1.5em;
+            font-size:2em;
         }
         #manage-groups-body {
-            height:80%;
+            padding:0px 20px;
             div{
-                
-                width:24vw;
-                height:24vw;
+                width:30vw;
+                height:30vw;
                 span{
                     max-width: 80%;
-                    font-size:1.5em;
+                    font-size:2em;
                 }
                 img{
-                    width:24vw;
+                    width:30vw;
                 }
             }
-            }
+        }
+
+        :nth-child(3){
+            margin: 0 auto;
+        }
         .home-paper-pin-container{
             div img{
                 width:30px;
@@ -645,7 +664,7 @@
     }
 
     @include mixins.mQ-other(769px,1149px){
-        height:350px;
+        min-height: 270px;
         padding-left:10px;
         padding-right:10px;
         #manage-group-title{
@@ -654,31 +673,23 @@
             font-size:1em;
         }
         #manage-groups-body {
-            flex-direction: column;
-            height:80%;
+            height:90%;
             div{
-                
-                width:90px;
-                height:90px;
+                width:100px;
+                height:100px;
                 span{
                     max-width: 80%;
                     font-size:0.9em;
                 }
                 img{
-                    width:85px;
+                    width:100px;
                 }
             }
 
-            div:nth-child(1){
-               position: relative;
-               left:50px;
+            :nth-child(3){
+                margin:0 auto;
             }
-
-            div:nth-child(3){
-               position: relative;
-               left:-50px;
-            }
-            }
+        }
         .home-paper-pin-container{
             div img{
                 width:35px;

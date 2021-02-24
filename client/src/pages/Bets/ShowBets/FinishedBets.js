@@ -151,7 +151,7 @@ class FinishedBets extends Component {
                     trigger={this.state.trigger}
                     user={this.props.user}
                 >
-                    {this.state.trigger ? this.state.bets : <div className="no-bets-to-show">No finished bets to show</div>}
+                    {this.state.trigger ? this.state.bets : <div className="no-bets-to-show basic-fx justify-center-fx align-center-fx"><span>No finished bets to show</span></div>}
                     <div id="legend-finished-bets">
                         <div><span>Winner</span><FontAwesomeIcon icon={faCheck} /></div>
                     </div>

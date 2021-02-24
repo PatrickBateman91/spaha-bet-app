@@ -9,6 +9,9 @@ import SuccessModal from '../../../components/Modals/SuccessModal';
 import './styles.scss';
 
 const JoinNewGroup = (props) => {
+    window.scrollTo(0, 0);
+    document.getElementById('root').style.height = "100%";
+
     const [error, setError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [success, setSuccess] = useState(false);
@@ -47,7 +50,7 @@ const JoinNewGroup = (props) => {
     }
 
     return (
-        <div className={`basic-fx justify-center-fx align-center-fx main-container ${usingMobile(480) ? "main-background" : "alternative-mobile-background"}`}>
+        <div className={`basic-column-fx justify-center-fx align-center-fx main-container ${usingMobile(480) ? "main-background" : "alternative-mobile-background"}`}>
             <form id="join-new-group-form" onSubmit={joinNewGroupFunction}>
                 {pageLoaded ?
                     <div className="join-new-group basic-column-fx justify-around-fx">
@@ -64,9 +67,9 @@ const JoinNewGroup = (props) => {
                             {error ? <ErrorMessage text={errorMessage} /> : null}
                             <ConfirmButton classToDisplay="basic-fx justify-center-fx confirm-button-space" form="join-new-group-form" text="Join group" type="submit" />
                         </div>
-                        <ReturnButton classToDisplay="justify-center-fx return-button-space return-button-medium" returnToMain={returnToMain.bind(null, props)} text="Main menu" />
                     </div> : null}
             </form>
+            <ReturnButton classToDisplay="justify-center-fx return-button-space return-button-medium" returnToMain={returnToMain.bind(null, props)} text="Main menu" />
             {success ? <SuccessModal message={successMessage} /> : null}
         </div>
     )

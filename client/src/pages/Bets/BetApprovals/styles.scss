@@ -2,16 +2,31 @@
 @use '../../../assets//Sass/mixins.scss';
 
 #no-waiting-bets-container{
-    height:80vh;
+    height:90vh;
 }
 
 #no-waiting-bets-holder{
-width:400px;
-background-color: variables.$containerColor;
-padding:30px;
-border-radius: 10px;
-svg{
-    color:variables.$confirmation;
-    transform: scale(3);
-}
+    border-radius: 10px;
+    min-height:80vh;
+
+    .no-waiting-bets-body{
+        background-color: variables.$titleColor;
+        width:400px;
+        padding:30px;
+    }
+
+    svg{
+        color:variables.$confirmation;
+        transform: scale(3);
+    }
+
+    @include mixins.mQ-phones(480px){
+        .no-waiting-bets-body{
+            width:100vw;
+        }
+
+        svg{
+            transform: scale(2);
+        }
+    }
 }

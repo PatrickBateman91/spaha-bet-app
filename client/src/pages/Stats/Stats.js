@@ -896,7 +896,7 @@ class Stats extends Component {
             <div className="main-container">
                 {this.state.pageLoaded ?
                     <div id="stats-container" className="main-container main-background basic-column-fx wrap-fx" onClick={this.hideModal}>
-
+                        <div className="basic-column-fx stats-body">
                         <div id="stats-title" className="basic-fx align-center-fx justify-around-fx">
                             <div className="statistic-main-title">Stats</div>
                             <div id="active-bets-group-container" className="relative">
@@ -919,9 +919,13 @@ class Stats extends Component {
 
 
                         </div>
-                        {this.state.activeBetsTrigger === false ? <div className="stats-no-finished-bets"><span>No active bets</span></div> : null}
-                        {this.state.finishedBetsTrigger === false ? <div className="stats-no-finished-bets"><span>No finished bets</span></div> : null}
-                        {this.state.noGroups ? <div className="stats-no-finished-bets"><span>You are not part of any groups yet!</span></div> : null}
+
+                        <div className="stats-no-finished-bets basic-fx justify-center-fx align-center-fx">
+                        {!this.state.activeBetsTrigger && !this.state.finishedBetsTrigger ? <span>There are no bets in this group!</span> : null}
+                        </div>
+
+                        {this.state.noGroups ? <div className="stats-no-finished-bets basic-fx justify-center-fx align-center-fx"><span>You are not part of any groups yet!</span></div> : null}
+                        </div>
                         <ReturnButton
                             returnToMain={returnToMain.bind(null, this.props)}
                             classToDisplay="justify-center-fx return-button-space return-button-medium"

@@ -14,9 +14,13 @@ import './styles.scss';
 class Home extends Component {
 
     state = {
-        people: [],
-        user: null,
-        groups: [],
+        accountModalOpen: false,
+        error: false,
+        errorMessage: "",
+        editID: "",
+        finishBetModal: false,
+        finishID: "",
+        hoverProfile: false,
         navAuth: [
             {
                 name: 'Sign Out',
@@ -30,18 +34,13 @@ class Home extends Component {
             name: 'Sign Up',
             id: 'sign-up'
         }],
-        accountModalOpen: false,
-        error: false,
-        errorMessage: "",
-        editID: "",
-        finishBetModal: false,
-        finishID: "",
-        hoverProfile: false,
         pageLoaded: false,
         payedModal: false,
         payedModalBet: "",
+        people: [],
         success: false,
         successMessage: "",
+        showNotifications:false,
         usingFilter: false
     }
 
@@ -103,6 +102,9 @@ class Home extends Component {
                 this.props.removeNotification(functionProps.notification._id.toString());
                 this.props.setGroups(changedGroups);
             }).catch(err => {
+                if(err.response.data.message === "Group is no longer available!"){
+                    window.location.reload();
+                }
                 this.setState({
                     error: true,
                     errorMessage: "There was an error!"
@@ -135,6 +137,9 @@ class Home extends Component {
                 }
 
             }).catch(err => {
+                if(err.response.data.message === "Group is no longer available!"){
+                    window.location.reload();
+                }
                 this.setState({
                     error: true,
                     errorMessage: "There was an error!"
@@ -147,6 +152,11 @@ class Home extends Component {
 
     handleNavigationClick = (e) => {
         this.props.history.push(`/${e.target.id}`);
+    }
+
+    handleShowNotifications = () => {
+        const newValue = !this.state.showNotifications;
+        this.setState({showNotifications:newValue})
     }
 
     hideAccountModal = () => {
@@ -288,13 +298,13 @@ class Home extends Component {
                                 user={this.props.user}
                             />
                         </div>
-                        {this.props.appLoaded && this.props.user !== "guest" ? windowWidth(480) ? <div id="right-home-container" className='basic-fx align-center-fx justify-center-fx'>
+                        {this.props.appLoaded && this.props.user !== "guest" ? windowWidth(768) ? <div id="right-home-container" className='basic-fx align-center-fx justify-center-fx'>
                             <SignOutNav navAuth={this.state.navAuth} handleNavigationClick={this.handleNavigationClick} />
                         </div> : null : null}
 
                     </div>
                         <div id="middle-home-container" className="basic-fx justify-around-fx">
-                            <Notifications user={this.props.user} handleNotificationApproval={this.handleNotificationApproval} />
+                            <Notifications handleShowNotifications={this.handleShowNotifications} handleNotificationApproval={this.handleNotificationApproval} showNotifications={this.state.showNotifications} user={this.props.user}/>
                             <ManageBets menuClick={this.menuClick} notifications={this.props.shortStats.waitingNotifications} />
                             <ManageGroups menuClick={this.menuClick} />
                         </div>

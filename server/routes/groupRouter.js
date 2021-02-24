@@ -225,7 +225,7 @@ groupRouter.post('/manage-groups', auth, async (req, res) => {
                 }
 
                 const notificationText = `${req.user.nickname} changed the group name from ${groupResponse.name} to ${req.body.newGroupName}`;
-                notificationEmitter.emit('send notifications', req.user.nickname, [groupResponse.people], { data: {}, needsResolving: false, notificationText, seen: false, type: "group name changed" }, false, null);
+                notificationEmitter.emit('send notifications', req.user.nickname, groupResponse.people, { data: {}, needsResolving: false, notificationText, seen: false, type: "group name changed" }, false, null);
 
                 groupResponse.name = req.body.newGroupName;
                 try {

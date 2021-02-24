@@ -79,6 +79,8 @@ class CreateNewGroup extends Component {
     }
 
     componentDidMount() {
+        window.scrollTo(0, 0);
+        document.getElementById('root').style.height = "100%";
         if (this.props.appLoaded) {
             if (this.props.user === "guest") {
                 this.props.history.push('/');
@@ -178,7 +180,7 @@ class CreateNewGroup extends Component {
 
     render() {
         return (
-            <div className={`main-container basic-fx justify-center-fx align-center-fx ${!usingMobile(480) ? "alternative-mobile-background" : "main-background"}`}>
+            <div className={`main-container basic-column-fx justify-center-fx align-center-fx ${!usingMobile(480) ? "alternative-mobile-background" : "main-background"}`}>
                 <form name="create-new-group" id="create-new-group" onSubmit={this.uploadGroup}>
                     <div id="create-new-group-container" className="basic-column-fx align-center-fx">
                         {this.state.pageLoaded ?
@@ -236,14 +238,14 @@ class CreateNewGroup extends Component {
                                 {this.state.error ? <ErrorMessage text={this.state.errorMessage} /> : null}
                                 <ConfirmButton classToDisplay="confirm-button-space" form="create-new-group" text="Add group" type="submit" />
                                 </div>
-                                <ReturnButton
-                                    classToDisplay="return-button-space return-button-medium"
-                                    returnToMain={returnToMain.bind(null, this.props)}
-                                    text="Main menu" />
                                 {this.state.success ? <SuccessModal message={this.state.successMessage} /> : null}
                             </Fragment> : <Loader loading={this.state.pageLoaded} />}
                     </div>
                 </form>
+                <ReturnButton
+                                    classToDisplay="return-button-space return-button-medium"
+                                    returnToMain={returnToMain.bind(null, this.props)}
+                                    text="Main menu" />
             </div>
         )
     }

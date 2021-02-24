@@ -7,6 +7,8 @@ import './styles.scss';
 
 const PublicProfile = (props) => {
     window.scrollTo(0, 0);
+    document.getElementById('root').style.height = "100%";
+    
     const nickname = props.match.params.nickname;
     const [statistics, setStatistics] = useState({});
     const [pageLoaded, setPageLoaded] = useState(false);
