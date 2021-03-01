@@ -4,7 +4,7 @@ import { changeGroup } from '../../components/Groups/GroupsDropdown/ChangeGroupF
 import * as d3 from "d3";
 import d3Tip from "d3-tip";
 import { legendColor } from 'd3-svg-legend';
-import { returnToMain } from '../../services/HelperFunctions/HelperFunctions';
+import { returnToMain, windowWidth } from '../../services/HelperFunctions/HelperFunctions';
 import GroupsDropdown from '../../components/Groups/GroupsDropdown/GroupsDropdown';
 import Loader from '../../components/Loaders/Loader';
 import ReturnButton from '../../components/Buttons/ReturnButton';
@@ -41,6 +41,7 @@ class Stats extends Component {
     }
 
     componentDidUpdate(prevProps) {
+        document.getElementById('root').height = "100%";
         if (!prevProps.appLoaded && this.props.appLoaded) {
             if (this.props.user === "guest") {
                 this.props.history.push('/');
@@ -68,7 +69,6 @@ class Stats extends Component {
                 .transition('changeSliceFill').duration(300)
                 .attr('fill', darkerColours[i]);
         }
-
 
         const tip = d3Tip()
             .html(d => {
@@ -176,6 +176,7 @@ class Stats extends Component {
             .attr('fill', d => colour(d.data.name))
             .transition().duration(750)
             .attrTween('d', arcTweenEnter);
+        
 
         graph.selectAll('path')
             .on('mouseover', (d, i, n) => {
@@ -891,11 +892,15 @@ class Stats extends Component {
         })
     }
 
+    returnToHome = () => {
+        window.location.replace('https://spaha-betapp.netlify.app');
+    }
+
     render() {
         return (
             <div className="main-container">
                 {this.state.pageLoaded ?
-                    <div id="stats-container" className="main-container main-background basic-column-fx wrap-fx" onClick={this.hideModal}>
+                    <div id="stats-container" className="main-container gradient-background basic-column-fx wrap-fx" onClick={this.hideModal}>
                         <div className="basic-column-fx stats-body">
                         <div id="stats-title" className="basic-fx align-center-fx justify-around-fx">
                             <div className="statistic-main-title">Stats</div>
@@ -909,11 +914,11 @@ class Stats extends Component {
                                     selectedGroupName={this.props.selectedGroupName}
                                 />
                             </div>
-                            <ReturnButton
+                            {windowWidth(480) ? <ReturnButton
                                 classToDisplay="return-button-small"
-                                returnToMain={returnToMain.bind(null, this.props)}
+                                returnToMain={this.returnToHome}
                                 text="Main menu"
-                            />
+                            /> : null}
                         </div>
                         <div id="stats-svg-holder" className="basic-fx wrap-fx justify-around-fx">
 
@@ -927,7 +932,7 @@ class Stats extends Component {
                         {this.state.noGroups ? <div className="stats-no-finished-bets basic-fx justify-center-fx align-center-fx"><span>You are not part of any groups yet!</span></div> : null}
                         </div>
                         <ReturnButton
-                            returnToMain={returnToMain.bind(null, this.props)}
+                            returnToMain={this.returnToHome}
                             classToDisplay="justify-center-fx return-button-space return-button-medium"
                             text="Main menu"
                         />

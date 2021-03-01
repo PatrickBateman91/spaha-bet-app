@@ -133,6 +133,8 @@ class MainAuth extends Component {
     signInPromise.then(userResponse => {
       localStorage.setItem('bet-app-token', userResponse.data.payload.token);
       this.props.updateUser(userResponse.data.payload.user);
+      this.props.setPopularBets(userResponse.data.payload.popularBets);
+      this.props.setLatestBets(userResponse.data.payload.latestBets);
 
       if (userResponse.data.payload.user.groups.length > 0) {
         getGroups(this.props, userResponse.data.payload.user.nickname);
@@ -221,7 +223,10 @@ class MainAuth extends Component {
     const signUpPromise = signUpRequest('sign-up', formData);
     signUpPromise.then(userResponse => {
       localStorage.setItem('bet-app-token', userResponse.data.payload.token);
+      this.props.setLatestBets(userResponse.data.payload.latestBets);
+      this.props.setPopularBets(userResponse.data.payload.popularBets);
       this.props.updateUser(userResponse.data.payload.user);
+    
 
       if (userResponse.data.payload.user.groups.length > 0) {
         getGroups(this.props, userResponse.data.payload.user.nickname);
@@ -450,6 +455,14 @@ const mapDispatchToProps = (dispatch) => {
 
     setAppLoaded: (bool) => {
       dispatch({ type: 'appStates/setAppLoaded', payload: bool })
+    },
+
+    setLatestBets: (bets) => {
+      dispatch({type: 'appStates/setLatestBets', payload: bets})
+    },
+
+    setPopularBets: (bets) => {
+      dispatch({type: 'appStates/setPopularBets', payload:bets})
     },
 
     setShortStats: (stats) => {

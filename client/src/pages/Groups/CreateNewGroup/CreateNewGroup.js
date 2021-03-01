@@ -180,7 +180,7 @@ class CreateNewGroup extends Component {
 
     render() {
         return (
-            <div className={`main-container basic-column-fx justify-center-fx align-center-fx ${!usingMobile(480) ? "alternative-mobile-background" : "main-background"}`}>
+            <div className={`main-container basic-column-fx justify-center-fx align-center-fx ${!usingMobile(480) ? "alternative-mobile-background" : "gradient-background"}`}>
                 <form name="create-new-group" id="create-new-group" onSubmit={this.uploadGroup}>
                     <div id="create-new-group-container" className="basic-column-fx align-center-fx">
                         {this.state.pageLoaded ?

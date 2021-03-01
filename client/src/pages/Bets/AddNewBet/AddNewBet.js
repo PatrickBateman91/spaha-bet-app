@@ -36,6 +36,7 @@ class AddNewBet extends Component {
                 value: ""
             }],
         draggableElement: { element: "", id: "" },
+        editMode:false,
         error: false,
         errorMessage: "",
         equalBets: false,
@@ -110,33 +111,95 @@ class AddNewBet extends Component {
     componentDidMount() {
         window.scrollTo(0, 0);
         document.getElementById('root').style.height = "100%";
+
         if (this.props.appLoaded) {
-            if (this.props.editMode) {
-                const newGroup = this.props.groups.filter(group => group._id.toString() === this.props.selectedGroup.toString());
-                this.setState({
-                    pageLoaded: true,
-                    people: newGroup[0].people,
-                }, () => {
-                    this.getAndSetEditValues();
-                })
+            //Ako User nije registrovan
+            if (this.props.user === "guest") {
+                this.props.history.push('/')
             }
-            else {
-                if (this.props.user === 'guest') {
-                    this.props.history.push('/sign-in')
-                } else if (this.props.groups.length === 0) {
+
+            //Ako je preusmjerenje sa dijela stranice
+            if (this.props.location.state) {
+                let jointBet = false;
+                let popularBet = false;
+                let error = false;
+                let errorMessage = "";
+                let people = [];
+
+                //Ako je EDIT BET MODE
+                if (this.props.location.state.editMode) {
+                    const newGroup = this.props.groups.filter(group => group._id.toString() === this.props.selectedGroup.toString());
                     this.setState({
-                        error: true,
-                        errorMessage: "You cannot add bets until you are apart of a group!",
+                        editMode:true,
                         pageLoaded: true,
-                        people: [this.props.user.nickname],
-                    })
-                } else {
-                    const newGroup = this.props.groups.filter(group => group._id === this.props.selectedGroup);
-                    this.setState({
                         people: newGroup[0].people,
-                        pageLoaded: true
+                    }, () => {
+                        this.getAndSetEditValues();
                     })
                 }
+
+                else if (this.props.location.state.type === "custom") {
+                    //Ako je kliknuto na Joint bet
+                    if (this.props.location.state.bet === "group") {
+                        jointBet = true;
+                    }
+                }
+
+                //Ako je kliknuto na neku od popular bets
+                else if (this.props.location.state.type === "popular") {
+                    popularBet = true;
+                }
+
+                //Ako user nema nijedne grupe
+                if (this.props.groups.length === 0) {
+                    error = true;
+                    errorMessage = "You cannot add bets until you are apart of a group!"
+                    people = [this.props.user.nickname]
+                }
+
+                else {
+                    const newGroup = this.props.groups.filter(group => group._id === this.props.selectedGroup);
+                    people = newGroup[0].people;
+                }
+
+                this.setState({
+                    error,
+                    errorMessage,
+                    jointBet,
+                    pageLoaded: true,
+                    people
+                }, () => {
+                    if (popularBet) {
+                        document.getElementById('newBetSubject').value = this.props.location.state.subject;
+                    }
+                })
+            }
+
+            //Ako je direktno na /add-bet
+            else {
+                let error = false;
+                let errorMessage = "";
+                let people = [];
+
+                //Ako user nema nijedne grupe
+                if (this.props.groups.length === 0) {
+                    error = true;
+                    errorMessage = "You cannot add bets until you are apart of a group!"
+                    people = [this.props.user.nickname]
+                }
+
+                else {
+                    const newGroup = this.props.groups.filter(group => group._id === this.props.selectedGroup);
+                    people = newGroup[0].people;
+                }
+
+                this.setState({
+                    error,
+                    errorMessage,
+                    jointBet : false,
+                    pageLoaded: true,
+                    people
+                })
             }
         }
     }
@@ -145,32 +208,90 @@ class AddNewBet extends Component {
         if (!prevProps.appLoaded && this.props.appLoaded) {
             if (this.props.user === "guest") {
                 this.props.history.push('/');
-            } else {
-                if (this.props.editMode) {
-                    const newGroup = this.props.groups.filter(group => group._id === this.props.selectedGroup);
+            }
+
+            //Ako je preusmjerenje sa dijela stranice
+            if (this.props.location.state) {
+                let jointBet = false;
+                let popularBet = false;
+                let error = false;
+                let errorMessage = "";
+                let people = [];
+
+                //Ako je EDIT BET MODE
+                if (this.props.location.state.editMode) {
+                    const newGroup = this.props.groups.filter(group => group._id.toString() === this.props.selectedGroup.toString());
                     this.setState({
+                        editMode:true,
                         pageLoaded: true,
                         people: newGroup[0].people,
                     }, () => {
                         this.getAndSetEditValues();
                     })
                 }
-                else {
-                    if (this.props.groups.length === 0) {
-                        this.setState({
-                            error: true,
-                            errorMessage: "You cannot add bets until you are apart of a group!",
-                            pageLoaded: true,
-                            people: [this.props.user.nickname],
-                        })
-                    } else {
-                        const newGroup = this.props.groups.filter(group => group._id === this.props.selectedGroup);
-                        this.setState({
-                            people: newGroup[0].people,
-                            pageLoaded: true
-                        })
+
+                else if (this.props.location.state.type === "custom") {
+                    //Ako je kliknuto na Joint bet
+                    if (this.props.location.state.bet === "group") {
+                        jointBet = true;
                     }
                 }
+
+                //Ako je kliknuto na neku od popular bets
+                else if (this.props.location.state.type === "popular") {
+                    popularBet = true;
+                }
+
+                //Ako user nema nijedne grupe
+                if (this.props.groups.length === 0) {
+                    error = true;
+                    errorMessage = "You cannot add bets until you are apart of a group!"
+                    people = [this.props.user.nickname]
+                }
+
+                else {
+                    const newGroup = this.props.groups.filter(group => group._id === this.props.selectedGroup);
+                    people = newGroup[0].people;
+                }
+
+                this.setState({
+                    error,
+                    errorMessage,
+                    jointBet,
+                    pageLoaded: true,
+                    people
+                }, () => {
+                    if (popularBet) {
+                        document.getElementById('newBetSubject').value = this.props.location.state.subject;
+                    }
+                })
+            }
+
+            //Ako je direktno na /add-bet
+            else {
+                let error = false;
+                let errorMessage = "";
+                let people = [];
+
+                //Ako user nema nijedne grupe
+                if (this.props.groups.length === 0) {
+                    error = true;
+                    errorMessage = "You cannot add bets until you are apart of a group!"
+                    people = [this.props.user.nickname]
+                }
+
+                else {
+                    const newGroup = this.props.groups.filter(group => group._id === this.props.selectedGroup);
+                    people = newGroup[0].people;
+                }
+
+                this.setState({
+                    error,
+                    errorMessage,
+                    jointBet : false,
+                    pageLoaded: true,
+                    people
+                })
             }
         }
     }
@@ -298,8 +419,8 @@ class AddNewBet extends Component {
                         approvedFinishArray: []
                     }
                 }
-                if (this.props.editMode) {
-                    newBet._id = this.props.editId;
+                if (this.state.editMode) {
+                    newBet._id = this.props.location.state.editID;
                     const editBetPromise = editBetRequest("editBet", this.props.selectedGroup, newBet);
                     editBetPromise.then(groupResponse => {
                         document.body.style.pointerEvents = 'none';
@@ -499,8 +620,8 @@ class AddNewBet extends Component {
                     }
 
                 }
-                if (this.props.editMode) {
-                    newBet._id = this.props.editId;
+                if (this.state.editMode) {
+                    newBet._id = this.props.location.state.editID;
                     const editBetPromise = editBetRequest("editBet", this.props.selectedGroup, newBet);
                     editBetPromise.then(groupResponse => {
                         document.body.style.pointerEvents = 'none';
@@ -592,93 +713,102 @@ class AddNewBet extends Component {
     }
 
     getAndSetEditValues = () => {
-        const theGroup = this.props.groups.filter(group => group._id.toString() === this.props.selectedGroup.toString());
-        const theOne = theGroup[0].activeBets.filter(bet => bet._id.toString() === this.props.editId.toString());
+        let theGroup = this.props.groups.filter(group => group._id.toString() === this.props.selectedGroup.toString());
+        let theOne = theGroup[0].activeBets.filter(bet => bet._id.toString() === this.props.location.state.editID.toString());
+        if(theOne.length === 0){
+            theGroup = this.props.groups.filter(group => group._id.toString() === this.props.location.state.selectedGroup.toString());
+            theOne = theGroup[0].activeBets.filter(bet => bet._id.toString() === this.props.location.state.editID.toString());
+            this.props.setGroup(this.props.location.state.selectedGroup)
+            this.props.setGroupName(this.props.location.state.selectedGroupName)
+        }
+            let filteredBet = JSON.parse(JSON.stringify(theOne[0]));
 
-        let filteredBet = JSON.parse(JSON.stringify(theOne[0]));
-
-        if (filteredBet.jointBet) {
-            let newJointSelected = [];
-            filteredBet.participants.forEach(item => {
-                item.participants.forEach(participant => {
-                    newJointSelected.push({ id: item.side, name: participant })
+            if (filteredBet.jointBet) {
+                let newJointSelected = [];
+                filteredBet.participants.forEach(item => {
+                    item.participants.forEach(participant => {
+                        newJointSelected.push({ id: item.side, name: participant })
+                    })
                 })
-            })
-
-            let newAdditionalClauses = [];
-            if (filteredBet.additionalClauses.length > 0) {
-                filteredBet.additionalClauses.forEach((clause, index) => {
-                    newAdditionalClauses.push({
-                        name: `newBetAdditionalClause${index + 1}`,
-                        value: clause
-                    });
+    
+                let newAdditionalClauses = [];
+                if (filteredBet.additionalClauses.length > 0) {
+                    filteredBet.additionalClauses.forEach((clause, index) => {
+                        newAdditionalClauses.push({
+                            name: `newBetAdditionalClause${index + 1}`,
+                            value: clause
+                        });
+                    })
+                }
+    
+                this.setState({
+                    additionalClauses: newAdditionalClauses,
+                    jointBet: true,
+                    jointSelected: newJointSelected,
+                    limitedCheck: filteredBet.limitedDuration,
+                    moneyClicked: filteredBet.type === "money" ? true : false,
+                    people:theGroup[0].people
+                }, () => {
+                    if (filteredBet.type === "money") {
+                        document.getElementById('moneyBetCheck').checked = true;
+                    }
+    
+                    if (filteredBet.limitedDuration) {
+                        document.getElementById('durationLimitedCheck').checked = true;
+                        document.getElementById('durationLimitedValue').value = filteredBet.limitedDurationValue;
+                    }
+                    document.getElementById('newBetSubject').value = filteredBet.subject;
+                    document.getElementById('joint-left-side-input1').value = filteredBet.participants[0].value;
+                    document.getElementById('joint-left-side-input2').value = filteredBet.participants[0].bet;
+                    document.getElementById('joint-right-side-input1').value = filteredBet.participants[1].bet;
+                    document.getElementById('joint-right-side-input2').value = filteredBet.participants[1].value;
                 })
             }
-
-            this.setState({
-                jointBet: true,
-                jointSelected: newJointSelected,
-                limitedCheck: filteredBet.limitedDuration,
-                moneyClicked: filteredBet.type === "money" ? true : false,
-                additionalClauses: newAdditionalClauses
-            }, () => {
-                if (filteredBet.type === "money") {
-                    document.getElementById('moneyBetCheck').checked = true;
+    
+            else {
+                let newParticipants = filteredBet.participants.map((participant, index) => {
+                    participant.id = `newBetParticipant${index + 1}`;
+                    return participant;
+                })
+    
+                let newAdditionalClauses = [];
+                if (filteredBet.additionalClauses.length > 0) {
+                    filteredBet.additionalClauses.forEach((clause, index) => {
+                        newAdditionalClauses.push({
+                            name: `newBetAdditionalClause${index + 1}`,
+                            value: clause
+                        });
+                    })
                 }
-
-                if (filteredBet.limitedDuration) {
-                    document.getElementById('durationLimitedCheck').checked = true;
-                    document.getElementById('durationLimitedValue').value = filteredBet.limitedDurationValue;
-                }
-                document.getElementById('newBetSubject').value = filteredBet.subject;
-                document.getElementById('joint-left-side-input1').value = filteredBet.participants[0].value;
-                document.getElementById('joint-left-side-input2').value = filteredBet.participants[0].bet;
-                document.getElementById('joint-right-side-input1').value = filteredBet.participants[1].bet;
-                document.getElementById('joint-right-side-input2').value = filteredBet.participants[1].value;
-            })
-        }
-        else {
-            let newParticipants = filteredBet.participants.map((participant, index) => {
-                participant.id = `newBetParticipant${index + 1}`;
-                return participant;
-            })
-
-            let newAdditionalClauses = [];
-            if (filteredBet.additionalClauses.length > 0) {
-                filteredBet.additionalClauses.forEach((clause, index) => {
-                    newAdditionalClauses.push({
-                        name: `newBetAdditionalClause${index + 1}`,
-                        value: clause
-                    });
+    
+                this.setState({
+                    additionalClauses: newAdditionalClauses,
+                    equalBets: filteredBet.differentStakes,
+                    limitedCheck: filteredBet.limitedDuration,
+                    moneyClicked: filteredBet.type === "money" ? true : false,
+                    participants: newParticipants,
+                    people:theGroup[0].people
+                }, () => {
+                    document.getElementById('newBetSubject').value = filteredBet.subject;
+                    if (filteredBet.type === "money" && filteredBet.differentStakes === false) {
+                        document.getElementById('moneyBetCheck').checked = true;
+                        document.getElementById('newBetAmount').value = filteredBet.amount;
+                    }
+                    else if (filteredBet.type === "other" && filteredBet.differentStakes === false) {
+                        document.getElementById('newBetOther').value = filteredBet.stake;
+                    }
+                    if (filteredBet.differentStakes) {
+                        document.getElementById('moneyBetEquality').checked = true;
+    
+                    }
+    
+                    if (filteredBet.limitedDuration) {
+                        document.getElementById('durationLimitedCheck').checked = true;
+                        document.getElementById('durationLimitedValue').value = filteredBet.limitedDurationValue;
+                    }
                 })
             }
-
-            this.setState({
-                additionalClauses: newAdditionalClauses,
-                participants: newParticipants,
-                limitedCheck: filteredBet.limitedDuration,
-                moneyClicked: filteredBet.type === "money" ? true : false,
-                equalBets: filteredBet.differentStakes
-            }, () => {
-                document.getElementById('newBetSubject').value = filteredBet.subject;
-                if (filteredBet.type === "money" && filteredBet.differentStakes === false) {
-                    document.getElementById('moneyBetCheck').checked = true;
-                    document.getElementById('newBetAmount').value = filteredBet.amount;
-                }
-                else if (filteredBet.type === "other" && filteredBet.differentStakes === false) {
-                    document.getElementById('newBetOther').value = filteredBet.stake;
-                }
-                if (filteredBet.differentStakes) {
-                    document.getElementById('moneyBetEquality').checked = true;
-
-                }
-
-                if (filteredBet.limitedDuration) {
-                    document.getElementById('durationLimitedCheck').checked = true;
-                    document.getElementById('durationLimitedValue').value = filteredBet.limitedDurationValue;
-                }
-            })
-        }
+        
     }
 
     handleGroupModal = (e) => {
@@ -689,7 +819,6 @@ class AddNewBet extends Component {
     }
 
     handleGroupChange = (ID, e) => {
-        console.log(ID, e)
         e.stopPropagation();
         const newGroup = changeGroup(this.props.groups, ID, this.props.setGroup, this.props.setGroupName);
         const fieldsToRevert = Array.from(document.getElementsByClassName('participant-input-name'));
@@ -701,6 +830,10 @@ class AddNewBet extends Component {
             participants: [
                 { id: "newBetParticipant1", name: "", value: "", singleStake: "" },
                 { id: "newBetParticipant2", name: "", value: "", singleStake: "" }]
+        }, () => {
+            if (this.props.location.state && this.props.location.state.type === "popular") {
+                document.getElementById('newBetSubject').value = this.props.location.state.subject;
+            }
         })
     }
 
@@ -725,6 +858,7 @@ class AddNewBet extends Component {
         else {
             document.getElementById('jointBet').innerHTML = "Group bet";
         }
+        document.getElementById('durationLimitedCheck').checked = false;
         this.setState({
             participants: [
                 { id: "newBetParticipant1", name: "", value: "", singleStake: "" },
@@ -864,6 +998,10 @@ class AddNewBet extends Component {
         setTimeout(hep, 10);
     }
 
+    reDirect(){
+        this.props.history.push('/');
+    }
+
     removeJointParticipant = (e, name) => {
         let copyJointSelected = [...this.state.jointSelected];
         let newJointSelected = copyJointSelected.filter(item => {
@@ -986,11 +1124,11 @@ class AddNewBet extends Component {
         return (
             <DndProvider backend={windowWidth(480) ? Backend : TouchBackend}>
                 {windowWidth(480) ? null : <MyPreview />}
-                <div className={`${this.props.editMode ? "" : windowWidth(480) ? "main-container main-background" : "main-container mobile-alternative-background"} basic-column-fx justify-center-fx align-center-fx`}>
+                <div className={`main-container ${!windowWidth(480) ? "mobile-alternative-background" : "gradient-background"} basic-column-fx justify-center-fx align-center-fx`}>
                     {this.state.pageLoaded ? <Fragment>
                         <div id="add-new-bet-container" className="basic-fx justify-center-fx " onClick={this.closeModals}>
                             <form id="addNewBet" onSubmit={this.createNewBet} onChange={this.hideError}>
-                                {this.state.pageLoaded && !this.props.editMode ? <div className="basic-fx justify-center-fx relative add-bet-group-container">
+                                {this.state.pageLoaded && !this.state.editMode ? <div className="basic-fx justify-center-fx relative add-bet-group-container">
                                     <GroupsDropdown
                                         groups={this.props.groups}
                                         groupsOpen={this.state.groupsOpen}
@@ -1000,7 +1138,7 @@ class AddNewBet extends Component {
                                         selectedGroupName={this.props.selectedGroupName}
                                     /></div> : null}
 
-                                <div className="full-line-space basic-fx justify-between-fx">
+                                <div className="basic-fx justify-between-fx bet-subject">
                                     <label htmlFor="newBetSubject">Bet subject</label>
                                     <input type="text" id="newBetSubject" name="newBetSubject" />
                                 </div>
@@ -1015,11 +1153,11 @@ class AddNewBet extends Component {
                                 {!this.state.jointBet && this.state.participants.length < 3 ?
                                     <AddCheckbox id="moneyBetEquality" function={this.moneyEqualBets.bind(this, this.state.participants.length)} text="Different bets?" /> : null}
                                 <AddCheckbox id="durationLimitedCheck" function={this.handleLimitedCheck} text="Time limited?" />
-                                {this.state.limitedCheck ? <InputField id="durationLimitedValue" text="Until when?" /> : null}
+                                {this.state.limitedCheck ? <InputField id="durationLimitedValue" text="Until when?" type="text" /> : null}
                                 {!this.state.jointBet ? !this.state.equalBets ?
                                     <Fragment>
-                                        {this.state.moneyClicked ? <InputField id="newBetAmount" text="Amount" /> : null}
-                                        {!this.state.moneyClicked ? <InputField id="newBetOther" text="Winner gets" /> : null}</Fragment> : null : null}
+                                        {this.state.moneyClicked ? <InputField id="newBetAmount" text="Amount" type="number" /> : null}
+                                        {!this.state.moneyClicked ? <InputField id="newBetOther" text="Winner gets" type="text" /> : null}</Fragment> : null : null}
                                 {this.state.additionalClauses.map((item, index) => {
                                     return (
                                         <AdditionalClauses
@@ -1033,15 +1171,15 @@ class AddNewBet extends Component {
                                 })}
                                 <button type="button" className="add-clause-participant-button" onClick={this.addNewAdditionalClause}>Add clause</button>
                                 {this.state.error ? <ErrorMessage text={this.state.errorMessage} classToDisplay="message-space" /> : null}
-                                {this.props.editMode ?
+                                {this.state.editMode ?
                                     <div className="basic-fx justify-around-fx align-center-fx">
                                         <ConfirmButton classToDisplay="confirm-button-space" text="Edit bet" type="submit" />
-                                        <DangerButton disabled={false} handleDangerButton={this.props.hideModal} text="Quit" type="button" />
+                                        <DangerButton disabled={false} handleDangerButton={this.reDirect.bind(this)} text="Quit" type="button" />
                                     </div>
                                     : <ConfirmButton classToDisplay="basic-fx justify-center-fx confirm-button-space" text="Add bet" type="submit" />}
                             </form>
                         </div>
-                        {this.props.editMode ? null : <ReturnButton
+                        {this.state.editMode ? null : <ReturnButton
                             returnToMain={returnToMain.bind(null, this.props)}
                             classToDisplay="return-button-space return-button-medium" text="Main menu" />}
                     </Fragment> : <Loader loading={this.state.pageLoaded} />}

@@ -16,14 +16,17 @@ const GroupsDropdown = (props) => {
   return (
     <Fragment>
       {groupTrigger ? <div id="currently-selected-group" className="basic-fx justify-evenly-fx align-center-fx relative" onClick={props.handleGroupModal}>
-        <span>{props.selectedGroupName}</span>
+        <div>
+          <span>
+            {props.selectedGroupName}
+            </span>
+            {props.groupsOpen && groupTrigger ? <div id="other-groups-container">
+        {otherGroups}
+      </div> : null}
+        </div>
         {props.groupsOpen ? <FontAwesomeIcon icon={faCaretSquareUp} /> : <FontAwesomeIcon icon={faCaretSquareDown} />}
       </div>
         : null}
-      {props.groupsOpen && groupTrigger ? <div id="other-groups-container">
-        {otherGroups}
-      </div> : null}
-
     </Fragment>
   );
 }

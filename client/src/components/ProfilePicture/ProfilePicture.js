@@ -24,7 +24,7 @@ const ProfilePicture = (props) => {
     }
     return (
         <div id="profile-picture-container" >
-            <div id="profile-picture-hidden-div" onClick={props.reDirect} onMouseLeave={props.hoverChangePicture} className="display-none basic-fx align-center-fx justify-center-fx">
+            <div id="profile-picture-hidden-div" onClick={ e => props.reDirect(e, '/change-profile-picture')} onMouseLeave={props.hoverChangePicture} className="display-none basic-fx align-center-fx justify-center-fx">
                 <span className="profile-picture-change-span">Change profile picture</span>
             </div>
             <img src={profilePicture} alt="profile" onMouseEnter={props.hoverChangePicture} />

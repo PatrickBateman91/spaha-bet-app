@@ -422,7 +422,7 @@ class ManageGroups extends Component {
             }
         }
         return (
-            <div className={`main-container ${isMobile(480) ? "mobile-alternative-background" : "main-background"}`}>
+            <div className={`main-container ${isMobile(480) ? "mobile-alternative-background" : "gradient-background"}`}>
                 {this.state.pageLoaded ? <div className="basic-column-fx align-center-fx">
                     <div id="manage-title">Manage your groups</div>
                     {groupLines}

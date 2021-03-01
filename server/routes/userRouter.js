@@ -4,6 +4,7 @@ const createCustomError = require('../helperFunctions/createCustomError');
 const createSendObject = require('../helperFunctions/createSendObjects');
 const User = require('../models/UserModel');
 const Group = require('../models/GroupModel');
+const Stats = require('../models/StatsModel');
 const ObjectID = require('mongodb').ObjectID;
 const bcryptjs = require('bcryptjs');
 const helpers = require('../helperFunctions/BasicFunctions');
@@ -15,8 +16,16 @@ const userRouter = new express.Router();
 //Get Data
 userRouter.get('/', auth, async (req, res) => {
     if (req.headers.type === "get user") {
-        const sendObject = createSendObject(200, "User successfully received!", req.user);
-        res.status(200).send(sendObject);
+        const id = new ObjectID(process.env.STATS_ID);
+        Stats.findById(id, async (err, statsResponse) => {
+          if(err){
+            const sendObject = createSendObject(200, "User successfully received!", req.user);
+            res.status(200).send(sendObject);
+          }
+
+          const sendObject = createSendObject(200, "User successfully received!", {user: req.user, latestBets: statsResponse.latestBets, popularBets: statsResponse.popularBets});
+          res.status(200).send(sendObject);
+        })
     }
 
     else if (req.headers.type === "get groups") {
@@ -76,9 +85,19 @@ userRouter.post('/sign-in', async (req, res) => {
     try {
         const user = await User.findByCredentials(req.body.email, req.body.password);
         const token = await user.generateAuthToken();
-        const sendObject = createSendObject(200, "Logged in successfully!", { user, token });
-        res.status(200).send(sendObject);
-    } catch (err) {
+        const id = new ObjectID(process.env.STATS_ID)
+        Stats.findById(id, async (err, statsResponse) => {
+            if(err){
+                const sendObject = createSendObject(200, "Logged in successfully!", { user, token });
+                res.status(200).send(sendObject);
+            }
+
+            const sendObject = createSendObject(200, "Logged in successfully!", { user, token, latestBets: statsResponse.latestBets, popularBets: statsResponse.popularBets });
+            res.status(200).send(sendObject);
+        })
+    } 
+    
+    catch (err) {
         const customError = createCustomError(401, "Email/Password combination is not correct!", err);
         res.status(401).send(customError)
     }
@@ -473,9 +492,19 @@ userRouter.post('/sign-up', upload.single('file'), async (req, res, next) => {
                 try {
                     await user.save();
                     const token = await user.generateAuthToken();
-                    const sendObject = createSendObject(200, "Profile created!", { user, token })
-                    res.status(200).send(sendObject)
-                } catch (err) {
+                    const id = new ObjectID(process.env.STATS_ID);
+                    Stats.findById(id, async (err, statsResponse) => {
+                        if(err){
+                            const sendObject = createSendObject(200, "Profile created!", { user, token })
+                            res.status(200).send(sendObject)
+                        }
+
+                        const sendObject = createSendObject(200, "Profile created!", { user, token, latestBets : statsResponse.latestBets, popularBets: statsResponse.popularBets })
+                        res.status(200).send(sendObject)
+                    })
+                } 
+                
+                catch (err) {
                     await Group.findByIdAndDelete(data._id.toString())
                     let notUnique;
                     const errorKeys = Object.keys(err.keyValue);
@@ -508,24 +537,22 @@ userRouter.post('/sign-up', upload.single('file'), async (req, res, next) => {
                     }
 
                     try {
-                        User.find({ nickname: responseGroup.admin }, async (err, responseUser) => {
-                            const newNotification = {
-                                title: `${userObject.nickname} wants to join your group ${responseGroup.name}`,
-                                data: { user: userObject.nickname, groupId: responseGroup._id },
-                                seen: false,
-                                timestamp: new Date(),
-                                type: "accept user to group",
-                                needsResolving: true,
-                                _id: new ObjectID()
-                            }
-                            responseUser[0].notifications.push(newNotification);
-                            await responseUser[0].save();
-                        })
+                        const notificationText = `${userObject.nickname} wants to join your group ${responseGroup.name}`;
+                        notificationEmitter.emit('send notifications', userObject.nickname, [responseGroup.admin], { data: { user: userObject.nickname, groupId: responseGroup._id }, needsResolving: true, notificationText, seen: false, type: "accept user to group" }, false, null);
                         try {
                             await user.save();
                             const token = await user.generateAuthToken();
-                            const sendObject = createSendObject(201, "Profile created!", { user, token })
-                            res.status(201).send(sendObject);
+                            const id = new ObjectID(process.env.STATS_ID);
+                            Stats.findById(id, async (err, statsResponse) => {
+                                if(err){
+                                    const sendObject = createSendObject(201, "Profile created!", { user, token })
+                                    res.status(201).send(sendObject);
+                                }
+
+                                const sendObject = createSendObject(201, "Profile created!", { user, token, latestBets:statsResponse.latestBets, popularBets:statsResponse.popularBets })
+                                res.status(201).send(sendObject);
+                            })
+                       
                         }
                         catch (err) {
                             responseUser[0].notifications.pop();

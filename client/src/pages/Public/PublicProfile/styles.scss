@@ -17,7 +17,7 @@
 
 #public-profile-holder{
     width:60vw;
-    background-color: variables.$alternativeBackground;
+    background-color: #F9F1E1;
     padding:30px;
     border-radius:10px;
     border:5px solid black;
@@ -60,6 +60,16 @@
     @include mixins.mQ-other(481px,768px){
         width:70vw;
     }
+
+    @include mixins.mQ-other(1700px, 2299px){
+        width:50vw;
+        min-height: 500px;
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        width:50vw;
+        min-height:600px;
+    }
 }
 
 #public-profile-picture-container{
@@ -87,14 +97,30 @@
         }
     }
 
+    @include mixins.mQ-other(1700px, 2299px){
+        img{
+            width: 350px;
+            height: 350px;
+        }
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        img{
+            max-width:400px;
+            max-height: 400px;
+        }
+    }
+
 }
 
 .public-profile-name{
     background-color: variables.$titleTextColor;
-    padding:10px;
+    padding:10px 20px;
     text-align:center;
     color:variables.$background;
     margin-bottom:20px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
 
     @include mixins.mQ-phones(360px){
         width:50vw;

@@ -1,63 +1,109 @@
 @use '../../assets/Sass/variables.scss';
 @use '../../assets/Sass/mixins.scss';
 
+.home-container{
+    width:100vw;
+    overflow-y: hidden;
+}
+
 #upper-home-container{
-    margin-top:100px;
-    margin-bottom: 30px;
     min-height:300px;
+    @include mixins.homeContainer;
+    @include mixins.homeSectionMargin;
+
+    #left-home-container{
+        span{
+            color:variables.$ParticipantColor4;
+            font-size:4em;
+        }
+    }
             
     @include mixins.mQ-phones(360px){
-        flex-wrap: wrap;
-        justify-content: center;
-        height:auto;
-        min-height: 150px;
-        margin-top:20px;
-        margin-bottom: 20px;
-        #left-home-container>div{
-            justify-content: space-around;
-            width:100vw;
+        flex-direction: column-reverse;
+        min-height: auto;
+        #left-home-container{
+            width:100%;
+
+            span{
+                margin-top:10px;
+                font-size:1.6em;
+                margin-left:10px;
+            }
+
+            >div{
+                flex-direction: row;
+                justify-content: flex-start;
+            }
+        }
+
+        #right-home-container{
+            width:100%;
+
+            >div{
+                width: 100%;
+            }
         }
     }
     
     @include mixins.mQ-other(361px, 480px){
-        flex-wrap: wrap;
-        justify-content: center;
-        height:auto;
-        min-height: 200px;
-        margin-top:20px;
-        margin-bottom: 20px;
+        flex-direction: column-reverse;
+
         #left-home-container{
-            margin-left:5px;
-            margin-right: 5px;
+            width:100%;
+
+            span{
+                margin-top:10px;
+                font-size:2em;
+                margin-left:10px;
+            }
+
+            >div{
+                flex-direction: row;
+                justify-content: flex-start;
+            }
         }
-            
-        #right-home-container{
-            width:100vw;
-            justify-content: flex-end;
+    }
+
+    @include mixins.mQ-other(481px,624px){
+        flex-direction: column-reverse;
+        #left-home-container{
+            width:90%;
+
+            span{
+                margin-top:25px;
+                font-size:2.5em;
+            }
+
+            >div{
+                flex-direction: row;
+                justify-content: center;
+            }
         }
     }
     
-    @include mixins.mQ-other(481px,768px){
-        height: 200px;
-        margin-top:0px;
-
+    @include mixins.mQ-other(625px,768px){
+        flex-direction: column-reverse;
         #left-home-container{
-            width:100vw;
-        }
+            width:90%;
 
-        #right-home-container{
-            justify-content: center;
-            width:25vw;
+            span{
+                margin-top:25px;
+                font-size:3em;
+            }
+
+            >div{
+                flex-direction: row;
+                justify-content: center;
+            }
         }
     }
-    
+
     @include mixins.mQ-other(769px,1149px){
-    margin-top:20px;
-    height: 250px;
-    }
-    
-    @include mixins.mQ-other(1150px, 1699px){
-        margin-top:20px;
+        #left-home-container{
+            span{
+                font-size: 3em;
+            }
+        }
     }
     
     @include mixins.mQ-other(1700px, 2298px){
@@ -65,20 +111,33 @@
     }
     
     @include mixins.mQ-largerDesktops(2299px){
-        margin-top:100px;
-        height: 500px;
+    }
+}
+
+#left-home-container, #right-home-container{
+    width:50%;
+
+    @include mixins.mQ-phones(480px){
+        width: 90%;
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        width:90%;
     }
 }
     
 #middle-home-container{
-    width:100vw;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    margin-bottom:50px;
+    margin-bottom:30px;
+    @include mixins.homeContainer;
+
+    @include mixins.mQ-phones(480px){
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
     @include mixins.mQ-other(481px,768px){
         flex-direction: column;
         align-items: center;
-        margin-bottom:20px;
     }
-    
 }

@@ -26,7 +26,7 @@ const DeactivateAccount = (props) => {
 
 
     return (
-        <div className={`main-container ${windowWidth(480) ? "main-background" : "alternative-background"}`}>
+        <div className={`main-container ${windowWidth(480) ? "gradient-background" : "alternative-background"}`}>
             <div className="deactivate-container basic-column-fx justify-between-fx align-center-fx">
                 <div className="auth-form-holder basic-column-fx justify-between-fx align-center-fx">
                 <div id="deactivate-question">Are you sure you want to deactivate your account?</div>

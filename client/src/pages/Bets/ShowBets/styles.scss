@@ -5,21 +5,15 @@
     padding-top: 50px;
     padding-bottom:50px;
     min-height:100vh;
-    background-color: variables.$alternativeBackground;
 
-    .single-bet-container:nth-child(odd){
-        background-color: #fe4891;
+    .single-bet-container{
+        background-color: #F9F1E1;
+
         #bet-title{
-            background-color: #e2015b;
+            background-color: variables.$titleColor;
         }
     }
 
-    .single-bet-container:nth-child(even){
-       background-color: #00b7bb;
-       #bet-title{
-           background-color: #008082;
-       }
-    }
 
     .upper-bet-full{
         display: flex;

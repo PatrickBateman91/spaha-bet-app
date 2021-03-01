@@ -1,3 +1,4 @@
+//Media queries
 @mixin mQ-phones($arg){
     @media screen and (max-width: $arg){
         @content;
@@ -14,4 +15,73 @@
 @media screen and (min-width:$min){
     @content;
 }
+}
+
+@mixin homeTitle(){
+    font-size:25px;
+    font-weight: bold;
+    margin-top:50px;
+    margin-bottom:50px;
+    text-transform: uppercase;
+    text-align: center;
+    letter-spacing: 3px;
+
+    @include mQ-phones(480px){
+        margin-top:20px;
+        margin-bottom: 20px;
+    }
+
+    @include mQ-other(769px,1149px){
+        font-size:20px;
+    }
+}
+
+@mixin homeContainer(){
+    width:80%;
+
+    @include mQ-phones(480px){
+        width:95%;
+    }
+
+    @include mQ-other(481px,768px){
+        width:95%;
+    }
+
+    @include mQ-other(769px,1149px){
+        width:95%;
+    }
+
+    @include mQ-other(1150px, 1699px){
+        width:90%;
+    }
+}
+
+@mixin homeSectionMargin(){
+    margin-top:50px;
+    margin-bottom:50px;
+
+    @include mQ-phones(480px){
+        margin-top:20px;
+        margin-bottom: 20px;
+    }
+
+    @include mQ-other(481px,768px){
+        margin-top:25px;
+        margin-bottom: 25px;
+    }
+
+    @include mQ-other(769px,1149px){
+        margin-top:30px;
+        margin-bottom: 30px;
+    }
+
+    @include mQ-other(1150px, 1699px){
+        margin-top:35px;
+        margin-bottom: 35px;
+    }
+
+    @include mQ-other(1700px, 2298px){
+        margin-top:40px;
+        margin-bottom:40px
+    }
 }

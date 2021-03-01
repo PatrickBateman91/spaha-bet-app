@@ -52,9 +52,8 @@ const Notifications = (props) => {
             <div id="notification-holder" className="basic-column-fx">
                 <div id="notification-title">Notifications</div>
                 <Fragment>
-                    <div id="newer-notifications-holder">
-                        {unseenTrigger ? unseenToRender : null}
-                        {!unseenTrigger && !seenTrigger ? <span>You have no notifications</span> : null}
+                    <div id="newer-notifications-holder" className="basic-column-fx align-items-center">
+                        {unseenTrigger ? unseenToRender : "No new notifications"}
                     </div>
                     <div id="older-notifications-holder" className="basic-column-fx wrap-fx">
                         {seenTrigger ? <span className="older-notifications-title">Older notifications:</span> : null}
@@ -65,7 +64,7 @@ const Notifications = (props) => {
                     <div className="show-more-notifications-holder">Show {props.showNotifications ? "less" : "more"} notifications</div>
                 </div> : null}
             </div>
-            <div className="home-paper-pin-container">
+            <div className="home-paper-pin-container display-none">
                 <div>
                     <img src={`${currentUrl}/public/general/paper-pin.png`} alt="paper-pin" />
                 </div>

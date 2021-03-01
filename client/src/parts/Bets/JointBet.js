@@ -31,7 +31,7 @@ const JointBet = (props) => {
                 {props.type === "active" && props.rightUserCheck(props.user.nickname, 'jointBet', props.bet) ? <div className="edit-icon"><FontAwesomeIcon onClick={e => props.handleEdit(props.bet._id)} icon={faEdit} /></div> : null}
             </div>
             {props.type === "finished" ? null : props.bet.limitedDuration ? <TimeLimited time={props.bet.limitedDurationValue} /> : null}
-            <ParticipantsJointBet bet={props.bet} getUserProfile={props.getUserProfile} type={props.type} user={props.user} />
+            <ParticipantsJointBet bet={props.bet} reDirect={props.reDirect} type={props.type} user={props.user} />
             <JointAnswers bet={props.bet} />
             {props.bet.additionalClauses.length > 0 ? props.bet.additionalClauses.map(clause => {
                 return (

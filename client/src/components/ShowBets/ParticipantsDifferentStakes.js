@@ -23,7 +23,7 @@ const ParticipantsDifferentStakes = (props) => {
                 return (
                     <div className="participant-row" key={participant.name}>
                         <div className={`participant-name ${props.user.nickname === participant.name ? "participant-user" : "participant-other"}`}
-                            onClick={e => props.getUserProfile(e, participant.name, props.bet.finished)}>{participant.name}
+                            onClick={e => props.reDirect(e, `/profile/${participant.name}`)}>{participant.name}
                             {props.type === "finished" || props.type === "approve-finish" ? participant.name === props.bet.winner ? <div className="winner-check"><FontAwesomeIcon icon={faCheck} /></div> : null : null}
                         </div>
                         <div className="participant-value basic-fx justify-center-fx"><span>{participant.value}</span></div>

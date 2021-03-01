@@ -104,7 +104,7 @@
     }
 
     @include mixins.mQ-other(1700px, 2298px){
-        width:700px;
+        width:100vw;
     }
 }
 
@@ -233,11 +233,11 @@
     @include mixins.mQ-other(481px,768px){
         width:75vw;
         label{
-            font-size: 0.9em;
+            font-size: 1.1em;
         }
         input[type=text], input[type=password], input[type=email]{
-            font-size: 0.9em;
-            padding:3px;
+            font-size: 1.1em;
+            padding:5px 10px;
             width:45vw;
         }
 

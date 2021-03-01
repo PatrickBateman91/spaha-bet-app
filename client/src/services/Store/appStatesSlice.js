@@ -7,6 +7,8 @@ const initState = {
     firstRead:true,
     loading: false,
     needsUpdate:false,
+    latestBets:[],
+    popularBets:[],
     shortStats:{
         balance:0,
         totalNumberOfBets:0,
@@ -65,8 +67,18 @@ const appStatesSlice = createSlice({
             return state;
         },
 
+        setLatestBets:(state, action) => {
+            state.latestBets = action.payload;
+            return state;
+        },
+
         setNeedsUpdate: (state, action) => {
             state.needsUpdate = action.payload;
+            return state;
+        },
+
+        setPopularBets: (state, action) => {
+            state.popularBets = action.payload;
             return state;
         },
 

@@ -113,6 +113,9 @@
     }
 
     @include mixins.mQ-other(1700px, 2298px){
+        width:40vw;
+        min-height: 550px;
+        font-size:1.1em;
         label{
             margin-bottom: 20px;
         }

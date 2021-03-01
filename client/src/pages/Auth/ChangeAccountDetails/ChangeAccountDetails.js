@@ -256,7 +256,7 @@ class ChangeAccountDetails extends Component {
 
   render() {
     return (
-      <div className={`main-container basic-column-fx align-center-fx ${usingMobile(480) ? "main-background" : "mobile-alternative-background"}`}>
+      <div className={`main-container basic-column-fx align-center-fx ${usingMobile(480) ? "gradient-background" : "mobile-alternative-background"}`}>
         {this.state.pageLoaded ?
           <div id="change-account-container">
             <div className="change-account-title">Account details:</div>

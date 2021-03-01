@@ -63,12 +63,15 @@
     }
 
     @include mixins.mQ-other(1700px, 2298px){
-        min-height: 400px;
-        font-size:0.9em;
+        width:50vw;
+        min-height: 550px;
+        font-size:1.1em;
     }
 
     @include mixins.mQ-largerDesktops(2299px){
-        min-width:700px;
+        min-width:800px;
+        height: 600px;
+        padding: 30px;
     }
 }
 
@@ -92,6 +95,13 @@
         width:85vw;
         input{
             padding:2px;
+        }
+    }
+
+    @include mixins.mQ-other(1150px, 1699px){
+        input{
+            padding:5px 10px;
+            font-size:1em;
         }
     }
 }

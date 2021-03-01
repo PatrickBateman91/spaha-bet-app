@@ -6,7 +6,7 @@ import { returnToMain } from '../../../services/HelperFunctions/HelperFunctions'
 
 const ShowBetsLayout = (props) => {
     return (
-        <div className="main-container">
+        <div className="main-container gradient-background">
             <div className="all-bets-container basic-column-fx wrap-fx align-center-fx" onClick={props.closeModals}>
                 {props.pageLoaded ?
                     <Fragment>

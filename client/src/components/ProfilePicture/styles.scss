@@ -6,8 +6,8 @@
     position:relative;
     img{
             border:6px ridge variables.$ParticipantColor4;
-            max-width:200px;
-            max-height: 200px;
+            max-width:150px;
+            max-height: 150px;
     }
     
      @include mixins.mQ-phones(360px){    
@@ -26,24 +26,33 @@
                 max-height:50vw;
                 border:2px solid variables.$ParticipantColor4;
                 padding:0px;
-            }
+            } 
+    }
+
+    @include mixins.mQ-other(481px,624px){
+        img{
+            max-width: 40vw;
+            max-height:40vw;
+            border:2px solid variables.$ParticipantColor4;
+            padding:0px;
+        } 
     }
     
-    @include mixins.mQ-other(481px,768px){
+    @include mixins.mQ-other(625px,768px){
             img{
                 max-width: 400px;
                 max-height:400px;
             }
     }
     
-    @include mixins.mQ-other(769px,1023px){
+    @include mixins.mQ-other(769px,1024px){
             img{
                 max-width: 200px;
                 max-height:200px;
             }
     }
 
-    @include mixins.mQ-other(1024px,1699px){
+    @include mixins.mQ-other(1025px,1699px){
             img{
                 max-width: 300px;
                 max-height:300px;
@@ -52,8 +61,8 @@
 
     @include mixins.mQ-other(1700px,2298px){
             img{
-                max-width: 400px;
-                max-height:400px;
+                max-width: 350px;
+                max-height:350px;
             }
     }
     

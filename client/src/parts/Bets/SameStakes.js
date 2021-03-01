@@ -34,7 +34,7 @@ const SameStakes = (props) => {
                 {props.type === "active" ? props.rightUserCheck(props.user.nickname, 'regular', props.bet) ? <div className="edit-icon"><FontAwesomeIcon icon={faEdit} onClick={e => props.handleEdit(props.bet._id)} /></div> : null : null}
             </div>
             {props.type === "finished" ? null : props.bet.limitedDuration ? <TimeLimited time={props.bet.limitedDurationValue} /> : null}
-            <ParticipantsSameStakes bet={props.bet} getUserProfile={props.getUserProfile} type={props.type} user={props.user} />
+            <ParticipantsSameStakes bet={props.bet} reDirect={props.reDirect} type={props.type} user={props.user} />
             {props.bet.additionalClauses.length > 0 ? props.bet.additionalClauses.map(clause => {
                 return (
                     <AdditionalClauses clause={clause} key={clause} />

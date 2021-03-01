@@ -45,8 +45,16 @@ const mapDispatchToProps = (dispatch) => {
             dispatch({ type: 'groups/setGroups', payload: groups })
         },
 
+        setLatestBets: (bets) => {
+            dispatch({type: 'appStates/setLatestBets', payload: bets})
+        },
+
         setAppLoaded: (bool) => {
             dispatch({ type: 'appStates/setAppLoaded', payload: bool })
+        },
+
+        setPopularBets: (bets) => {
+            dispatch({type: 'appStates/setPopularBets', payload:bets})
         },
 
         setShortStats: (stats) => {

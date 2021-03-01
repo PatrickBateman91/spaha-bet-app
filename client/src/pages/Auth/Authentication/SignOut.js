@@ -24,7 +24,7 @@ const SignedOutPage = (props) => {
 
     return (
         <Fragment>
-            {success ? <div className="basic-fx justify-center-fx align-center-fx sign-out-page">
+            {success ? <div className="basic-fx justify-center-fx align-center-fx sign-out-page gradient-background">
                 You have been signed out successfully!
                 Redirecting to Home page...
         </div> :

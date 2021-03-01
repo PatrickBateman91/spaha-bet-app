@@ -221,7 +221,7 @@
     }
 
     @include mixins.mQ-other(481px,768px){
-        input[type=text]{
+        input[type=text], input[type=number]{
             width: 30%;
         }
 
@@ -236,7 +236,7 @@
     }
 
     @include mixins.mQ-largerDesktops(769px){
-      input[type=text]{
+      input[type=text], input[type=number]{
           width: 30%;
       }
     }
@@ -277,7 +277,7 @@
             width:40vw;
         }
 
-        input[type=text]{
+        input[type=text], input[type=number]{
             width:40vw;
             padding:5px;
             font-size: 16px;
@@ -292,7 +292,7 @@
         padding:10px;
 
         #newBetSubject{
-            width:150px;
+            width:60%;
         }
 
         input{
@@ -306,10 +306,32 @@
     }
 
     @include mixins.mQ-other(1700px, 2299px){
-        input[type=text]{
+        input[type=text], input[type=number]{
             width: 30%;
         }
     }
+}
+
+.bet-subject{
+    margin-bottom: 20px;
+    label{
+        width:30%;
+    }
+    input[type=text]{
+        width:70%;
+        padding:5px 10px;
+    }
+
+    @include mixins.mQ-phones(768px){
+        flex-direction: column;
+        label{
+            width:80%;
+        }
+        input[type=text]{
+            width:100%;
+            height: 50px;
+    }
+}
 }
 
 .removeAdditionalClauseOrParticipant{

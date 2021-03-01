@@ -6,7 +6,6 @@ import { changeSingleGroup, rightUserCheck } from '../../../services/HelperFunct
 import {Link} from 'react-router-dom';
 import BetLegend from '../../../components/ShowBets/BetLegend';
 import ConfirmButton from '../../../components/Buttons/ConfirmButton';
-import EditBet from '../../../components/Modals/EditBet/EditBet';
 import ErrorMessage from '../../../components/Messages/ErrorMessage';
 import DifferentStakes from '../../../parts/Bets/DifferentStakes';
 import JointBet from '../../../parts/Bets/JointBet';
@@ -20,7 +19,6 @@ import './styles.scss';
 class ActiveBets extends Component {
     state = {
         bets: [],
-        editModalOpen: false,
         editId: "",
         error: false,
         errorMessage: "",
@@ -47,7 +45,9 @@ class ActiveBets extends Component {
 
             if (this.props.groups.length > 0) {
                 this.reRenderBets();
-            } else {
+            } 
+            
+            else {
                 this.setState({ pageLoaded: true })
             }
         }
@@ -125,14 +125,15 @@ class ActiveBets extends Component {
         }
     }
 
-    getUserProfile = (e, name) => {
-        this.props.history.push(`/profile/${name}`)
-    }
-
     handleEdit = (id) => {
-        this.setState({ editModalOpen: true, editId: id }, () => {
-            document.body.style.overflowY = "hidden";
-            document.getElementById('modal-container').style.top = `${window.pageYOffset}px`;
+        this.props.history.push({
+            pathname:'/add-bet',
+            state:{
+                editID: id,
+                editMode:true,
+                selectedGroup: this.props.selectedGroup,
+                selectedGroupName: this.props.selectedGroupName
+            }
         })
     }
 
@@ -163,16 +164,6 @@ class ActiveBets extends Component {
         })
     }
 
-    hideModal = (e) => {
-        if (e.target.id === "modal-container" || e.target.innerHTML === "Quit") {
-            document.body.style.overflowY = "auto";
-            this.setState({
-                editModalOpen: false,
-                editId: ""
-            })
-        }
-    }
-
     reRenderBets() {
         let i = 0;
         let trigger;
@@ -191,11 +182,11 @@ class ActiveBets extends Component {
                         chooseBetWinner={this.chooseBetWinner}
                         finishedBetToServer={this.finishedBetToServer}
                         finishID={this.state.finishID}
-                        getUserProfile={this.getUserProfile}
                         handleEdit={this.handleEdit}
                         handleFinish={this.handleFinish}
                         idx={i}
                         key={bet._id}
+                        reDirect={this.reDirect}
                         rightUserCheck={rightUserCheck}
                         type={'active'}
                         winner={this.state.winner}
@@ -209,11 +200,11 @@ class ActiveBets extends Component {
                             chooseBetWinner={this.chooseBetWinner}
                             finishedBetToServer={this.finishedBetToServer}
                             finishID={this.state.finishID}
-                            getUserProfile={this.getUserProfile}
                             handleFinish={this.handleFinish}
                             handleEdit={this.handleEdit}
                             idx={i}
                             key={bet._id}
+                            reDirect={this.reDirect}
                             rightUserCheck={rightUserCheck}
                             type={'active'}
                             winner={this.state.winner}
@@ -227,11 +218,11 @@ class ActiveBets extends Component {
                             chooseBetWinner={this.chooseBetWinner}
                             finishedBetToServer={this.finishedBetToServer}
                             finishID={this.state.finishID}
-                            getUserProfile={this.getUserProfile}
                             handleFinish={this.handleFinish}
                             handleEdit={this.handleEdit}
                             idx={i}
                             key={bet._id}
+                            reDirect={this.reDirect}
                             rightUserCheck={rightUserCheck}
                             type={'active'}
                             winner={this.state.winner}
@@ -252,6 +243,11 @@ class ActiveBets extends Component {
             success: false,
             successMessage: "",
         })
+    }
+
+    reDirect = (e, path) => {
+        e.stopPropagation();
+        this.props.history.push(path)
     }
 
     render() {
@@ -277,18 +273,12 @@ class ActiveBets extends Component {
                     }
                     <BetLegend />
                     {this.state.error ? <ErrorMessage classToDisplay="message-space" text={this.state.errorMessage} /> : null}
-                    {this.state.editModalOpen ? <EditBet
-                        editMode={true}
-                        editId={this.state.editId}
-                        hideModal={this.hideModal}
-                        groups={this.props.groups}
-                        selectedGroup={this.props.selectedGroup}
-                        user={this.props.user}
-                    /> : null}
                     {this.state.success ? <SuccessModal message={this.state.successMessage} /> : null}
                 </ShowBetsLayout>
             );
-        } else {
+        } 
+        
+        else {
             return (
                 <Loader loading={!this.state.pageLoaded || !this.props.appLoaded} />
             )

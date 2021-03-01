@@ -31,7 +31,7 @@ const ResendPassword = (props) => {
         }
     }
     return (
-        <div className={`main-container basic-column-fx align-center-fx justify-center-fx ${usingMobile(480) ? "main-background" : "alternative-mobile-background"}`}>
+        <div className={`main-container basic-column-fx align-center-fx justify-center-fx ${usingMobile(480) ? "gradient-background" : "alternative-mobile-background"}`}>
             <div className="auth-form-holder basic-column-fx wrap-fx justify-center-fx align-center-fx resend-password-container">
                 <form name="resend-password" id="resend-password" onSubmit={e => handleResetPassword(e)}>
                     <div className="basic-column-fx justify-between-fx align-center-fx wrap-fx">

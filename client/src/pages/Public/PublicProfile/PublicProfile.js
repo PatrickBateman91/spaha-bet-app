@@ -47,7 +47,7 @@ const PublicProfile = (props) => {
         })
     }
     return (
-        <div className="main-container main-background">
+        <div className="main-container gradient-background">
             <div id="public-profile-container" className="basic-column-fx justify-center-fx align-center-fx">
                 {pageLoaded ?
                     <div id="public-profile-holder" >

@@ -15,7 +15,7 @@ const ParticipantsJointBet = (props) => {
                     return (
                         <div className="basic-fx justify-between-fx align-center-fx" key={name}>
                             <span className={`joint-participant-name ${props.user.nickname === name ? "participant-user" : "participant-other"}`}
-                                onClick={e => props.getUserProfile(e, name)}>{name}
+                                onClick={e => props.reDirect(e, `/profile/${name}`)}>{name}
                             </span>
 
                             {props.bet.type === "money" ?
@@ -47,7 +47,7 @@ const ParticipantsJointBet = (props) => {
                                         {`${props.bet.participants[1].bet}`}
                                         {props.bet.type === "money" ? `${(props.bet.participants[1].bet / props.bet.participants[1].participants.length).toFixed()} $` : null}
                                     </span> : <span className="bet-right"></span>}
-                            <span className={`joint-participant-name ${props.user.nickname === name ? "participant-user" : "participant-other"}`} onClick={e => props.getUserProfile(e, name)}>{name}</span>
+                            <span className={`joint-participant-name ${props.user.nickname === name ? "participant-user" : "participant-other"}`} onClick={e => props.reDirect(e, `/profile/${name}`)}>{name}</span>
                         </div>
                     )
                 })}

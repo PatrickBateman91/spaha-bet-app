@@ -44,6 +44,11 @@ background-image:url(./images//wall-background.png);
     background-color: #FFFEFC !important;
 }
 
+.gradient-background{
+background: rgb(210,204,196);
+background: linear-gradient(9deg, rgba(210,204,196,1) 0%, rgba(246,244,243,1) 22%, rgba(255,255,255,1) 48%, rgba(241,239,237,1) 71%, rgba(210,204,196,1) 100%);
+}
+
 @include mixins.mQ-phones(481px){
     input[type='text']
     input[type='number'],

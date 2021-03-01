@@ -3,138 +3,48 @@
 
 #notification-container{
     position: relative;
-    background-image:url('../../assets/images/paper-background3.jpg');
-    width:32vw;
+    width:50%;
     border-radius: 4px;
-    padding:20px;
-    margin-bottom:20px;
-    -webkit-box-shadow: 7px 4px 12px -9px rgba(0,0,0,0.75);
-    -moz-box-shadow: 7px 4px 12px -9px rgba(0,0,0,0.75);
-    box-shadow: 7px 4px 12px -9px rgba(0,0,0,0.75);
-    
-    .home-paper-pin-container{
-        position: absolute;
-        top:0px;
-        right:0px;
-        div{
-            z-index: 100;
-          img{
-            object-fit: cover;
-            width:80px;
-          }
-        }
-    }
+    @include mixins.homeSectionMargin;
 
     @include mixins.mQ-phones(360px){
         width:95vw;
         min-height: 200px;
         padding:5px;
-        .home-paper-pin-container{
-            div img{
-                width:25px;
-            }
-        }
     }
 
     @include mixins.mQ-other(361px, 480px){
-        width:95vw;
+        width:95%;
         min-height: 100px;
-        padding:8px;
-        .home-paper-pin-container{
-            div img{
-                width:35px;
-            }
-        }
+        padding:8px 0px;
     }
     
     @include mixins.mQ-other(481px,768px){
-        width:90vw;
+        width:100%;
         min-height: 200px;
-        padding:10px;
-        .home-paper-pin-container{
-            div img{
-                width:30px;
-            }
-        }
     }
 
     @include mixins.mQ-other(769px,1149px){
         min-height: 200px;
         padding:15px;
-        .home-paper-pin-container{
-            div img{
-                width:35px;
-            }
-        }
     }
 
     @include mixins.mQ-other(1150px, 1699px){
         min-height: 250px;
-        .home-paper-pin-container{
-            div img{
-                width:40px;
-            }
-        }
     }
 
     @include mixins.mQ-other(1700px, 2298px){
         min-height: 300px;
-        .home-paper-pin-container{
-            div img{
-                width:50px;
-            }
-        }
     }
 
-    @include mixins.mQ-largerDesktops(2299px){
-        padding:40px;
-    }
 }
 
 #notification-holder{
-    width:100%;
+    width:90%;
 }
 
 #notification-title{
-    font-size:1.3em;
-    font-weight: bold;
-    margin-bottom:30px;
-    text-decoration: underline;
-
-    @include mixins.mQ-phones(360px){
-        text-align: center;
-        margin-bottom: 10px;
-    }
-
-    @include mixins.mQ-other(361px, 480px){
-        text-align: center;
-        font-size:1.7em;
-        margin-bottom: 10px;
-    }
-
-    @include mixins.mQ-other(481px,768px){
-        font-size:2em;
-        margin-bottom: 10px;
-    }
-
-    @include mixins.mQ-other(769px,1149px){
-        font-size:1em;
-        margin-bottom: 20px;
-    }
-
-    @include mixins.mQ-other(1150px, 1699px){
-    font-size: 1.2em;
-    }
-
-    @include mixins.mQ-other(1700px, 2299px){
-        font-size:1.2em;
-        margin-bottom: 30px;
-    }
-
-    @include mixins.mQ-largerDesktops(2299px){
-        font-size:2em;
-        margin-bottom: 50px;
-    }
+    @include mixins.homeTitle;
 }
 
 #newer-notifications-holder{
@@ -166,12 +76,12 @@
 
 @include mixins.mQ-phones(360px){
     .notification-item{
-        font-size: 1.2em;
+        font-size: 1.06em;
     }
 }
 
 @include mixins.mQ-other(361px, 480px){
-font-size:0.9em;
+font-size:0.75em;
 }
 
 @include mixins.mQ-other(481px,768px){
@@ -188,15 +98,17 @@ font-size:0.9em;
     font-size:0.8em;
     margin-top:20px;
     margin-bottom:20px;
+    color:#909090;
+
 
     @include mixins.mQ-phones(360px){
-        margin-top:5px;
+        margin-top:20px;
         margin-bottom: 5px;
         font-size:1.3em;
     }
 
     @include mixins.mQ-other(361px, 480px){
-        margin-top:5px;
+        margin-top:20px;
         margin-bottom: 5px;
         font-size:1.2em;
     }
@@ -259,7 +171,7 @@ font-size:0.9em;
     align-self: flex-end;
     .show-more-notifications-holder{
         cursor: pointer;
-        background-color: variables.$alternativeBackground;
+        background-color: variables.$titleColor;
         padding:10px 20px;
         border-radius: 15px;
 

@@ -57,10 +57,6 @@ class FinishedBets extends Component {
         }
     }
 
-    getUserProfile = (e, name) => {
-        this.props.history.push(`/profile/${name}`)
-    }
-
     handleGroupChange = (ID, e) => {
         e.stopPropagation();
         changeGroup(this.props.groups, ID, this.props.setGroup, this.props.setGroupName);
@@ -92,9 +88,9 @@ class FinishedBets extends Component {
             if (bet.jointBet) {
                 return <JointBet
                     bet={bet}
-                    getUserProfile={this.getUserProfile}
                     idx={i}
                     key={bet._id}
+                    reDirect={this.reDirect}
                     rightUserCheck={rightUserCheck}
                     type={'finished'}
                     winner={bet.winner}
@@ -105,9 +101,9 @@ class FinishedBets extends Component {
                 if (bet.differentStakes) {
                     return <DifferentStakes
                         bet={bet}
-                        getUserProfile={this.getUserProfile}
                         idx={i}
                         key={bet._id}
+                        reDirect={this.reDirect}
                         rightUserCheck={rightUserCheck}
                         type={'finished'}
                         winner={bet.winner}
@@ -118,9 +114,9 @@ class FinishedBets extends Component {
                 else {
                     return <SameStakes
                         bet={bet}
-                        getUserProfile={this.getUserProfile}
                         idx={i}
                         key={bet._id}
+                        reDirect={this.reDirect}
                         rightUserCheck={rightUserCheck}
                         type={'finished'}
                         winner={bet.winner}
@@ -133,6 +129,11 @@ class FinishedBets extends Component {
             trigger,
             pageLoaded: true
         })
+    }
+
+    reDirect = (e, path) => {
+        e.stopPropagation();
+        this.props.history.push(path)
     }
 
     render() {

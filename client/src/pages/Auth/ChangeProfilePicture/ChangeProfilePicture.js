@@ -132,7 +132,7 @@ class ChangeProfilePicture extends Component {
     render() {
         return (
             <DndProvider backend={Backend}>
-            <div className={`main-container ${usingMobile(480) ? "main-background" : "alternative-mobile-background"}`}>
+            <div className={`main-container ${usingMobile(480) ? "gradient-background" : "alternative-mobile-background"}`}>
                 {this.state.pageLoaded ?
                     <Fragment>
                         <div className="basic-fx justify-center-fx align-center-fx change-profile-holder">

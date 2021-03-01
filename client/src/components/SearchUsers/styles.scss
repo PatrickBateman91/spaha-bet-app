@@ -20,6 +20,14 @@
         width:90vw;
         font-size:0.9em;  
     }
+
+    @include mixins.mQ-other(1700px, 2299px){
+        width:500px
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        width:600px;
+    }
 }
 
 .search-holder{

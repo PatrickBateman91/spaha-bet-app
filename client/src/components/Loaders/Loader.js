@@ -10,7 +10,7 @@ const Loader = (props) => {
   `;
 
   return (
-    <div className="main-container basic-fx justify-center-fx align-center-fx">
+    <div className="main-container gradient-background basic-fx justify-center-fx align-center-fx">
       <ClipLoader color={"#900C3F"} loading={props.pageLoaded} css={override} size={250} />
     </div>
   );

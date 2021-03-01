@@ -18,7 +18,6 @@ import PublicProfile from './pages/Public/PublicProfile/PublicProfile';
 import AddNewBet from './pages/Bets/AddNewBet/AddNewBet';
 import ActiveBets from './pages/Bets/ShowBets/ActiveBets';
 import FinishedBets from './pages/Bets/ShowBets/FinishedBets';
-import BetApprovals from './pages/Bets/BetApprovals/BetApprovals';
 
 import CreateNewGroup from './pages/Groups/CreateNewGroup/CreateNewGroup';
 import JoinNewGroup from './pages/Groups/JoinNewGroup/JoinNewGroup';
@@ -37,7 +36,6 @@ function App(props) {
         <Route path='/add-bet' component={AddNewBet} />
         <Route {...props} path='/active-bets' component={ActiveBets} />
         <Route {...props} path='/finished-bets' component={FinishedBets} />
-        <Route {...props} path='/bet-approvals' component={BetApprovals} />
 
         <Route {...props} path='/create-new-group' component={CreateNewGroup} />
         <Route {...props} path='/join-new-group' component={JoinNewGroup} />

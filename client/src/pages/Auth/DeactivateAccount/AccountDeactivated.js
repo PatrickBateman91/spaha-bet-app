@@ -6,7 +6,7 @@ const AccountDeactivated = (props) => {
     document.getElementById('root').style.height = "100%";
     setTimeout(() => window.location.replace("https://spaha-betapp.netlify.app"), 2000);
     return (
-        <div className="main-container main-background basic-fx align-center-fx justify-center-fx">
+        <div className="main-container gradient-background basic-fx align-center-fx justify-center-fx">
             <div id="goodbye-container" className="basic-column-fx justify-around-fx align-center-fx">
                 <div>Your account has been deleted.</div>
                 <div>Come back any time!</div>

@@ -50,7 +50,7 @@ const JoinNewGroup = (props) => {
     }
 
     return (
-        <div className={`basic-column-fx justify-center-fx align-center-fx main-container ${usingMobile(480) ? "main-background" : "alternative-mobile-background"}`}>
+        <div className={`basic-column-fx justify-center-fx align-center-fx main-container ${usingMobile(480) ? "gradient-background" : "alternative-mobile-background"}`}>
             <form id="join-new-group-form" onSubmit={joinNewGroupFunction}>
                 {pageLoaded ?
                     <div className="join-new-group basic-column-fx justify-around-fx">

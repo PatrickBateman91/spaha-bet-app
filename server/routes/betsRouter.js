@@ -3,6 +3,7 @@ const auth = require('../middleware/AuthUserCheck');
 const createCustomError = require('../helperFunctions/createCustomError');
 const createSendObject = require('../helperFunctions/createSendObjects');
 const notificationEmitter = require('../emitters/sendNotifications');
+const updateLatestBetsEmitter = require('../emitters/updateLatestBets');
 const Bet = require('../models/BetModel');
 const Group = require('../models/GroupModel');
 const ObjectID = require('mongodb').ObjectID;
@@ -199,6 +200,11 @@ betsRouter.post('/bet-approvals', auth, async (req, res) => {
                     }
                     groupResponse[reqSecondArray].push(filteredBet);
                     groupResponse[reqGroup] = newArray;
+
+                    if(req.headers.type === "add"){
+                        updateLatestBetsEmitter.emit('new bet', filteredBet);
+                    }
+
                     await groupResponse.save()
                     const sendObject = createSendObject(200, 'Bet accepted!', groupResponse)
                     res.status(200).send(sendObject);
@@ -223,6 +229,11 @@ betsRouter.post('/bet-approvals', auth, async (req, res) => {
                     }
                     groupResponse[reqSecondArray].push(filteredBet);
                     groupResponse[reqGroup] = newArray;
+
+                    if(req.headers.type === "add"){
+                        updateLatestBetsEmitter.emit('new bet', filteredBet);
+                    }
+
                     await groupResponse.save()
                     const sendObject = createSendObject(200, 'Bet accepted!', groupResponse)
                     res.status(200).send(sendObject);

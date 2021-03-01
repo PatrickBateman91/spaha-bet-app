@@ -61,7 +61,7 @@
     }
 
     @include mixins.mQ-other(481px,768px){
-        width:20vw;
+        width:25vw;
     }
 
     @include mixins.mQ-largerDesktops(2299px){
@@ -74,7 +74,7 @@
     font-size:0.85em;
 
     @include mixins.mQ-other(481px,768px){
-        width:20vw;
+        width:25vw;
     }
 }
 
@@ -91,7 +91,7 @@
     }    
 }
 
-#profile-info-more-stats{
+.profile-info-button{
     align-self: center;
     padding:5px;
     margin-top:10px;
@@ -100,51 +100,10 @@
     border-radius:7px;
     border:1px solid transparent;
     font-size:0.7em;
-    width:130px;
+    width:100%;
     &:hover{
         cursor: pointer;
         border:1px solid black;
-    }
-
-    @include mixins.mQ-phones(360px){
-        font-size: 12px;
-        width:25vw;
-        margin-top:5px;
-        padding:3px;
-    }
-
-    @include mixins.mQ-other(361px, 480px){
-        width:35vw;
-        font-size:16px;
-        margin-top:5px;
-        padding:4px 10px;
-    }
-
-    @include mixins.mQ-other(481px,768px){
-        font-size:1em;
-        padding:3px 20px;
-        margin-bottom: 5px;
-        width:20vw;
-        margin-top:5px;
-        align-self: flex-end;
-    }
-
-    @include mixins.mQ-other(769px,1149px){
-        font-size:0.7em;
-        width:80px;
-        margin-top:5px;
-    }
-
-    @include mixins.mQ-other(1700px, 2299px){
-        font-size:0.7em;
-        width:200px;
-        margin-top:20px;
-    }
-
-    @include mixins.mQ-largerDesktops(2299px){
-        font-size:0.8em;
-        width:250px;
-        margin-top:30px;
     }
 }
 
@@ -155,12 +114,12 @@
     background-color: variables.$titleTextColor;
     border:1px solid black;
     z-index: 10;
+    width:100%;
     ul{
         list-style-type: none;
         li{
             padding:5px;
             font-size:0.7em;
-            width:148px;
             color:white;
             text-align: right;
             border:1px solid black;
@@ -203,9 +162,6 @@
 
     @include mixins.mQ-other(481px,768px){
         top:30px;
-        ul li{
-            width:150px;
-        }
     }
 
     @include mixins.mQ-other(769px,1149px){

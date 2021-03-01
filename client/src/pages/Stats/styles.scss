@@ -31,32 +31,15 @@
     }
 
     @include mixins.mQ-other(481px,768px){
-        width:90vw;
+        width:100vw;
         padding:30px;
+        justify-content: center;
     }
 
-    @include mixins.mQ-other(769px,1149px){
-        width:90vw;
+    @include mixins.mQ-largerDesktops(769px){
+        width:100vw;
         padding:20px;
-        justify-content: flex-start;
-    }
-
-    @include mixins.mQ-other(1150px, 1699px){
-        width:90vw;
-        padding:30px;
-        justify-content: flex-start;
-    }
-
-    @include mixins.mQ-other(1700px, 2299px){
-        width:90vw;
-        padding:20px;
-        justify-content: flex-start;
-    }
-
-    @include mixins.mQ-largerDesktops(2299px){
-        width:90vw;
-        padding:20px;
-        justify-content: flex-start;
+        justify-content: center;
     }
 }
 
@@ -65,10 +48,12 @@
     height:120px;
 
     .statistic-main-title{
-        padding:10px;
+        padding:10px 30px;
         border-radius: 10px;
         font-size: 1.7em;
         background-color:variables.$titleColor;
+        text-transform: uppercase;
+        letter-spacing: 3px;
     }
 
     @media screen and (min-device-width: 320px) 
@@ -137,7 +122,6 @@
     span{
         font-size:2em;
         padding:10px;
-        background-color: variables.$titleColor;
         border-radius: 7px;
         width: 60%;
     }
@@ -198,18 +182,24 @@
 
 .tip-holder{
     display:flex;
+    flex-direction: column;
     position:relative;
 }
 
 .additional-tip-info{
+    display:none;
+    //display:flex;
+    flex-wrap: wrap;
+    flex-direction: column;
     position: absolute;
-    background-color: #e9b200;
+    //background-color: #e9b200;
     padding:10px;
     min-width:250px;
     max-width:350px;
-    left:150px;
-    display:flex;
-    flex-wrap: wrap;
+    left:0px;
+    top:150px;
+    font-size:0.9em;
+
 
     @include mixins.mQ-phones(480px){
         min-width:120px;

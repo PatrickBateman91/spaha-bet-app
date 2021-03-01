@@ -1,7 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
-import { windowWidth } from '../../services/HelperFunctions/HelperFunctions';
 import ProfilePicture from '../../components/ProfilePicture/ProfilePicture';
 import SignOutNav from '../../parts/Menu/SignOutNav';
 import './styles.scss';
@@ -24,18 +23,17 @@ const MainProfile = (props) => {
                 <div className="relative basic-fx justify-between-fx" id="profile-info-home" onClick={props.handleAccountModal}>
                     <div>{props.user.nickname}</div>
                     <div id="profile-info-icon"><FontAwesomeIcon icon={props.accountModalOpen ? faCaretUp : faCaretDown} /></div>
-                    {props.accountModalOpen ? <div id="profile-hidden-menu" onClick={props.handleAccountClick}>
+                    {props.accountModalOpen ? <div id="profile-hidden-menu">
                         <ul>
-                            <li>Change account details</li>
-                            <li>Change profile picture</li>
-                            <li>Deactivate the account</li>
+                            <li onClick={e => props.reDirect(e, '/change-account-details')}>Change account details</li>
+                            <li onClick={e => props.reDirect(e, '/change-profile-picture')}>Change profile picture</li>
+                            <li onClick={e => props.reDirect(e, '/deactivate-account')}>Deactivate the account</li>
                         </ul>
                     </div> : null}
                 </div>
                 <div className="profile-info-item basic-fx justify-between-fx"><span>Active bets:</span><span> {props.totalNumberOfBets}</span></div>
                 <div className="profile-info-item basic-fx justify-between-fx">Balance: {changedBalance}</div>
-                <div id="profile-info-more-stats" className="basic-fx justify-center-fx" onClick={props.menuClick}><span>More stats</span></div>
-                {windowWidth(768) ? null : <SignOutNav navAuth={props.navAuth} handleNavigationClick={props.handleNavigationClick} />}
+                <SignOutNav navAuth={props.navAuth} reDirect={props.reDirect} />
             </div>
         </div>
     );

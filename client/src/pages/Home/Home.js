@@ -1,14 +1,19 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { changeSingleGroup, windowWidth } from '../../services/HelperFunctions/HelperFunctions';
+import { changeSingleGroup } from '../../services/HelperFunctions/HelperFunctions';
 import { notificationRequests } from '../../services/Axios/OtherRequests';
+import AddBetsHome from './AddBetsHome/AddBetsHome';
+import BetApprovals from './BetApprovals/BetApprovals';
+import GroupsHome from './Groups/GroupsHome';
+import LatestBets from './LatestBets/LatestBets';
+import Loader from '../../components/Loaders/Loader';
 import Profile from '../../parts/Profile/Profile';
-import ManageBets from '../../parts/Menu/ManageBets';
-import ManageGroups from '../../parts/Menu/ManageGroups';
-import NonAuthHome from '../Public/Home/NonAuthHome';
+import NonAuthHome from '../Public/NonAuthHome/NonAuthHome';
 import Notifications from '../../parts/Notifications/Notifications';
 import ServerError from '../../components/ServerError/ServerError';
-import SignOutNav from '../../parts/Menu/SignOutNav';
+import StatsHome from './StatsHome/StatsHome';
+import SuggestedBets from './SuggestedBets/SuggestedBets';
+import ViewBets from './ViewBets/ViewBets';
 import './styles.scss';
 
 class Home extends Component {
@@ -17,9 +22,6 @@ class Home extends Component {
         accountModalOpen: false,
         error: false,
         errorMessage: "",
-        editID: "",
-        finishBetModal: false,
-        finishID: "",
         hoverProfile: false,
         navAuth: [
             {
@@ -35,19 +37,17 @@ class Home extends Component {
             id: 'sign-up'
         }],
         pageLoaded: false,
-        payedModal: false,
-        payedModalBet: "",
-        people: [],
+        selectedCategory: null,
         success: false,
         successMessage: "",
-        showNotifications:false,
-        usingFilter: false
+        showNotifications: false
     }
 
     componentDidMount() {
-        window.scrollTo(0, 0);
         document.getElementById('root').style.height = "100%";
         document.body.style.overflowY = "auto";
+        window.scrollTo(0, 0);
+
         if (this.props.appLoaded && this.props.user !== "guest" && this.props.firstRead) {
             this.markAsSeen();
         }
@@ -59,36 +59,61 @@ class Home extends Component {
         }
     }
 
-    handleAccountClick = (e) => {
+    changeCategory = (e, name) => {
         e.stopPropagation();
-        switch (e.target.innerHTML) {
-            case "Change profile picture":
-                this.props.history.push({
-                    pathname: `/change-profile-picture`
-                })
-                break;
+        if(this.state.selectedCategory !== name){
+            this.setState({selectedCategory: name});
+        }
 
-            case "Change account details":
-                this.props.history.push({
-                    pathname: `/change-account-details`
-                })
-                break;
+        else{
+            this.setState({selectedCategory: ""});
+        }
+    }
 
-            case "Deactivate the account":
-                this.props.history.push({
-                    pathname: `/deactivate-account`
-                })
-                break;
+    handleAccountModal = (e) => {
+        e.stopPropagation();
+        const newModalState = !this.state.accountModalOpen;
+        this.setState({ accountModalOpen: newModalState });
+    }
+
+    handleAddBet = (e, info) => {
+        e.stopPropagation();
+
+        switch(info){
+            case "solo":
+            this.props.history.push({
+                pathname:'/add-bet',
+                state:{
+                    type:"custom",
+                    bet:"solo"
+                }
+            })
+            break;
+
+            case "group":
+            this.props.history.push({
+                pathname:'/add-bet',
+                state:{
+                    type:"custom",
+                    bet:"group"
+                }
+            })
+            break;
 
             default:
                 return false;
         }
     }
 
-    handleAccountModal = (e) => {
-        e.stopPropagation();
-        let newModalState = !this.state.accountModalOpen;
-        this.setState({ accountModalOpen: newModalState });
+    handleAddPopularBet = (e, whichBet) => {
+       e.stopPropagation(); 
+       this.props.history.push({
+           pathname: '/add-bet',
+           state:{
+               type:"popular",
+               subject:whichBet
+           }
+       })
     }
 
     handleNotificationApproval = (e, functionProps) => {
@@ -102,7 +127,7 @@ class Home extends Component {
                 this.props.removeNotification(functionProps.notification._id.toString());
                 this.props.setGroups(changedGroups);
             }).catch(err => {
-                if(err.response.data.message === "Group is no longer available!"){
+                if (err.response.data.message === "Group is no longer available!") {
                     window.location.reload();
                 }
                 this.setState({
@@ -137,7 +162,7 @@ class Home extends Component {
                 }
 
             }).catch(err => {
-                if(err.response.data.message === "Group is no longer available!"){
+                if (err.response.data.message === "Group is no longer available!") {
                     window.location.reload();
                 }
                 this.setState({
@@ -150,13 +175,9 @@ class Home extends Component {
         }
     }
 
-    handleNavigationClick = (e) => {
-        this.props.history.push(`/${e.target.id}`);
-    }
-
     handleShowNotifications = () => {
         const newValue = !this.state.showNotifications;
-        this.setState({showNotifications:newValue})
+        this.setState({ showNotifications: newValue })
     }
 
     hideAccountModal = () => {
@@ -196,122 +217,66 @@ class Home extends Component {
         this.props.setFirstRead(false);
     }
 
-    menuClick = (e) => {
+    reDirect = (e, path) => {
         e.stopPropagation();
-        let whereTo;
-        if (e.target.id === "approve-bets" || e.target.id === "approve-bets-container") {
-            whereTo = "Approve bets";
-        }
-
-        else if (e.target.nodeName === "IMG") {
-            whereTo = e.target.parentNode.childNodes[0].innerHTML;
-        }
-
-        else if (e.target.innerHTML === "More stats") {
-            whereTo = e.target.innerHTML;
-        }
-
-        else if (e.target.nodeName === "SPAN") {
-            whereTo = e.target.innerHTML;
-        }
-
-        else {
-            let removeSpan = e.target.innerHTML.replace('<span>', "").replace('</span>', "")
-            whereTo = removeSpan;
-        }
-
-        const reDirect = (path) => {
-            this.props.history.push({
-                pathname: `/${path}`
-            })
-        }
-        switch (whereTo) {
-            case "stats":
-                return false;
-
-            case "Add new bet":
-                reDirect("add-bet");
-                break;
-
-            case "Create new group":
-                reDirect("create-new-group");
-                break;
-
-            case "Join existing group":
-                reDirect("join-new-group");
-                break;
-
-            case "View all active bets":
-                reDirect("active-bets");
-                break;
-
-            case "View all finished bets":
-                reDirect("finished-bets");
-                break;
-
-            case "Approve bets":
-                reDirect("bet-approvals");
-                break;
-
-            case "More stats":
-                reDirect('stats');
-                break;
-
-            case "Manage your groups":
-                reDirect('manage-groups');
-                break;
-
-            default:
-                if (whereTo.startsWith("Approve bets")) {
-                    reDirect('bet-approvals');
-                } else {
-                    return false;
-                }
-        }
-    }
-
-    reDirect = () => {
-        window.scrollTo(0, 0);
-        this.props.history.push('/change-profile-picture')
+        this.props.history.push(path);
     }
 
     render() {
-        return (
-            <div className="main-container main-background basic-column-fx wrap-fx" onClick={this.hideAccountModal}>
-                {this.props.error ? <ServerError message={this.props.errorMessage} /> : null}
-                {this.props.appLoaded && this.props.user === "guest" ?
-                    <NonAuthHome navNonAuth={this.state.navNonAuth} handleNavigationClick={this.handleNavigationClick} /> :
-                    this.props.appLoaded ? <Fragment><div id="upper-home-container" className="basic-fx justify-around-fx">
-                        <div id="left-home-container" className="basic-fx justify-around-fx align-center-fx">
-                            <Profile
-                                accountModalOpen={this.state.accountModalOpen}
-                                balance={this.props.shortStats.balance}
-                                handleAccountClick={this.handleAccountClick}
-                                handleAccountModal={this.handleAccountModal}
-                                handleNavigationClick={this.handleNavigationClick}
-                                hoverChangePicture={this.hoverChangePicture}
-                                imgSource={this.props.user.avatarLocation}
-                                menuClick={this.menuClick}
-                                navAuth={this.state.navAuth}
-                                reDirect={this.reDirect}
-                                totalNumberOfBets={this.props.shortStats.totalNumberOfBets}
-                                user={this.props.user}
-                            />
-                        </div>
-                        {this.props.appLoaded && this.props.user !== "guest" ? windowWidth(768) ? <div id="right-home-container" className='basic-fx align-center-fx justify-center-fx'>
-                            <SignOutNav navAuth={this.state.navAuth} handleNavigationClick={this.handleNavigationClick} />
-                        </div> : null : null}
+        if (this.props.appLoaded && this.props.user === "guest") {
+            return (
+                <div className="main-container gradient-background">
+                    <NonAuthHome navNonAuth={this.state.navNonAuth} reDirect={this.reDirect} />
+                </div>
+            )
+        } 
+        
+        else if(!this.props.appLoaded){
+            return <Loader loading={this.props.appLoaded}/>
+        } 
+        
+        else {
+            return (
+                <div className="main-container gradient-background basic-column-fx wrap-fx" onClick={this.hideAccountModal}>
+                    {this.props.error ? <ServerError message={this.props.errorMessage} /> : null}
+                    <div className="home-container basic-column-fx align-center-fx">
+                        <div id="upper-home-container" className="basic-fx justify-around-fx align-center-fx">
+                            <div id="left-home-container">
+                                <div className="basic-column-fx align-center-fx">
+                                    <span>{"Welcome back, "}</span>
+                                    <span>{`${this.props.user.nickname}`}</span>
+                                </div>
+                            </div>
+                            <div id="right-home-container" className="basic-fx justify-around-fx align-center-fx">
+                                <Profile
+                                    accountModalOpen={this.state.accountModalOpen}
+                                    balance={this.props.shortStats.balance}
+                                    handleAccountModal={this.handleAccountModal}
+                                    hoverChangePicture={this.hoverChangePicture}
+                                    imgSource={this.props.user.avatarLocation}
+                                    menuClick={this.menuClick}
+                                    navAuth={this.state.navAuth}
+                                    reDirect={this.reDirect}
+                                    totalNumberOfBets={this.props.shortStats.totalNumberOfBets}
+                                    user={this.props.user}
+                                />
+                            </div>
 
-                    </div>
-                        <div id="middle-home-container" className="basic-fx justify-around-fx">
-                            <Notifications handleShowNotifications={this.handleShowNotifications} handleNotificationApproval={this.handleNotificationApproval} showNotifications={this.state.showNotifications} user={this.props.user}/>
-                            <ManageBets menuClick={this.menuClick} notifications={this.props.shortStats.waitingNotifications} />
-                            <ManageGroups menuClick={this.menuClick} />
                         </div>
-                    </Fragment> : null
-                }
-            </div>
-        );
+                        <div id="middle-home-container" className="basic-fx wrap-fx justify-around-fx align-start-fx">
+                            <Notifications handleShowNotifications={this.handleShowNotifications} handleNotificationApproval={this.handleNotificationApproval} showNotifications={this.state.showNotifications} user={this.props.user} />
+                            <LatestBets appLoaded={this.props.appLoaded} latestBets={this.props.latestBets} reDirect={this.reDirect} user={this.props.user} />
+                            {this.props.shortStats.waitingNotifications ? <BetApprovals reDirect={this.reDirect} /> : null}
+                            <ViewBets />
+                            <AddBetsHome handleAddBet={this.handleAddBet} />
+                            <SuggestedBets changeCategory={this.changeCategory} handleAddPopularBet={this.handleAddPopularBet} popularBets={this.props.popularBets} selectedCategory={this.state.selectedCategory} />
+                            <GroupsHome />
+                            <StatsHome />
+                        </div>
+                    </div>
+                </div>
+            );
+        }
     }
 }
 
@@ -320,6 +285,8 @@ const mapStateToProps = (state) => {
         appLoaded: state.appStates.appLoaded,
         firstRead: state.appStates.firstRead,
         groups: state.groups,
+        latestBets: state.appStates.latestBets,
+        popularBets:state.appStates.popularBets,
         shortStats: state.appStates.shortStats,
         user: state.user
     }

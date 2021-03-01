@@ -16,23 +16,12 @@
     }
 }
 
-.approve-single-box{
-    margin-top:20px;
-    border-bottom: 3px solid black;
 
-    .approval-container:last-child{
-        margin-bottom: 20px;
-    }
-
-    @include mixins.mQ-phones(480px){
-            margin-top:10px;
-    }
-}
 
 .approve-item-title{
+position: relative;
 text-decoration: underline;
 font-weight: bold;
-font-size:1.5em;
 margin-bottom:20px;
 margin-top:20px;
 text-align: center;
@@ -90,4 +79,16 @@ text-align: center;
 
 .bet-approvals-box{
     border-bottom:2px solid black;
+}
+
+.approve-single-box{
+    width:50%;
+
+    @include mixins.mQ-phones(480px){
+        width: 100%;
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        width:100%;
+    }
 }

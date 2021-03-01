@@ -10,12 +10,12 @@
     }
 
     @include mixins.mQ-phones(360px){
-        width:75%;
+        width:65%;
         font-size: 0.7em;
     }
     
     @include mixins.mQ-other(361px, 480px){
-        width:75%;
+        width:65%;
     }
     
     @include mixins.mQ-other(481px,768px){
@@ -42,11 +42,13 @@
 
     @include mixins.mQ-phones(360px){
         font-size:0.6em;
+        margin-right: 5px;
     }
 
 
     @include mixins.mQ-other(769px,1149px){
         font-size:0.55em;
+        margin-right: 5px
     }
 
     @include mixins.mQ-other(1150px,1699px){
