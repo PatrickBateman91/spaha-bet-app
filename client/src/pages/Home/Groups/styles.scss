@@ -1,0 +1,78 @@
+@use '../../../assets/Sass/variables.scss';
+@use '../../../assets//Sass/mixins.scss';
+
+.home-groups-container{
+    background-color: #F9F1E1;
+    @include mixins.homeContainer;
+    @include mixins.homeSectionMargin;
+
+    .home-groups-item{
+        width:33.3%;
+        height:300px;
+
+        a{
+            width:100%;
+            height: 100%;
+            text-decoration: none;
+            color:#000;
+        }
+
+        span{
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 1.4em;
+            text-align: center;
+        }
+        
+        svg{
+            font-size:5em;
+            margin-top: 40px;
+
+            &:hover{
+                cursor: pointer;
+                transition:  transform ease-in 0.25s;
+                transform:scale(1.2)
+            }
+        }
+
+        &:nth-of-type(1){
+            border-right:1px solid #CACACA;
+        }
+
+        &:nth-of-type(2){
+            border-right:1px solid #CACACA;
+        }
+
+        &:hover{
+            background-color: variables.$titleColor;
+        }
+    }
+
+    @include mixins.mQ-phones(480px){
+        font-size: 0.5em;
+
+        .home-groups-item{
+            padding:0px 10px;
+            height:180px;
+
+            a{
+                justify-content: space-between;
+                padding-top:20px;
+                padding-bottom: 20px;
+            }
+        }
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        .home-groups-item{
+            font-size:0.6em;
+            height:225px;
+        }
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        .home-groups-item{
+            font-size: 0.7em;
+        }
+    }
+}

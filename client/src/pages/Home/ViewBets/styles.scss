@@ -1,0 +1,126 @@
+@use '../../../assets/Sass/variables.scss';
+@use '../../../assets//Sass/mixins.scss';
+
+.view-bets-home-container{
+    @include mixins.homeContainer;
+    @include mixins.homeSectionMargin;
+}
+
+.view-bets-body{
+    width: 100%;
+
+    .view-bets-home-image-container{
+        position: relative;
+        img{
+            width: 30vw;
+        }
+    }
+
+    .view-bets-textover{
+        position:absolute;
+        width:100%;
+        height:100%;
+        top:0px;
+        left:0px;
+        margin-left:20px;
+        z-index: 10;
+
+        a{
+            text-decoration: none;
+            margin: 0 auto;
+        }
+
+        .view-bets-home-title{
+            font-size: 25px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .view-bets-text{
+            width:50%;
+            font-size: 0.8em;
+            word-spacing: 2.5px;
+        }
+
+        .view-bets-link{
+            cursor: pointer;
+            color: #000;
+            font-size:1.5em;
+
+            svg{
+                margin-left:10px;
+            }
+
+            
+            &:hover{
+                color:variables.$titleColor;
+
+                svg{
+                    transition: margin-left 0.5s ease-out;
+                    margin-left:50px;
+                }
+            }
+        }
+    }
+
+    @include mixins.mQ-phones(480px){
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        .view-bets-home-image-container{
+            position: relative;
+            img{
+                width: 100%;
+                margin-bottom: 20px;
+            }
+        }
+
+        .view-bets-textover{
+            margin-left:20px;
+            .view-bets-link{
+                font-size: 1.1em;
+                margin-bottom: 20px;
+            }
+        }
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        
+        .view-bets-home-image-container{
+            position: relative;
+            img{
+                width: 90vw;
+                margin-bottom: 20px;
+            }
+        }
+
+        .view-bets-textover{
+            margin-left:20px;
+            .view-bets-link{
+                font-size: 1.1em;
+            }
+        }
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        font-size: 0.8em;
+
+        .view-bets-textover .view-bets-home-title{
+            font-size:20px;
+        }
+
+        .view-bets-home-image-container img{
+            width:40vw;
+        }
+    }
+    
+    @include mixins.mQ-other(1150px, 1699px){
+        .view-bets-home-image-container img{
+            width:40vw;
+        }
+    }
+}

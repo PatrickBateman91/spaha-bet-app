@@ -1,0 +1,135 @@
+@use '../../assets/Sass/mixins.scss';
+@use '../../assets/Sass/variables.scss';
+
+
+@keyframes spinning-circle-in{
+    from {transform: rotateY(0deg);}
+    to {transform: rotateY(180deg);}
+}
+
+@keyframes spinning-circle-out{
+    from {transform: rotateY(180deg);}
+    to {transform: rotateY(0deg);}
+}
+
+.spinning-circle-in{
+    animation:spinning-circle-in 1.5s forwards;
+}
+
+.spinning-circle-out{
+    animation:spinning-circle-out 1.5s backwards;
+}
+
+.how-to-container{
+    width:35vw;
+
+    @include mixins.mQ-phones(480px){
+        width: 95vw;
+
+        .how-to-body{
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        width:90vw;
+    }
+
+
+}
+
+.how-to-title{
+    font-size:1.4em;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+
+    @include mixins.mQ-phones(480px){
+        font-size: 2em;
+        margin-top:50px;
+    }
+}
+
+.how-to-item{
+    width:30%;
+    margin:10px 3%;
+
+    .how-to-image-container{
+        position: relative;
+
+        img{
+            width:150px;
+            border: 3px solid black;
+            border-radius:50%;
+        }
+    }
+
+    .how-to-number{
+        position:absolute;
+        padding:5px 15px;
+        border:3px solid black;
+        border-radius: 50%;
+        left:-20px;
+        top:35%;
+        z-index: 2;
+        background-color: rgb(246,244,243);
+        color:variables.$ParticipantColor4;
+    }
+
+    .how-to-item-title{
+        color:variables.$ParticipantColor4;
+        font-size:0.75em;
+        text-align: center;
+        margin-bottom:10px;
+    }
+
+    .how-to-item-text{
+        width:100%;
+        font-size:0.65em;
+        text-align: center;
+    }
+
+    @include mixins.mQ-phones(480px){
+        width:85%;
+        .how-to-image-container{
+            img{
+                width:50vw;
+            }
+        }
+
+        .how-to-number{
+            font-size: 1.5em;
+            padding: 5px 15px;
+            left:-20px;
+        }
+
+        .how-to-item-title{
+            font-size: 2em;
+        }
+
+        .how-to-item-text{
+            font-size: 1.4em;
+            width: 80%;
+            margin-bottom: 20px;
+        }
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        .how-to-number{
+            padding:5px 12px;
+            left:-15px;
+        }
+    }
+
+    @include mixins.mQ-other(769px,1280px){
+        .how-to-image-container img{
+            width: 100px;
+            height:100px;
+        }
+
+        .how-to-number{
+            padding:5px 12px;
+            left:-15px;
+        }
+    }
+}

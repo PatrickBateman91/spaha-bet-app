@@ -1,0 +1,32 @@
+@use '../../assets/Sass/mixins.scss';
+@use '../../assets//Sass/variables.scss';
+
+.type-of-approval{
+    transform: rotate(-45deg);
+    padding:5px 10px;
+    border-radius: 10px;
+    z-index: 20;
+}
+
+.added-bet{
+    background-color: variables.$confirmation;
+    position: absolute;
+    top: 5spx;
+    left:-30px;
+}
+
+.edited-bet{
+    background-color: variables.$titleColor;
+    color:#000;
+    position: absolute;
+    top:0px;
+    left:-40px;
+}
+
+.finished-bet{
+    background-color: variables.$ParticipantColor4;
+    color:white;
+    position: absolute;
+    top:-5px;
+    left:-42px;
+}

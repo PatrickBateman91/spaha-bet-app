@@ -1,0 +1,62 @@
+@use '../../../assets//Sass//mixins.scss';
+@use '../../../assets//Sass//variables.scss';
+
+@keyframes newest-bets {
+    0% {
+     position: relative;
+      opacity:0;
+      bottom:-50px;
+    }
+
+    15%{
+     opacity: 1;
+     bottom:0px;
+    }
+
+    90%{
+        opacity: 1;
+        bottom:0px;
+    }
+
+    100% {
+        opacity: 0;
+        bottom:150px;
+    }
+}
+
+.latest-bets-container{
+    width:50%;
+    min-height:300px;
+    @include mixins.homeSectionMargin;
+
+    @include mixins.mQ-phones(480px){
+        width: 100%;
+        min-height: 200px;
+    }
+}
+
+.newest-bets{
+    z-index:20;
+    animation: newest-bets 5s forwards;
+}
+
+.latest-bets-holder{
+  margin-top:50px;
+
+    @include mixins.mQ-phones(480px){
+        margin-top:20px;
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        margin-top:10px;
+    }
+}
+
+.latest-bets-title{
+    @include mixins.homeTitle;
+}
+
+.latest-bets-note{
+    font-size: 0.8em;
+    letter-spacing: 4px;
+}

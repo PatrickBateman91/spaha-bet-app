@@ -1,0 +1,51 @@
+@use '../../../assets/Sass/variables.scss';
+@use '../../../assets//Sass/mixins.scss';
+
+.bets-approval-container{
+    @include mixins.homeContainer;
+    @include mixins.homeSectionMargin;
+
+    @include mixins.mQ-phones(480px){
+        width: 100%;
+    }
+
+    @include mixins.mQ-other(1150px, 1280px){
+        width:100%;
+    }    
+}
+
+#no-waiting-bets-container{
+    height:300px;
+}
+
+#no-waiting-bets-holder{
+    border-radius: 10px;
+    height: 300px;
+
+    .no-waiting-bets-body{
+        width:400px;
+        padding:30px;
+    }
+
+    svg{
+        color:variables.$confirmation;
+        transform: scale(3);
+    }
+}
+
+.bets-approval-title{
+    @include mixins.homeTitle;
+}
+
+.bets-approval-holder{
+
+    @include mixins.mQ-phones(480px){
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        flex-direction: column;
+        justify-content: center;
+    }
+}

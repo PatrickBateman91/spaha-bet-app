@@ -1,0 +1,216 @@
+@use '../../../assets/Sass/mixins.scss';
+@use '../../../assets/Sass/variables.scss';
+
+.non-auth-navigation-container{
+    min-height:100vh;
+}
+
+.non-auth-navigation-body{
+    font-size:1em;
+    width:80vw;
+
+    .non-auth-navigation-holder{  
+        width:100%;
+        position:relative;
+        left:50px;
+        div{
+            display:flex;
+            font-size:1.6em;
+            box-sizing: border-box;
+            padding:12px 20px;
+            text-align: center;
+            border-radius: 8px;
+            margin:10px;
+            #sign-in{
+                background-color: variables.$titleColor;
+                &:hover{
+                    cursor: pointer;
+                    padding:10px 18px;
+                    border: 2px solid variables.$titleTextColor;
+                }
+            }
+            #sign-up{
+                background-color: variables.$titleTextColor;
+                color:variables.$beige;
+                &:hover{
+                    cursor: pointer;
+                    padding:10px 18px;
+                    border: 2px solid variables.$ParticipantTextColor2;    
+                }
+            }
+        }
+    }
+
+    #non-auth-main-title{
+        font-size:3em;
+        position: relative;
+        margin-top:100px;
+    }
+
+    #non-auth-smaller-titles{
+        align-self:flex-end;
+        p:nth-child(1){
+            position: relative;
+            right:100px;
+            color:variables.$ParticipantColor4; 
+        }
+        p:nth-child(2){
+            position: relative;
+            right:75px;
+            color:variables.$ParticipantColor9;
+        }
+        p:nth-child(3){
+            position: relative;
+            color:variables.$ParticipantColor3;
+            right:50px;
+        }
+        p:nth-child(4){
+            position: relative;
+            color:variables.$ParticipantColor2;
+            right:0px;
+        }
+    }
+
+    @include mixins.mQ-phones(360px){  
+        width:100%;
+        font-size:0.9em;
+
+        .non-auth-navigation-holder{
+            font-size:0.7em;
+            margin-top:20px;
+            left:0px;
+            div{
+                padding:5px 10px;
+            }
+        }
+
+        #non-auth-main-title{
+            font-size:2em;
+            text-align: center;
+        }
+
+        #non-auth-smaller-titles{
+            font-size:1em;
+            margin-top:20px;
+            margin-bottom:20px;
+        }
+    }
+
+    @include mixins.mQ-other(361px, 480px){
+        width:100%;
+        font-size:0.7em;
+
+        .non-auth-navigation-holder{
+            font-size:1em;
+            margin-top:20px;
+            left:0px;
+
+            div{
+                padding:5px 10px;
+            }
+        }
+
+        #non-auth-main-title{
+            width:90vw;
+            font-size:3em;
+            margin-top: 20px;
+        }
+
+        #non-auth-smaller-titles{
+            font-size:1.3em;
+            margin-top:20px;
+            margin-bottom:20px;
+        }
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        font-size:0.7em;
+        width:100vw;
+
+        .non-auth-navigation-holder{
+            left:0px;
+        }
+
+        #non-auth-main-title{
+            font-size:1.8em;
+            margin-top:20px;
+        }
+
+        #non-auth-smaller-titles{
+            margin-right: 50px;
+        }
+    }
+
+    @include mixins.mQ-other(769px,1024px){
+        font-size:0.8em;
+        width:100vw;
+        #non-auth-main-title{
+            font-size:1.8em;
+        }
+
+        #non-auth-smaller-titles{
+            margin-right: 50px;
+        }
+    }
+
+    @include mixins.mQ-other(1025px,1699px){
+        font-size:0.9em;
+        width:100vw;
+        #non-auth-main-title{
+            align-self: flex-start;
+            margin-left:50px
+        }
+
+        #non-auth-smaller-titles{
+            margin-right: 50px;
+        }
+    }
+
+    @include mixins.mQ-other(1699px, 2298px){
+        font-size:1.2em;
+
+        #non-auth-main-title{
+            align-self: flex-start;
+            margin-left:50px
+        }
+    }
+
+    @include mixins.mQ-largerDesktops(2299px){
+        font-size:1.5em;
+
+        #non-auth-main-title{
+            align-self: flex-start;
+            margin-left:50px
+        }
+    }
+}
+
+#non-auth-bottom-container{
+    width: 90vw;
+    #cover-bet{
+        object-fit: contain;
+        max-width:40vw
+    }
+
+    @include mixins.mQ-phones(480px){
+        flex-direction: column-reverse;
+        align-items: center;
+
+        #cover-bet{
+            max-width: 80vw;
+        }
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        flex-direction: column-reverse;
+        align-items: center;
+    }
+
+    @include mixins.mQ-largerDesktops(1280px){
+        width: 100vw;
+
+        #cover-bet{
+            max-width: 30vw;
+        }
+    }
+}

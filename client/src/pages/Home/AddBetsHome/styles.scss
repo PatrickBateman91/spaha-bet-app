@@ -1,0 +1,112 @@
+@use '../../../assets/Sass/variables.scss';
+@use '../../../assets//Sass/mixins.scss';
+
+.add-bets-home-container{
+    position:relative;
+    height:500px;
+    @include mixins.homeContainer;
+    @include mixins.homeSectionMargin;
+
+    @include mixins.mQ-phones(480px){
+        flex-direction: column;
+        align-items: center;
+        height:auto;
+        font-size: 1em;
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        flex-direction: column;
+        align-items: center;
+        height:auto;
+        font-size: 1em;
+    }
+}
+
+.left-add-bet-home, .right-add-bet-home{
+    width:50%;
+    background-color: #F9F1E1;
+    .add-bets-home-title{
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        font-size: 1.4em;
+    }
+
+    .add-bets-home-text{
+        width:50%;
+        font-size:0.85em;
+        word-spacing: 3px;
+    }
+
+    @include mixins.mQ-phones(480px){
+        width: 100%;
+        margin-bottom: 30px;
+
+        .add-bets-home-title{
+            padding-top:20px;
+            padding-bottom: 20px;
+        }
+
+        .add-bets-home-text{
+            padding-bottom: 20px;
+            width: 75%;
+        }
+
+        img{
+            width:250px;
+        }
+    }
+
+    @include mixins.mQ-other(481px,768px){
+        width: 90vw;
+        margin-bottom: 30px;
+
+        .add-bets-home-title{
+            padding-top:20px;
+            padding-bottom: 20px;
+        }
+
+        .add-bets-home-text{
+            padding-bottom: 20px;
+        }
+
+        img{
+            width:250px;
+        }
+    }
+
+    @include mixins.mQ-other(769px,1149px){
+        img{
+            width:250px;
+        }
+
+        .add-bets-home-title{
+            font-size: 20px;
+        }
+
+        .add-bets-home-text{
+            font-size:0.7em;
+        }
+    }
+
+    @include mixins.mQ-other(1150px, 1699px){
+
+        .add-bets-home-title{
+            margin-top:20px;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .add-bets-home-text{
+            font-size:0.8em;
+        }
+    }
+}
+
+.right-add-bet-home{
+    border-left:1px solid #CACACA;
+
+    @include mixins.mQ-other(481px,768px){
+        border-left: none;
+    }
+}
+
